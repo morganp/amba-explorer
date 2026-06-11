@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;padding:0;}
+  *{box-sizing:border-box;}
+  ::selection{background:oklch(0.78 0.14 235 / 0.35);}
+  ::-webkit-scrollbar{height:10px;width:10px;}
+  ::-webkit-scrollbar-thumb{background:oklch(0.34 0.01 258);border-radius:6px;}
+  ::-webkit-scrollbar-thumb:hover{background:oklch(0.42 0.01 258);}
+  ::-webkit-scrollbar-track{background:transparent;}
+  @keyframes flowR{0%{left:-6%;opacity:0;}12%{opacity:1;}88%{opacity:1;}100%{left:102%;opacity:0;}}
+  @keyframes flowL{0%{left:102%;opacity:0;}12%{opacity:1;}88%{opacity:1;}100%{left:-6%;opacity:0;}}
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:oklch(0.145 0.012 258);color:oklch(0.93 0.005 258);font-family:'IBM Plex Sans',system-ui,sans-serif;">
+
+  <!-- ===================== TOPOLOGY HEADER ===================== -->
+  <header style="position:sticky;top:0;z-index:30;background:oklch(0.13 0.011 258);border-bottom:1px solid oklch(0.27 0.011 258);padding:14px 26px;backdrop-filter:blur(6px);">
+    <div style="display:flex;align-items:center;gap:26px;max-width:1500px;margin:0 auto;">
+      <div style="flex:0 0 auto;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.26em;color:oklch(0.58 0.01 258);text-transform:uppercase;">AMBA AXI</div>
+        <div style="font-size:18px;font-weight:600;letter-spacing:-0.01em;margin-top:1px;">Interface Explorer</div>
+      </div>
+
+      <!-- master ↔ slave topology -->
+      <div style="flex:1;display:flex;align-items:center;gap:0;min-width:0;">
+        <div style="flex:0 0 88px;text-align:center;padding:11px 6px;border:1.5px solid oklch(0.42 0.012 258);border-radius:9px;background:oklch(0.20 0.013 258);font-family:'JetBrains Mono',monospace;">
+          <div style="font-size:12px;color:oklch(0.92 0.005 258);font-weight:600;">CPU</div>
+          <div style="font-size:9.5px;color:oklch(0.55 0.01 258);margin-top:2px;">Manager</div>
+        </div>
+
+        <div style="flex:1;display:grid;grid-template-columns:1fr;gap:5px;padding:0 6px;min-width:0;">
+          <div onMouseEnter="{{ hoverAW }}" onMouseLeave="{{ clearHover }}" onClick="{{ goWrite }}" style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:oklch(0.80 0.15 35);width:26px;flex:0 0 auto;">AW</span>
+            <span style="flex:1;height:3px;border-radius:2px;background:oklch(0.80 0.15 35);position:relative;box-shadow:{{ glowAW }};">
+              <span style="position:absolute;top:-2.5px;width:8px;height:8px;border-radius:50%;background:oklch(0.80 0.15 35);box-shadow:0 0 7px oklch(0.80 0.15 35);animation:flowR 2.6s linear infinite;"></span>
+              <span style="position:absolute;right:-1px;top:-3px;border-left:7px solid oklch(0.80 0.15 35);border-top:4.5px solid transparent;border-bottom:4.5px solid transparent;"></span>
+            </span>
+          </div>
+          <div onMouseEnter="{{ hoverW }}" onMouseLeave="{{ clearHover }}" onClick="{{ goWrite }}" style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:oklch(0.85 0.15 90);width:26px;flex:0 0 auto;">W</span>
+            <span style="flex:1;height:3px;border-radius:2px;background:oklch(0.85 0.15 90);position:relative;box-shadow:{{ glowW }};">
+              <span style="position:absolute;top:-2.5px;width:8px;height:8px;border-radius:50%;background:oklch(0.85 0.15 90);box-shadow:0 0 7px oklch(0.85 0.15 90);animation:flowR 2.6s linear infinite .5s;"></span>
+              <span style="position:absolute;right:-1px;top:-3px;border-left:7px solid oklch(0.85 0.15 90);border-top:4.5px solid transparent;border-bottom:4.5px solid transparent;"></span>
+            </span>
+          </div>
+          <div onMouseEnter="{{ hoverB }}" onMouseLeave="{{ clearHover }}" onClick="{{ goWrite }}" style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:oklch(0.80 0.15 155);width:26px;flex:0 0 auto;text-align:right;">B</span>
+            <span style="flex:1;height:3px;border-radius:2px;background:oklch(0.80 0.15 155);position:relative;box-shadow:{{ glowB }};">
+              <span style="position:absolute;top:-2.5px;width:8px;height:8px;border-radius:50%;background:oklch(0.80 0.15 155);box-shadow:0 0 7px oklch(0.80 0.15 155);animation:flowL 2.6s linear infinite .3s;"></span>
+              <span style="position:absolute;left:-1px;top:-3px;border-right:7px solid oklch(0.80 0.15 155);border-top:4.5px solid transparent;border-bottom:4.5px solid transparent;"></span>
+            </span>
+          </div>
+          <div onMouseEnter="{{ hoverAR }}" onMouseLeave="{{ clearHover }}" onClick="{{ goRead }}" style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:oklch(0.78 0.14 235);width:26px;flex:0 0 auto;">AR</span>
+            <span style="flex:1;height:3px;border-radius:2px;background:oklch(0.78 0.14 235);position:relative;box-shadow:{{ glowAR }};">
+              <span style="position:absolute;top:-2.5px;width:8px;height:8px;border-radius:50%;background:oklch(0.78 0.14 235);box-shadow:0 0 7px oklch(0.78 0.14 235);animation:flowR 2.6s linear infinite .15s;"></span>
+              <span style="position:absolute;right:-1px;top:-3px;border-left:7px solid oklch(0.78 0.14 235);border-top:4.5px solid transparent;border-bottom:4.5px solid transparent;"></span>
+            </span>
+          </div>
+          <div onMouseEnter="{{ hoverR }}" onMouseLeave="{{ clearHover }}" onClick="{{ goRead }}" style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:oklch(0.72 0.17 305);width:26px;flex:0 0 auto;text-align:right;">R</span>
+            <span style="flex:1;height:3px;border-radius:2px;background:oklch(0.72 0.17 305);position:relative;box-shadow:{{ glowR }};">
+              <span style="position:absolute;top:-2.5px;width:8px;height:8px;border-radius:50%;background:oklch(0.72 0.17 305);box-shadow:0 0 7px oklch(0.72 0.17 305);animation:flowL 2.6s linear infinite .7s;"></span>
+              <span style="position:absolute;left:-1px;top:-3px;border-right:7px solid oklch(0.72 0.17 305);border-top:4.5px solid transparent;border-bottom:4.5px solid transparent;"></span>
+            </span>
+          </div>
+        </div>
+
+        <div style="flex:0 0 88px;text-align:center;padding:11px 6px;border:1.5px solid oklch(0.42 0.012 258);border-radius:9px;background:oklch(0.20 0.013 258);font-family:'JetBrains Mono',monospace;">
+          <div style="font-size:12px;color:oklch(0.92 0.005 258);font-weight:600;">DDR</div>
+          <div style="font-size:9.5px;color:oklch(0.55 0.01 258);margin-top:2px;">Subordinate</div>
+        </div>
+      </div>
+
+      <div style="flex:0 0 168px;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.5;color:oklch(0.6 0.01 258);border-left:1px solid oklch(0.27 0.011 258);padding-left:18px;min-height:38px;">
+        <span style="color:{{ hintColor }};font-weight:600;">{{ hintLabel }}</span><br>
+        <span style="color:oklch(0.6 0.01 258);">{{ hintText }}</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================== BODY: NAV + MAIN ===================== -->
+  <div style="display:grid;grid-template-columns:236px 1fr;max-width:1500px;margin:0 auto;align-items:start;">
+
+    <!-- NAV -->
+    <nav style="position:sticky;top:115px;align-self:start;padding:22px 14px 40px;border-right:1px solid oklch(0.24 0.011 258);font-family:'JetBrains Mono',monospace;">
+      <sc-for list="{{ navGroups }}" as="grp" hint-placeholder-count="3">
+        <div style="margin-bottom:18px;">
+          <div style="font-size:10px;letter-spacing:0.18em;color:oklch(0.48 0.01 258);text-transform:uppercase;padding:0 10px 7px;">{{ grp.title }}</div>
+          <sc-for list="{{ grp.items }}" as="it" hint-placeholder-count="3">
+            <div onClick="{{ it.onClick }}" style="display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:7px;cursor:pointer;font-size:13px;margin-bottom:2px;background:{{ it.bg }};color:{{ it.color }};border-left:2px solid {{ it.bar }};" style-hover="background:oklch(0.21 0.012 258);">
+              <span style="width:7px;height:7px;border-radius:2px;background:{{ it.dot }};flex:0 0 auto;"></span>
+              {{ it.label }}
+            </div>
+          </sc-for>
+        </div>
+      </sc-for>
+    </nav>
+
+    <!-- MAIN -->
+    <main style="padding:30px 38px 80px;min-width:0;">
+
+      <!-- ============ OVERVIEW ============ -->
+      <sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.58 0.01 258);text-transform:uppercase;">Basics / Overview</div>
+          <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">Five independent channels</h1>
+          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:680px;margin:0 0 26px;">AXI splits every memory transaction across five one-way channels. Writes use three (<strong style="color:oklch(0.80 0.15 35);font-weight:600;">AW</strong>, <strong style="color:oklch(0.85 0.15 90);font-weight:600;">W</strong>, <strong style="color:oklch(0.80 0.15 155);font-weight:600;">B</strong>); reads use two (<strong style="color:oklch(0.78 0.14 235);font-weight:600;">AR</strong>, <strong style="color:oklch(0.72 0.17 305);font-weight:600;">R</strong>). Each channel is fully independent and uses the same <em>VALID/READY</em> handshake. Hover any channel to highlight it across the diagram, or click a card below to open its walkthrough.</p>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:14px;margin-bottom:30px;">
+            <sc-for list="{{ channelCards }}" as="c" hint-placeholder-count="5">
+              <div onMouseEnter="{{ c.onHover }}" onMouseLeave="{{ clearHover }}" onClick="{{ c.onOpen }}" style="background:oklch(0.175 0.013 258);border:1px solid oklch(0.28 0.012 258);border-top:2px solid {{ c.color }};border-radius:11px;padding:16px 17px;cursor:pointer;transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease, background .12s ease;" style-hover="{{ c.hoverStyle }}">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;">
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;color:{{ c.color }};">{{ c.code }}</span>
+                  <span style="display:inline-flex;align-items:center;gap:5px;padding:3px 7px;border-radius:6px;background:oklch(0.13 0.01 258);border:1px solid oklch(0.27 0.012 258);">
+                    <span style="{{ c.dir.mStyle }}">M</span>
+                    <span style="display:inline-flex;align-items:center;margin:0 1px;">{{ c.dir.arrowEl }}</span>
+                    <span style="{{ c.dir.sStyle }}">S</span>
+                  </span>
+                </div>
+                <div style="font-size:14px;font-weight:600;margin-bottom:5px;">{{ c.name }}</div>
+                <div style="font-size:12.5px;line-height:1.5;color:oklch(0.64 0.008 258);margin-bottom:12px;">{{ c.desc }}</div>
+                <div style="display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:11px;color:{{ c.color }};opacity:0.85;">{{ c.cta }} <span style="font-size:13px;">→</span></div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-radius:11px;padding:18px 20px;display:flex;gap:18px;align-items:flex-start;max-width:740px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:22px;color:oklch(0.78 0.14 235);line-height:1;">§</div>
+            <div>
+              <div style="font-size:14px;font-weight:600;margin-bottom:5px;">One rule governs every channel</div>
+              <div style="font-size:13.5px;line-height:1.6;color:oklch(0.66 0.008 258);">A transfer happens on a rising clock edge <strong style="color:oklch(0.88 0.005 258);">only when both VALID and READY are high</strong>. The source raises VALID; the destination raises READY. Neither may wait on the other to assert first. Walk through it in <span onClick="{{ goHandshake }}" style="color:oklch(0.78 0.14 235);cursor:pointer;border-bottom:1px dashed oklch(0.78 0.14 235);">Handshake →</span></div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ HANDSHAKE ============ -->
+      <sc-if value="{{ isHandshake }}">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.58 0.01 258);text-transform:uppercase;">Basics / Handshake</div>
+          <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">The VALID / READY handshake</h1>
+          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:680px;margin:0 0 22px;">Every channel transfers information the same way. The <strong style="color:oklch(0.78 0.14 235);">source</strong> asserts VALID when its payload is valid; the <strong style="color:oklch(0.80 0.15 155);">destination</strong> asserts READY when it can accept. Pick a scenario, then step the clock.</p>
+
+          <div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;">
+            <sc-for list="{{ hsScenarios }}" as="s" hint-placeholder-count="3">
+              <div onClick="{{ s.onClick }}" style="font-family:'JetBrains Mono',monospace;font-size:12.5px;padding:8px 14px;border-radius:8px;cursor:pointer;background:{{ s.bg }};color:{{ s.color }};border:1px solid {{ s.border }};">{{ s.label }}</div>
+            </sc-for>
+          </div>
+
+          <div style="background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-radius:13px;overflow:hidden;max-width:760px;">
+            <div style="padding:18px 20px 8px;background:oklch(0.118 0.01 258);">{{ hsWave }}</div>
+            <div style="display:flex;align-items:center;gap:14px;padding:15px 20px;border-top:1px solid oklch(0.24 0.011 258);">
+              <div style="display:flex;gap:6px;">
+                <div onClick="{{ hsPrev }}" style="font-family:'JetBrains Mono',monospace;font-size:15px;color:oklch(0.7 0.01 258);width:30px;height:30px;display:grid;place-items:center;border:1px solid oklch(0.32 0.012 258);border-radius:7px;cursor:pointer;" style-hover="background:oklch(0.22 0.013 258);">◀</div>
+                <div onClick="{{ hsNext }}" style="font-family:'JetBrains Mono',monospace;font-size:15px;color:oklch(0.93 0.005 258);width:30px;height:30px;display:grid;place-items:center;border:1px solid oklch(0.4 0.012 258);border-radius:7px;cursor:pointer;background:oklch(0.22 0.013 258);" style-hover="background:oklch(0.27 0.013 258);">▶</div>
+              </div>
+              <div style="flex:1;">
+                <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:{{ hsAccent }};letter-spacing:0.05em;margin-bottom:2px;">{{ hsStepLabel }}</div>
+                <div style="font-size:13.5px;line-height:1.45;color:oklch(0.82 0.006 258);">{{ hsStepText }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:20px;display:flex;gap:14px;flex-wrap:wrap;max-width:760px;">
+            <div style="flex:1 1 220px;background:oklch(0.17 0.013 258);border:1px solid oklch(0.27 0.012 258);border-radius:10px;padding:14px 16px;">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:oklch(0.80 0.15 155);margin-bottom:5px;">no deadlock rule</div>
+              <div style="font-size:12.5px;line-height:1.55;color:oklch(0.66 0.008 258);">A source must <strong style="color:oklch(0.88 0.005 258);">not</strong> wait for READY before asserting VALID. Once VALID is high it must stay high until the transfer completes.</div>
+            </div>
+            <div style="flex:1 1 220px;background:oklch(0.17 0.013 258);border:1px solid oklch(0.27 0.012 258);border-radius:10px;padding:14px 16px;">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:oklch(0.78 0.14 235);margin-bottom:5px;">destination freedom</div>
+              <div style="font-size:12.5px;line-height:1.55;color:oklch(0.66 0.008 258);">A destination may assert READY before VALID, or wait — and can drop READY between transfers to apply backpressure.</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ WRITE ============ -->
+      <sc-if value="{{ isWrite }}">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.58 0.01 258);text-transform:uppercase;">Transactions / Write</div>
+          <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">Anatomy of a write</h1>
+          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:700px;margin:0 0 20px;">A write moves across three channels: address on <strong style="color:oklch(0.80 0.15 35);">AW</strong>, a burst of data beats on <strong style="color:oklch(0.85 0.15 90);">W</strong> (last beat flagged by <code style="font-family:'JetBrains Mono',monospace;">WLAST</code>), then a single response on <strong style="color:oklch(0.80 0.15 155);">B</strong>. Step the clock and hover any signal to inspect it.</p>
+
+          <div style="background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-radius:13px;overflow:hidden;">
+            <div style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:oklch(0.118 0.01 258);border-bottom:1px solid oklch(0.26 0.011 258);font-family:'JetBrains Mono',monospace;font-size:11px;color:oklch(0.56 0.01 258);">
+              <span style="width:9px;height:9px;border-radius:50%;background:oklch(0.62 0.16 25);"></span>
+              <span style="width:9px;height:9px;border-radius:50%;background:oklch(0.82 0.13 85);"></span>
+              <span style="width:9px;height:9px;border-radius:50%;background:oklch(0.78 0.15 150);"></span>
+              <span style="margin-left:6px;">write_burst.vcd — 2 beats</span>
+            </div>
+            <div style="padding:18px 18px 8px;background:oklch(0.115 0.01 258);overflow-x:auto;">{{ writeWave }}</div>
+            <div style="display:flex;align-items:stretch;border-top:1px solid oklch(0.24 0.011 258);">
+              <div style="display:flex;gap:6px;align-items:center;padding:0 16px;border-right:1px solid oklch(0.24 0.011 258);">
+                <div onClick="{{ writePrev }}" style="font-family:'JetBrains Mono',monospace;font-size:15px;color:oklch(0.7 0.01 258);width:30px;height:30px;display:grid;place-items:center;border:1px solid oklch(0.32 0.012 258);border-radius:7px;cursor:pointer;" style-hover="background:oklch(0.22 0.013 258);">◀</div>
+                <div onClick="{{ writeNext }}" style="font-family:'JetBrains Mono',monospace;font-size:15px;color:oklch(0.93 0.005 258);width:30px;height:30px;display:grid;place-items:center;border:1px solid oklch(0.4 0.012 258);border-radius:7px;cursor:pointer;background:oklch(0.22 0.013 258);" style-hover="background:oklch(0.27 0.013 258);">▶</div>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:oklch(0.55 0.01 258);margin-left:4px;">{{ writeCounter }}</span>
+              </div>
+              <div style="flex:1;padding:14px 18px;">
+                <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:{{ writeAccent }};letter-spacing:0.05em;margin-bottom:3px;">{{ writeStepLabel }}</div>
+                <div style="font-size:13.5px;line-height:1.5;color:oklch(0.82 0.006 258);">{{ writeStepText }}</div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:12px;color:oklch(0.6 0.01 258);background:oklch(0.17 0.013 258);border:1px solid oklch(0.27 0.012 258);border-radius:9px;padding:11px 15px;max-width:520px;">
+            <span style="color:{{ inspColor }};font-weight:600;">{{ inspLabel }}</span> · <span style="color:oklch(0.7 0.008 258);">{{ inspText }}</span>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ READ ============ -->
+      <sc-if value="{{ isRead }}">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.58 0.01 258);text-transform:uppercase;">Transactions / Read</div>
+          <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">Anatomy of a read</h1>
+          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:700px;margin:0 0 20px;">A read uses two channels: the master requests an address on <strong style="color:oklch(0.78 0.14 235);">AR</strong>, then the slave returns data beats on <strong style="color:oklch(0.72 0.17 305);">R</strong>. The read response (<code style="font-family:'JetBrains Mono',monospace;">RRESP</code>) rides with each beat; <code style="font-family:'JetBrains Mono',monospace;">RLAST</code> marks the end of the burst.</p>
+
+          <div style="background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-radius:13px;overflow:hidden;">
+            <div style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:oklch(0.118 0.01 258);border-bottom:1px solid oklch(0.26 0.011 258);font-family:'JetBrains Mono',monospace;font-size:11px;color:oklch(0.56 0.01 258);">
+              <span style="width:9px;height:9px;border-radius:50%;background:oklch(0.62 0.16 25);"></span>
+              <span style="width:9px;height:9px;border-radius:50%;background:oklch(0.82 0.13 85);"></span>
+              <span style="width:9px;height:9px;border-radius:50%;background:oklch(0.78 0.15 150);"></span>
+              <span style="margin-left:6px;">read_burst.vcd — 2 beats</span>
+            </div>
+            <div style="padding:18px 18px 8px;background:oklch(0.115 0.01 258);overflow-x:auto;">{{ readWave }}</div>
+            <div style="display:flex;align-items:stretch;border-top:1px solid oklch(0.24 0.011 258);">
+              <div style="display:flex;gap:6px;align-items:center;padding:0 16px;border-right:1px solid oklch(0.24 0.011 258);">
+                <div onClick="{{ readPrev }}" style="font-family:'JetBrains Mono',monospace;font-size:15px;color:oklch(0.7 0.01 258);width:30px;height:30px;display:grid;place-items:center;border:1px solid oklch(0.32 0.012 258);border-radius:7px;cursor:pointer;" style-hover="background:oklch(0.22 0.013 258);">◀</div>
+                <div onClick="{{ readNext }}" style="font-family:'JetBrains Mono',monospace;font-size:15px;color:oklch(0.93 0.005 258);width:30px;height:30px;display:grid;place-items:center;border:1px solid oklch(0.4 0.012 258);border-radius:7px;cursor:pointer;background:oklch(0.22 0.013 258);" style-hover="background:oklch(0.27 0.013 258);">▶</div>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:oklch(0.55 0.01 258);margin-left:4px;">{{ readCounter }}</span>
+              </div>
+              <div style="flex:1;padding:14px 18px;">
+                <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:{{ readAccent }};letter-spacing:0.05em;margin-bottom:3px;">{{ readStepLabel }}</div>
+                <div style="font-size:13.5px;line-height:1.5;color:oklch(0.82 0.006 258);">{{ readStepText }}</div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:12px;color:oklch(0.6 0.01 258);background:oklch(0.17 0.013 258);border:1px solid oklch(0.27 0.012 258);border-radius:9px;padding:11px 15px;max-width:520px;">
+            <span style="color:{{ inspColor }};font-weight:600;">{{ inspLabel }}</span> · <span style="color:oklch(0.7 0.008 258);">{{ inspText }}</span>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ BURSTS ============ -->
+      <sc-if value="{{ isBurst }}">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.58 0.01 258);text-transform:uppercase;">Transactions / Bursts</div>
+          <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">Burst types &amp; addressing</h1>
+          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:700px;margin:0 0 22px;">One address phase can transfer many beats. <code style="font-family:'JetBrains Mono',monospace;">AxBURST</code> sets how the address advances; <code style="font-family:'JetBrains Mono',monospace;">AxLEN</code> the beat count; <code style="font-family:'JetBrains Mono',monospace;">AxSIZE</code> the bytes per beat. Adjust the controls to see the addresses each beat lands on.</p>
+
+          <div style="display:flex;gap:26px;flex-wrap:wrap;align-items:flex-start;">
+            <div style="flex:0 0 250px;display:flex;flex-direction:column;gap:18px;">
+              <div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.12em;color:oklch(0.55 0.01 258);text-transform:uppercase;margin-bottom:8px;">AxBURST</div>
+                <div style="display:flex;gap:6px;">
+                  <sc-for list="{{ burstTypes }}" as="t" hint-placeholder-count="3">
+                    <div onClick="{{ t.onClick }}" style="flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;padding:9px 4px;border-radius:8px;cursor:pointer;background:{{ t.bg }};color:{{ t.color }};border:1px solid {{ t.border }};">{{ t.label }}</div>
+                  </sc-for>
+                </div>
+              </div>
+              <div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.12em;color:oklch(0.55 0.01 258);text-transform:uppercase;margin-bottom:8px;">AxLEN · beats</div>
+                <div style="display:flex;gap:6px;">
+                  <sc-for list="{{ burstLens }}" as="l" hint-placeholder-count="4">
+                    <div onClick="{{ l.onClick }}" style="flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;padding:9px 4px;border-radius:8px;cursor:pointer;background:{{ l.bg }};color:{{ l.color }};border:1px solid {{ l.border }};">{{ l.label }}</div>
+                  </sc-for>
+                </div>
+              </div>
+              <div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.12em;color:oklch(0.55 0.01 258);text-transform:uppercase;margin-bottom:8px;">AxSIZE · bytes/beat</div>
+                <div style="display:flex;gap:6px;">
+                  <sc-for list="{{ burstSizes }}" as="z" hint-placeholder-count="4">
+                    <div onClick="{{ z.onClick }}" style="flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;padding:9px 4px;border-radius:8px;cursor:pointer;background:{{ z.bg }};color:{{ z.color }};border:1px solid {{ z.border }};">{{ z.label }}</div>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="background:oklch(0.17 0.013 258);border:1px solid oklch(0.27 0.012 258);border-radius:10px;padding:13px 15px;">
+                <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:{{ burstAccent }};margin-bottom:5px;">{{ burstName }}</div>
+                <div style="font-size:12.5px;line-height:1.55;color:oklch(0.66 0.008 258);">{{ burstDesc }}</div>
+              </div>
+            </div>
+
+            <div style="flex:1;min-width:340px;">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:oklch(0.55 0.01 258);margin-bottom:10px;">start = 0x38 · {{ burstSummary }}</div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <sc-for list="{{ burstBeats }}" as="b" hint-placeholder-count="4">
+                  <div style="display:flex;align-items:center;gap:12px;">
+                    <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:oklch(0.55 0.01 258);width:48px;flex:0 0 auto;">beat {{ b.n }}</span>
+                    <div style="flex:1;height:34px;border-radius:7px;background:{{ b.bg }};border:1px solid {{ b.border }};display:flex;align-items:center;padding:0 13px;font-family:'JetBrains Mono',monospace;position:relative;overflow:hidden;">
+                      <span style="font-size:13px;color:{{ b.addrColor }};font-weight:600;">{{ b.addr }}</span>
+                      <span style="margin-left:auto;font-size:10.5px;color:oklch(0.5 0.01 258);">{{ b.note }}</span>
+                      <span style="position:absolute;left:0;top:0;bottom:0;width:3px;background:{{ b.bar }};"></span>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:oklch(0.55 0.01 258);line-height:1.6;">{{ burstFootnote }}</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ IDS / ORDERING ============ -->
+      <sc-if value="{{ isIds }}">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.58 0.01 258);text-transform:uppercase;">Transactions / IDs &amp; Ordering</div>
+          <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">Transaction IDs &amp; out-of-order</h1>
+          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:720px;margin:0 0 22px;">Each transaction carries an ID (<code style="font-family:'JetBrains Mono',monospace;">AxID</code>). Transactions with <strong style="color:oklch(0.88 0.005 258);">different</strong> IDs have no ordering guarantee — a slave may return them in any order, enabling pipelining. Same-ID transactions must stay ordered. Step through two outstanding reads returning out of order.</p>
+
+          <div style="background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-radius:13px;overflow:hidden;max-width:820px;">
+            <div style="padding:18px 18px 8px;background:oklch(0.115 0.01 258);overflow-x:auto;">{{ idWave }}</div>
+            <div style="display:flex;align-items:stretch;border-top:1px solid oklch(0.24 0.011 258);">
+              <div style="display:flex;gap:6px;align-items:center;padding:0 16px;border-right:1px solid oklch(0.24 0.011 258);">
+                <div onClick="{{ idPrev }}" style="font-family:'JetBrains Mono',monospace;font-size:15px;color:oklch(0.7 0.01 258);width:30px;height:30px;display:grid;place-items:center;border:1px solid oklch(0.32 0.012 258);border-radius:7px;cursor:pointer;" style-hover="background:oklch(0.22 0.013 258);">◀</div>
+                <div onClick="{{ idNext }}" style="font-family:'JetBrains Mono',monospace;font-size:15px;color:oklch(0.93 0.005 258);width:30px;height:30px;display:grid;place-items:center;border:1px solid oklch(0.4 0.012 258);border-radius:7px;cursor:pointer;background:oklch(0.22 0.013 258);" style-hover="background:oklch(0.27 0.013 258);">▶</div>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:oklch(0.55 0.01 258);margin-left:4px;">{{ idCounter }}</span>
+              </div>
+              <div style="flex:1;padding:14px 18px;">
+                <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:{{ idAccent }};letter-spacing:0.05em;margin-bottom:3px;">{{ idStepLabel }}</div>
+                <div style="font-size:13.5px;line-height:1.5;color:oklch(0.82 0.006 258);">{{ idStepText }}</div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:18px;display:flex;gap:14px;flex-wrap:wrap;max-width:820px;">
+            <div style="flex:1 1 240px;background:oklch(0.17 0.013 258);border:1px solid oklch(0.27 0.012 258);border-left:2px solid oklch(0.78 0.14 235);border-radius:10px;padding:13px 16px;">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:oklch(0.78 0.14 235);margin-bottom:5px;">different IDs → reorderable</div>
+              <div style="font-size:12.5px;line-height:1.55;color:oklch(0.66 0.008 258);">ID=2 was issued after ID=1 but returns first. Legal, because their IDs differ — the master matches responses by RID.</div>
+            </div>
+            <div style="flex:1 1 240px;background:oklch(0.17 0.013 258);border:1px solid oklch(0.27 0.012 258);border-left:2px solid oklch(0.72 0.17 305);border-radius:10px;padding:13px 16px;">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:oklch(0.72 0.17 305);margin-bottom:5px;">same ID → in order</div>
+              <div style="font-size:12.5px;line-height:1.55;color:oklch(0.66 0.008 258);">Two reads sharing an ID must return in issue order. Interleaving of read data beats across different IDs is also disallowed in AXI4.</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ COMPARE ============ -->
+      <sc-if value="{{ isCompare }}">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.58 0.01 258);text-transform:uppercase;">Reference / Variants</div>
+          <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">AXI vs AXI-Lite vs AXI-Stream</h1>
+          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:720px;margin:0 0 24px;">Three members of the AXI family for three jobs: full AXI for high-throughput memory, AXI-Lite for simple register access, AXI-Stream for point-to-point data flow with no addresses at all.</p>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;max-width:900px;">
+            <sc-for list="{{ variants }}" as="v" hint-placeholder-count="3">
+              <div style="background:oklch(0.175 0.013 258);border:1px solid oklch(0.28 0.012 258);border-top:2px solid {{ v.color }};border-radius:12px;padding:18px 19px;">
+                <div style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:{{ v.color }};margin-bottom:3px;">{{ v.name }}</div>
+                <div style="font-size:12.5px;color:oklch(0.62 0.008 258);margin-bottom:14px;min-height:34px;">{{ v.tag }}</div>
+                <sc-for list="{{ v.rows }}" as="r" hint-placeholder-count="4">
+                  <div style="display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-top:1px solid oklch(0.24 0.011 258);font-size:12.5px;">
+                    <span style="color:oklch(0.56 0.01 258);font-family:'JetBrains Mono',monospace;font-size:11px;">{{ r.k }}</span>
+                    <span style="color:oklch(0.82 0.006 258);text-align:right;">{{ r.v }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ CHEAT SHEET ============ -->
+      <sc-if value="{{ isCheat }}">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.58 0.01 258);text-transform:uppercase;">Reference / Cheat Sheet</div>
+          <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">Signal reference</h1>
+          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:700px;margin:0 0 24px;">The core signals on each channel. <span style="color:oklch(0.56 0.01 258);">M→S</span> = driven by manager, <span style="color:oklch(0.56 0.01 258);">S→M</span> = driven by subordinate. Suffixed buses (<code style="font-family:'JetBrains Mono',monospace;">AxID</code>, <code style="font-family:'JetBrains Mono',monospace;">AxLEN</code> …) share the channel's handshake.</p>
+
+          <div style="display:flex;flex-direction:column;gap:20px;max-width:880px;">
+            <sc-for list="{{ cheat }}" as="ch" hint-placeholder-count="5">
+              <div style="background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-radius:12px;overflow:hidden;">
+                <div style="display:flex;align-items:center;gap:11px;padding:12px 18px;background:oklch(0.135 0.011 258);border-bottom:1px solid oklch(0.26 0.011 258);border-left:3px solid {{ ch.color }};">
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:{{ ch.color }};">{{ ch.code }}</span>
+                  <span style="font-size:13.5px;font-weight:600;">{{ ch.name }}</span>
+                </div>
+                <sc-for list="{{ ch.rows }}" as="r" hint-placeholder-count="4">
+                  <div style="display:grid;grid-template-columns:150px 78px 1fr;gap:14px;align-items:center;padding:9px 18px;border-top:1px solid oklch(0.21 0.01 258);" style-hover="background:oklch(0.19 0.013 258);">
+                    <span style="font-family:'JetBrains Mono',monospace;font-size:12.5px;color:{{ ch.color }};">{{ r.sig }}</span>
+                    <span style="display:inline-flex;align-items:center;gap:5px;justify-self:start;padding:3px 7px;border-radius:6px;background:oklch(0.13 0.01 258);border:1px solid oklch(0.27 0.012 258);">
+                      <span style="{{ r.dir.mStyle }}">M</span>
+                      <span style="display:inline-flex;align-items:center;margin:0 1px;">{{ r.dir.arrowEl }}</span>
+                      <span style="{{ r.dir.sStyle }}">S</span>
+                    </span>
+                    <span style="font-size:12.5px;color:oklch(0.68 0.008 258);line-height:1.45;">{{ r.desc }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  state = {
+    section: 'overview',
+    hover: null,
+    writeStep: 0,
+    readStep: 0,
+    hsStep: 0,
+    hsScenario: 'valid',
+    idStep: 0,
+    burstType: 'INCR',
+    burstLen: 4,
+    burstSize: 4,
+  };
+
+  C = {
+    AW: 'oklch(0.80 0.15 35)',
+    W: 'oklch(0.85 0.15 90)',
+    B: 'oklch(0.80 0.15 155)',
+    AR: 'oklch(0.78 0.14 235)',
+    R: 'oklch(0.72 0.17 305)',
+    clk: 'oklch(0.72 0.01 258)',
+    hs1: 'oklch(0.78 0.14 235)',
+    hs2: 'oklch(0.80 0.15 155)',
+  };
+
+  go = (s) => this.setState({ section: s, hover: null });
+  setHover = (info) => this.setState({ hover: info });
+
+  // directional badge: M / S chips, driver highlighted, arrow shows data flow
+  dirBadge(dir, color) {
+    const isMS = dir === 'M→S';
+    const on = `font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:${color};background:color-mix(in oklch, ${color} 22%, transparent);border:1px solid color-mix(in oklch, ${color} 52%, transparent);border-radius:5px;width:19px;height:19px;display:inline-flex;align-items:center;justify-content:center;`;
+    const off = `font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:600;color:oklch(0.5 0.01 258);background:oklch(0.2 0.011 258);border:1px solid oklch(0.3 0.012 258);border-radius:5px;width:19px;height:19px;display:inline-flex;align-items:center;justify-content:center;`;
+    const h = React.createElement;
+    const aw = 24, ah = 14, cy = 7, hw = 8; // arrow width / height / centre / head length
+    const arrowEl = isMS
+      ? h('svg', { width: aw, height: ah, viewBox: `0 0 ${aw} ${ah}`, style: { display: 'block' } }, [
+          h('line', { key: 's', x1: 1, y1: cy, x2: aw - hw + 1, y2: cy, stroke: color, strokeWidth: 2.2, strokeLinecap: 'round' }),
+          h('polygon', { key: 'p', points: `${aw - 1},${cy} ${aw - hw},${cy - 4.5} ${aw - hw},${cy + 4.5}`, fill: color }),
+        ])
+      : h('svg', { width: aw, height: ah, viewBox: `0 0 ${aw} ${ah}`, style: { display: 'block' } }, [
+          h('line', { key: 's', x1: hw - 1, y1: cy, x2: aw - 1, y2: cy, stroke: color, strokeWidth: 2.2, strokeLinecap: 'round' }),
+          h('polygon', { key: 'p', points: `1,${cy} ${hw},${cy - 4.5} ${hw},${cy + 4.5}`, fill: color }),
+        ]);
+    return {
+      mStyle: isMS ? on : off,
+      sStyle: isMS ? off : on,
+      arrowEl,
+    };
+  }
+
+  step(key, dir, max) {
+    this.setState((st) => {
+      let v = st[key] + dir;
+      if (v < 0) v = 0;
+      if (v > max) v = max;
+      return { [key]: v };
+    });
+  }
+
+  // ---------- waveform builder ----------
+  buildWave(opts) {
+    const h = React.createElement;
+    const cycles = opts.cycles || 10;
+    const w = opts.w || 34;
+    const t = opts.theme || {};
+    const rowH = t.rowH || 30;
+    const hi = 7, lo = rowH - 8, mid = (hi + lo) / 2;
+    const traceW = cycles * w;
+    const labelW = t.labelW || 86;
+    const mono = "'JetBrains Mono', monospace";
+    const hovered = this.state.hover && this.state.hover.name;
+
+    function stepPath(bits, ww) {
+      let x = 0;
+      let d = `M0,${bits[0] ? hi : lo}`;
+      for (let i = 0; i < bits.length; i++) {
+        const y = bits[i] ? hi : lo;
+        d += ` L${x},${y}`;
+        x += ww;
+        d += ` L${x},${y}`;
+      }
+      return d;
+    }
+
+    // optional cycle axis
+    const headerRow = opts.axis ? (() => {
+      const cells = [];
+      for (let c = 0; c < cycles; c++) {
+        cells.push(h('div', { key: c, style: { width: w, flex: '0 0 auto', textAlign: 'center', fontFamily: mono, fontSize: 9.5, color: 'oklch(0.46 0.01 258)' } }, 'T' + c));
+      }
+      return h('div', { key: 'ax', style: { display: 'flex', height: 16, marginLeft: labelW } }, cells);
+    })() : null;
+
+    const rows = opts.signals.map((s, idx) => {
+      const kids = [];
+      if (t.grid) {
+        for (let c = 0; c <= cycles; c++) {
+          kids.push(h('line', { key: 'g' + c, x1: c * w, y1: 0, x2: c * w, y2: rowH, stroke: t.gridColor || 'oklch(0.26 0.008 258)', strokeWidth: 1 }));
+        }
+      }
+      if (s.type === 'clk') {
+        const bits = [];
+        for (let c = 0; c < cycles; c++) { bits.push(1); bits.push(0); }
+        kids.push(h('path', { key: 'p', d: stepPath(bits, w / 2), fill: 'none', stroke: s.color, strokeWidth: 1.4 }));
+      } else if (s.type === 'bus') {
+        (s.segs || []).forEach((sg, i) => {
+          const x0 = sg.from * w, x1 = sg.to * w;
+          const pts = `${x0},${mid} ${x0 + 6},${hi} ${x1 - 6},${hi} ${x1},${mid} ${x1 - 6},${lo} ${x0 + 6},${lo}`;
+          kids.push(h('polygon', { key: 'b' + i, points: pts, fill: `color-mix(in oklch, ${s.color} 16%, transparent)`, stroke: s.color, strokeWidth: 1.4 }));
+          if (sg.value) kids.push(h('text', { key: 'v' + i, x: (x0 + x1) / 2, y: mid + 4, fill: s.color, fontSize: 10.5, fontFamily: mono, textAnchor: 'middle' }, sg.value));
+        });
+        // idle dashed line over the rest
+        kids.unshift(h('line', { key: 'idle', x1: 0, y1: mid, x2: traceW, y2: mid, stroke: t.gridColor || 'oklch(0.32 0.01 258)', strokeWidth: 1, strokeDasharray: '3 3' }));
+      } else {
+        kids.push(h('path', { key: 'p', d: stepPath(s.bits, w), fill: 'none', stroke: s.color, strokeWidth: 1.9, strokeLinejoin: 'round', style: t.glow ? { filter: `drop-shadow(0 0 5px ${s.color})` } : undefined }));
+        // transfer markers where this signal is high AND its pair (next/prev) — handled via s.marks
+      }
+      (s.marks || []).forEach((mc, i) => {
+        kids.push(h('circle', { key: 'm' + i, cx: mc * w + w / 2, cy: mid, r: 3.4, fill: s.color, stroke: 'oklch(0.12 0.01 258)', strokeWidth: 1.2 }));
+      });
+
+      const svg = h('svg', { key: 's', width: traceW, height: rowH, style: { display: 'block', overflow: 'visible' } }, kids);
+      const isHov = hovered && s.name === hovered;
+      const label = h('div', {
+        key: 'l',
+        onMouseEnter: s.desc ? () => this.setHover({ name: s.name, color: s.color, desc: s.desc, full: s.full }) : undefined,
+        onMouseLeave: s.desc ? () => this.setHover(null) : undefined,
+        style: { width: labelW, flex: '0 0 auto', fontFamily: mono, fontSize: 11, color: s.type === 'clk' ? 'oklch(0.6 0.01 258)' : s.color, textAlign: 'right', paddingRight: 11, lineHeight: rowH + 'px', letterSpacing: '0.02em', whiteSpace: 'nowrap', cursor: s.desc ? 'help' : 'default' }
+      }, s.name);
+      return h('div', { key: idx, style: { display: 'flex', alignItems: 'center', height: rowH, background: isHov ? 'oklch(0.2 0.013 258)' : 'transparent', borderRadius: 5 } }, [label, svg]);
+    });
+
+    let overlay = null;
+    if (opts.playhead != null) {
+      const left = labelW + opts.playhead * w + w / 2;
+      overlay = h('div', { key: 'cur', style: { position: 'absolute', top: opts.axis ? 16 : 0, bottom: 2, left: left, width: 0, borderLeft: `1.5px dashed ${t.cursorColor || 'oklch(0.88 0.005 258)'}`, pointerEvents: 'none', zIndex: 5 } },
+        h('span', { style: { position: 'absolute', top: -1, left: -5, width: 9, height: 9, borderRadius: '50%', background: t.cursorColor || 'oklch(0.88 0.005 258)' } }));
+    }
+    return h('div', { style: { position: 'relative', display: 'inline-block', minWidth: '100%' } }, [headerRow, ...rows, overlay]);
+  }
+
+  // ---------- step scripts ----------
+  writeSteps() {
+    const C = this.C;
+    return [
+      { cy: 1, ch: 'AW', label: 'T1 · AW ADDRESS', text: 'Master drives the write address on AWADDR and asserts AWVALID. It must hold both stable until the slave is ready.' },
+      { cy: 2, ch: 'AW', label: 'T2 · AW HANDSHAKE', text: 'Slave asserts AWREADY. On this rising edge AWVALID & AWREADY are both high → the address is accepted.' },
+      { cy: 3, ch: 'W', label: 'T3 · W BEAT 0', text: 'Master sends the first data beat: WVALID + WDATA. Slave WREADY is high → beat 0 transfers on the W channel.' },
+      { cy: 4, ch: 'W', label: 'T4 · W BEAT 1 (LAST)', text: 'Final beat. WLAST is asserted to mark the end of the burst. Beat 1 transfers and the data phase completes.' },
+      { cy: 6, ch: 'B', label: 'T6 · B RESPONSE', text: 'Slave returns a single write response: BVALID + BREADY high, BRESP = OKAY. The whole write is now acknowledged.' },
+      { cy: 7, ch: null, label: 'T7 · COMPLETE', text: 'Done: one address phase, two data beats, one response — three independent channels, one transaction.' },
+    ];
+  }
+  readSteps() {
+    return [
+      { cy: 1, ch: 'AR', label: 'T1 · AR ADDRESS', text: 'Master drives the read address on ARADDR and asserts ARVALID, requesting a burst from the slave.' },
+      { cy: 2, ch: 'AR', label: 'T2 · AR HANDSHAKE', text: 'Slave asserts ARREADY. Both high on this edge → the address is accepted and the slave begins fetching.' },
+      { cy: 3, ch: null, label: 'T3 · LATENCY', text: 'Read latency: the slave fetches data internally. The master simply keeps RREADY available for when data arrives.' },
+      { cy: 4, ch: 'R', label: 'T4 · R BEAT 0', text: 'Slave returns the first beat: RVALID + RDATA, with RRESP riding alongside. RREADY is high → beat 0 transfers.' },
+      { cy: 5, ch: 'R', label: 'T5 · R BEAT 1 (LAST)', text: 'Final beat with RLAST asserted. Beat 1 transfers and the read burst completes. No separate response channel is needed.' },
+    ];
+  }
+  hsData() {
+    const sc = this.state.hsScenario;
+    // cycles 0..7
+    if (sc === 'valid') {
+      return {
+        accent: this.C.hs1,
+        v: [0, 1, 1, 1, 0, 0, 0, 0],
+        r: [0, 0, 0, 1, 0, 0, 0, 0],
+        xfer: 3,
+        steps: [
+          { cy: 1, label: 'T1 · VALID ASSERTED', text: 'Source raises VALID with its payload. Destination is not ready yet — no transfer. VALID must stay high.' },
+          { cy: 2, label: 'T2 · WAITING', text: 'VALID held high. READY is still low, so the payload is held on the bus. The source must not drop VALID.' },
+          { cy: 3, label: 'T3 · TRANSFER ✓', text: 'Destination raises READY. Both high on this rising edge → the beat transfers. VALID may now fall.' },
+        ],
+      };
+    }
+    if (sc === 'ready') {
+      return {
+        accent: this.C.hs2,
+        v: [0, 0, 0, 1, 0, 0, 0, 0],
+        r: [0, 1, 1, 1, 0, 0, 0, 0],
+        xfer: 3,
+        steps: [
+          { cy: 1, label: 'T1 · READY ASSERTED', text: 'Destination raises READY early — it can accept a beat. No VALID yet, so nothing transfers. This is legal.' },
+          { cy: 2, label: 'T2 · WAITING', text: 'READY held. The destination waits with capacity available; the source has not produced data yet.' },
+          { cy: 3, label: 'T3 · TRANSFER ✓', text: 'Source raises VALID. Both high → the beat transfers on this edge. Either side may assert first.' },
+        ],
+      };
+    }
+    return {
+      accent: 'oklch(0.88 0.005 258)',
+      v: [0, 0, 1, 0, 0, 0, 0, 0],
+      r: [0, 0, 1, 0, 0, 0, 0, 0],
+      xfer: 2,
+      steps: [
+        { cy: 1, label: 'T1 · IDLE', text: 'Neither side is asserting. The channel is idle.' },
+        { cy: 2, label: 'T2 · TRANSFER ✓', text: 'Source and destination assert in the same cycle. Both high on this edge → the beat transfers immediately, zero wait.' },
+      ],
+    };
+  }
+  idSteps() {
+    return [
+      { cy: 1, label: 'T1 · ISSUE ID=1', text: 'Master issues read A on AR with ARID=1. It is accepted by the slave.' },
+      { cy: 2, label: 'T2 · ISSUE ID=2', text: 'Master issues a second read B with ARID=2 before A has returned — two outstanding reads.' },
+      { cy: 4, label: 'T4 · RETURN ID=2', text: 'Slave returns data for ID=2 first (RID=2). Legal: different IDs carry no ordering guarantee.' },
+      { cy: 6, label: 'T6 · RETURN ID=1', text: 'Then data for ID=1 (RID=1). The master uses RID to match each beat to the right outstanding request.' },
+    ];
+  }
+
+  renderVals() {
+    const C = this.C;
+    const st = this.state;
+    const clk = { name: 'ACLK', type: 'clk', color: C.clk };
+    const sec = st.section;
+
+    // ---- nav ----
+    const mk = (key, label, dot) => {
+      const active = sec === key;
+      return {
+        label, dot, onClick: () => this.go(key),
+        bg: active ? 'oklch(0.21 0.014 258)' : 'transparent',
+        color: active ? 'oklch(0.95 0.005 258)' : 'oklch(0.66 0.008 258)',
+        bar: active ? dot : 'transparent',
+      };
+    };
+    const navGroups = [
+      { title: 'Basics', items: [mk('overview', 'Overview', 'oklch(0.7 0.01 258)'), mk('handshake', 'Handshake', 'oklch(0.78 0.14 235)')] },
+      { title: 'Transactions', items: [mk('write', 'Write', C.AW), mk('read', 'Read', C.AR), mk('bursts', 'Bursts', C.W), mk('ids', 'IDs & Ordering', C.R)] },
+      { title: 'Reference', items: [mk('compare', 'AXI / Lite / Stream', 'oklch(0.8 0.005 258)'), mk('cheat', 'Cheat Sheet', 'oklch(0.8 0.005 258)')] },
+    ];
+
+    // ---- header hint + glow ----
+    let hint = { label: 'IDLE', color: 'oklch(0.6 0.01 258)', text: 'hover a channel' };
+    let activeCh = null;
+    if (st.hover && st.hover.code) {
+      hint = { label: st.hover.code, color: st.hover.color, text: st.hover.short };
+      activeCh = st.hover.code;
+    } else if (sec === 'write') { const s = this.writeSteps()[st.writeStep]; activeCh = s.ch; if (s.ch) hint = { label: s.ch + ' active', color: C[s.ch], text: 'write transaction' }; else hint = { label: 'write', color: 'oklch(0.7 0.01 258)', text: 'transaction complete' }; }
+    else if (sec === 'read') { const s = this.readSteps()[st.readStep]; activeCh = s.ch; if (s.ch) hint = { label: s.ch + ' active', color: C[s.ch], text: 'read transaction' }; else hint = { label: 'read', color: 'oklch(0.7 0.01 258)', text: 'fetch latency' }; }
+    const glow = (k) => activeCh === k ? `0 0 13px ${C[k]}` : 'none';
+
+    // ---- channel meta ----
+    const chMeta = {
+      AW: { code: 'AW', color: C.AW, name: 'Write Address', dir: 'M→S', short: 'write address & control', desc: 'Carries the target address, burst length, size and type for a write. One handshake per transaction.' },
+      W: { code: 'W', color: C.W, name: 'Write Data', dir: 'M→S', short: 'write data beats', desc: 'Carries the write data beats and byte strobes (WSTRB). WLAST flags the final beat of the burst.' },
+      B: { code: 'B', color: C.B, name: 'Write Response', dir: 'S→M', short: 'write response', desc: 'A single response per write transaction: OKAY, EXOKAY, SLVERR or DECERR. Confirms completion.' },
+      AR: { code: 'AR', color: C.AR, name: 'Read Address', dir: 'M→S', short: 'read address & control', desc: 'Mirrors AW for reads — address, length, size, type. Requests a burst from the slave.' },
+      R: { code: 'R', color: C.R, name: 'Read Data', dir: 'S→M', short: 'read data + response', desc: 'Carries read data beats. The response (RRESP) rides with each beat; RLAST flags the last one.' },
+    };
+    const hov = (k) => () => this.setHover({ ...chMeta[k], code: chMeta[k].code });
+    const cardSection = { AW: 'write', W: 'write', B: 'write', AR: 'read', R: 'read' };
+    const channelCards = ['AW', 'W', 'B', 'AR', 'R'].map((k) => {
+      const m = chMeta[k];
+      const target = cardSection[k];
+      return {
+        ...m,
+        onHover: hov(k),
+        onOpen: () => this.go(target),
+        cta: 'Open ' + target + ' walkthrough',
+        dir: this.dirBadge(m.dir, m.color),
+        hoverStyle: `background:oklch(0.2 0.014 258);border-color:color-mix(in oklch, ${m.color} 55%, oklch(0.28 0.012 258));box-shadow:0 0 0 1px color-mix(in oklch, ${m.color} 38%, transparent), 0 10px 26px -10px ${m.color};transform:translateY(-2px);`,
+      };
+    });
+
+    // ---- inspector (write/read) ----
+    let insp;
+    if (st.hover && st.hover.desc) insp = { label: st.hover.name, color: st.hover.color, text: st.hover.desc };
+    else insp = { label: 'hint', color: 'oklch(0.6 0.01 258)', text: 'hover any signal label to inspect it' };
+
+    // ---- WRITE wave ----
+    const wsteps = this.writeSteps();
+    const wstep = wsteps[st.writeStep];
+    const writeWave = this.buildWave({
+      cycles: 10, w: 34, axis: true, playhead: wstep.cy,
+      theme: { glow: true, grid: true, rowH: 28, labelW: 86, cursorColor: 'oklch(0.88 0.005 258)' },
+      signals: [
+        clk,
+        { name: 'AWVALID', color: C.AW, bits: [0, 1, 1, 0, 0, 0, 0, 0, 0, 0], desc: 'Master asserts when AWADDR/control are valid; holds until AWREADY.', full: 'Write Address Valid' },
+        { name: 'AWREADY', color: C.AW, bits: [0, 0, 1, 0, 0, 0, 0, 0, 0, 0], marks: [2], desc: 'Slave asserts when it can accept the write address.', full: 'Write Address Ready' },
+        { name: 'AWADDR', type: 'bus', color: C.AW, segs: [{ from: 1, to: 3, value: '0x40' }], desc: 'Start byte address of the write burst.', full: 'Write Address' },
+        { name: 'WVALID', color: C.W, bits: [0, 0, 1, 1, 0, 0, 0, 0, 0, 0], desc: 'Master asserts when WDATA for this beat is valid.', full: 'Write Data Valid' },
+        { name: 'WREADY', color: C.W, bits: [0, 0, 1, 1, 0, 0, 0, 0, 0, 0], marks: [2, 3], desc: 'Slave asserts when it can accept a data beat.', full: 'Write Data Ready' },
+        { name: 'WDATA', type: 'bus', color: C.W, segs: [{ from: 2, to: 3, value: 'D0' }, { from: 3, to: 4, value: 'D1' }], desc: 'Write data for the current beat (plus WSTRB byte lanes).', full: 'Write Data' },
+        { name: 'WLAST', color: C.W, bits: [0, 0, 0, 1, 0, 0, 0, 0, 0, 0], desc: 'Asserted on the final beat of the write burst.', full: 'Write Last' },
+        { name: 'BVALID', color: C.B, bits: [0, 0, 0, 0, 0, 0, 1, 0, 0, 0], desc: 'Slave asserts when the write response is valid.', full: 'Write Response Valid' },
+        { name: 'BREADY', color: C.B, bits: [0, 0, 0, 0, 0, 1, 1, 0, 0, 0], marks: [6], desc: 'Master asserts when it can accept the response.', full: 'Write Response Ready' },
+      ],
+    });
+
+    // ---- READ wave ----
+    const rsteps = this.readSteps();
+    const rstep = rsteps[st.readStep];
+    const readWave = this.buildWave({
+      cycles: 10, w: 34, axis: true, playhead: rstep.cy,
+      theme: { glow: true, grid: true, rowH: 28, labelW: 86, cursorColor: 'oklch(0.88 0.005 258)' },
+      signals: [
+        clk,
+        { name: 'ARVALID', color: C.AR, bits: [0, 1, 1, 0, 0, 0, 0, 0, 0, 0], desc: 'Master asserts when ARADDR/control are valid.', full: 'Read Address Valid' },
+        { name: 'ARREADY', color: C.AR, bits: [0, 0, 1, 0, 0, 0, 0, 0, 0, 0], marks: [2], desc: 'Slave asserts when it can accept the read address.', full: 'Read Address Ready' },
+        { name: 'ARADDR', type: 'bus', color: C.AR, segs: [{ from: 1, to: 3, value: '0x80' }], desc: 'Start byte address of the read burst.', full: 'Read Address' },
+        { name: 'RVALID', color: C.R, bits: [0, 0, 0, 0, 1, 1, 0, 0, 0, 0], desc: 'Slave asserts when RDATA for this beat is valid.', full: 'Read Data Valid' },
+        { name: 'RREADY', color: C.R, bits: [0, 0, 0, 1, 1, 1, 0, 0, 0, 0], marks: [4, 5], desc: 'Master asserts when it can accept a data beat.', full: 'Read Data Ready' },
+        { name: 'RDATA', type: 'bus', color: C.R, segs: [{ from: 4, to: 5, value: 'D0' }, { from: 5, to: 6, value: 'D1' }], desc: 'Read data for the current beat. RRESP rides alongside.', full: 'Read Data' },
+        { name: 'RLAST', color: C.R, bits: [0, 0, 0, 0, 0, 1, 0, 0, 0, 0], desc: 'Asserted on the final beat of the read burst.', full: 'Read Last' },
+      ],
+    });
+
+    // ---- HANDSHAKE wave ----
+    const hs = this.hsData();
+    const hsStepIdx = Math.min(st.hsStep, hs.steps.length - 1);
+    const hsStep = hs.steps[hsStepIdx];
+    const hsWave = this.buildWave({
+      cycles: 8, w: 44, axis: true, playhead: hsStep.cy,
+      theme: { glow: true, grid: true, rowH: 32, labelW: 78, cursorColor: hs.accent },
+      signals: [
+        clk,
+        { name: 'VALID', color: C.hs1, bits: hs.v, desc: 'Driven by the source. High means "payload is valid".', full: 'Channel Valid' },
+        { name: 'READY', color: C.hs2, bits: hs.r, marks: [hs.xfer], desc: 'Driven by the destination. High means "I can accept now".', full: 'Channel Ready' },
+      ],
+    });
+    const hsScenarios = [
+      { key: 'valid', label: 'VALID first' },
+      { key: 'ready', label: 'READY first' },
+      { key: 'same', label: 'Same cycle' },
+    ].map((s) => {
+      const a = st.hsScenario === s.key;
+      return { label: s.label, onClick: () => this.setState({ hsScenario: s.key, hsStep: 0 }), bg: a ? 'oklch(0.22 0.014 258)' : 'oklch(0.165 0.013 258)', color: a ? 'oklch(0.95 0.005 258)' : 'oklch(0.62 0.008 258)', border: a ? 'oklch(0.45 0.012 258)' : 'oklch(0.28 0.012 258)' };
+    });
+
+    // ---- IDs wave ----
+    const idsteps = this.idSteps();
+    const idStepIdx = Math.min(st.idStep, idsteps.length - 1);
+    const idStep = idsteps[idStepIdx];
+    const idWave = this.buildWave({
+      cycles: 9, w: 40, axis: true, playhead: idStep.cy,
+      theme: { glow: true, grid: true, rowH: 30, labelW: 84, cursorColor: 'oklch(0.88 0.005 258)' },
+      signals: [
+        clk,
+        { name: 'ARVALID', color: C.AR, bits: [0, 1, 1, 0, 0, 0, 0, 0, 0], desc: 'Master issuing read requests.', full: 'Read Address Valid' },
+        { name: 'ARID', type: 'bus', color: C.AR, segs: [{ from: 1, to: 2, value: '1' }, { from: 2, to: 3, value: '2' }], desc: 'ID tag of each issued read. Distinguishes outstanding transactions.', full: 'Read Address ID' },
+        { name: 'RVALID', color: C.R, bits: [0, 0, 0, 0, 1, 1, 1, 1, 0], desc: 'Slave returning read data beats.', full: 'Read Data Valid' },
+        { name: 'RID', type: 'bus', color: C.R, segs: [{ from: 4, to: 6, value: '2' }, { from: 6, to: 8, value: '1' }], desc: 'ID of the returning data. Matches a response to its request — note 2 returns before 1.', full: 'Read Data ID' },
+        { name: 'RLAST', color: C.R, bits: [0, 0, 0, 0, 0, 1, 0, 1, 0], desc: 'Marks the last beat of each ID\u2019s burst.', full: 'Read Last' },
+      ],
+    });
+
+    // ---- BURSTS ----
+    const start = 0x38;
+    const size = st.burstSize;
+    const len = st.burstLen;
+    const type = st.burstType;
+    const beats = [];
+    const container = len * size;
+    const wrapBase = Math.floor(start / container) * container;
+    for (let n = 0; n < len; n++) {
+      let addr;
+      let note = '';
+      if (type === 'FIXED') { addr = start; note = n === 0 ? '' : 'same address'; }
+      else if (type === 'INCR') { addr = start + n * size; }
+      else { // WRAP
+        addr = wrapBase + ((start - wrapBase + n * size) % container);
+        if (n > 0 && addr === wrapBase) note = '↩ wrapped';
+      }
+      beats.push({ n, addr });
+    }
+    const burstColor = type === 'WRAP' ? C.R : (type === 'FIXED' ? C.B : C.W);
+    const burstBeats = beats.map((b) => ({
+      n: b.n,
+      addr: '0x' + b.addr.toString(16).toUpperCase(),
+      note: b.note || '',
+      addrColor: burstColor,
+      bar: burstColor,
+      bg: 'color-mix(in oklch, ' + burstColor + ' 8%, oklch(0.17 0.013 258))',
+      border: 'color-mix(in oklch, ' + burstColor + ' 28%, transparent)',
+    }));
+    const burstMeta = {
+      INCR: { name: 'INCR — incrementing', desc: 'Each beat\u2019s address increments by AxSIZE. The everyday burst for reading or writing a contiguous block.' },
+      WRAP: { name: 'WRAP — wrapping', desc: 'Increments, but wraps back to an aligned boundary after a container of LEN×SIZE bytes. Used for cache-line fills (critical-word-first).' },
+      FIXED: { name: 'FIXED — fixed', desc: 'Every beat hits the same address. Used for FIFOs or peripheral data registers where the target never moves.' },
+    };
+    const seg = (active, accent) => ({ bg: active ? 'color-mix(in oklch,' + accent + ' 18%, oklch(0.165 0.013 258))' : 'oklch(0.165 0.013 258)', color: active ? accent : 'oklch(0.62 0.008 258)', border: active ? accent : 'oklch(0.28 0.012 258)' });
+    const burstTypes = ['INCR', 'WRAP', 'FIXED'].map((k) => ({ label: k, onClick: () => this.setState({ burstType: k, burstLen: (k === 'WRAP' && st.burstLen === 1) ? 4 : st.burstLen }), ...seg(type === k, burstColor) }));
+    const lenOpts = type === 'WRAP' ? [2, 4, 8, 16] : [1, 2, 4, 8];
+    const burstLens = lenOpts.map((n) => ({ label: String(n), onClick: () => this.setState({ burstLen: n }), ...seg(len === n, burstColor) }));
+    const burstSizes = [1, 2, 4, 8].map((n) => ({ label: String(n), onClick: () => this.setState({ burstSize: n }), ...seg(size === n, burstColor) }));
+    const burstFootnote = type === 'WRAP'
+      ? 'Wrap boundary = 0x' + wrapBase.toString(16).toUpperCase() + ', container = ' + container + ' bytes. The address wraps once it reaches the top of the container.'
+      : (type === 'FIXED' ? 'AxLEN still sets the number of beats; all of them reuse the start address.' : 'Total bytes moved = LEN × SIZE = ' + container + ' bytes across ' + len + ' beats.');
+
+    // ---- VARIANTS ----
+    const variants = [
+      { name: 'AXI4', color: C.AR, tag: 'Full memory-mapped interconnect. High throughput.', rows: [{ k: 'channels', v: '5 (AW W B AR R)' }, { k: 'bursts', v: 'up to 256 beats' }, { k: 'IDs / OoO', v: 'yes' }, { k: 'use', v: 'DRAM, DMA, fabrics' }] },
+      { name: 'AXI4-Lite', color: C.B, tag: 'Stripped-down subset for control registers.', rows: [{ k: 'channels', v: '5, single beat' }, { k: 'bursts', v: 'none (1 beat)' }, { k: 'IDs / OoO', v: 'no' }, { k: 'use', v: 'CSR / config blocks' }] },
+      { name: 'AXI4-Stream', color: C.W, tag: 'Unidirectional data flow — no addresses.', rows: [{ k: 'channels', v: '1 (T)' }, { k: 'bursts', v: 'continuous' }, { k: 'IDs / OoO', v: 'TID / TDEST routing' }, { k: 'use', v: 'video, DSP, packets' }] },
+    ];
+
+    // ---- CHEAT ----
+    const cheat = [
+      { code: 'AW', color: C.AW, name: 'Write Address', rows: [
+        { sig: 'AWVALID/READY', dir: 'M→S', desc: 'Handshake pair for the address phase.' },
+        { sig: 'AWADDR', dir: 'M→S', desc: 'Start byte address of the burst.' },
+        { sig: 'AWLEN', dir: 'M→S', desc: 'Beats in the burst, minus 1 (0–255).' },
+        { sig: 'AWSIZE', dir: 'M→S', desc: 'Bytes per beat = 2^AWSIZE.' },
+        { sig: 'AWBURST', dir: 'M→S', desc: 'FIXED / INCR / WRAP.' },
+        { sig: 'AWID', dir: 'M→S', desc: 'Transaction ID tag.' },
+      ] },
+      { code: 'W', color: C.W, name: 'Write Data', rows: [
+        { sig: 'WVALID/READY', dir: 'M→S', desc: 'Handshake pair for each data beat.' },
+        { sig: 'WDATA', dir: 'M→S', desc: 'Write data for the beat.' },
+        { sig: 'WSTRB', dir: 'M→S', desc: 'Byte-lane strobes — which bytes are valid.' },
+        { sig: 'WLAST', dir: 'M→S', desc: 'High on the final beat of the burst.' },
+      ] },
+      { code: 'B', color: C.B, name: 'Write Response', rows: [
+        { sig: 'BVALID/READY', dir: 'S→M', desc: 'Handshake pair for the response.' },
+        { sig: 'BRESP', dir: 'S→M', desc: 'OKAY / EXOKAY / SLVERR / DECERR.' },
+        { sig: 'BID', dir: 'S→M', desc: 'ID — matches the originating AWID.' },
+      ] },
+      { code: 'AR', color: C.AR, name: 'Read Address', rows: [
+        { sig: 'ARVALID/READY', dir: 'M→S', desc: 'Handshake pair for the address phase.' },
+        { sig: 'ARADDR', dir: 'M→S', desc: 'Start byte address of the read burst.' },
+        { sig: 'ARLEN/SIZE/BURST', dir: 'M→S', desc: 'Burst geometry, same encoding as write.' },
+        { sig: 'ARID', dir: 'M→S', desc: 'Transaction ID tag.' },
+      ] },
+      { code: 'R', color: C.R, name: 'Read Data', rows: [
+        { sig: 'RVALID/READY', dir: 'S→M', desc: 'Handshake pair for each data beat.' },
+        { sig: 'RDATA', dir: 'S→M', desc: 'Read data for the beat.' },
+        { sig: 'RRESP', dir: 'S→M', desc: 'Per-beat response status.' },
+        { sig: 'RLAST', dir: 'S→M', desc: 'High on the final beat of the burst.' },
+        { sig: 'RID', dir: 'S→M', desc: 'ID — matches the originating ARID.' },
+      ] },
+    ];
+
+    cheat.forEach((ch) => { ch.rows = ch.rows.map((r) => ({ ...r, dir: this.dirBadge(r.dir, ch.color) })); });
+
+    return {
+      navGroups,
+      isOverview: sec === 'overview', isHandshake: sec === 'handshake', isWrite: sec === 'write',
+      isRead: sec === 'read', isBurst: sec === 'bursts', isIds: sec === 'ids', isCompare: sec === 'compare', isCheat: sec === 'cheat',
+      goWrite: () => this.go('write'), goRead: () => this.go('read'), goHandshake: () => this.go('handshake'),
+      hoverAW: hov('AW'), hoverW: hov('W'), hoverB: hov('B'), hoverAR: hov('AR'), hoverR: hov('R'), clearHover: () => this.setHover(null),
+      glowAW: glow('AW'), glowW: glow('W'), glowB: glow('B'), glowAR: glow('AR'), glowR: glow('R'),
+      hintLabel: hint.label, hintColor: hint.color, hintText: hint.text,
+      channelCards,
+      // handshake
+      hsWave, hsScenarios, hsAccent: hs.accent, hsStepLabel: hsStep.label, hsStepText: hsStep.text,
+      hsPrev: () => this.step('hsStep', -1, hs.steps.length - 1), hsNext: () => this.step('hsStep', 1, hs.steps.length - 1),
+      // write
+      writeWave, writeAccent: wstep.ch ? C[wstep.ch] : 'oklch(0.8 0.005 258)', writeStepLabel: wstep.label, writeStepText: wstep.text,
+      writeCounter: (st.writeStep + 1) + '/' + wsteps.length,
+      writePrev: () => this.step('writeStep', -1, wsteps.length - 1), writeNext: () => this.step('writeStep', 1, wsteps.length - 1),
+      // read
+      readWave, readAccent: rstep.ch ? C[rstep.ch] : 'oklch(0.8 0.005 258)', readStepLabel: rstep.label, readStepText: rstep.text,
+      readCounter: (st.readStep + 1) + '/' + rsteps.length,
+      readPrev: () => this.step('readStep', -1, rsteps.length - 1), readNext: () => this.step('readStep', 1, rsteps.length - 1),
+      inspLabel: insp.label, inspColor: insp.color, inspText: insp.text,
+      // ids
+      idWave, idAccent: 'oklch(0.88 0.005 258)', idStepLabel: idStep.label, idStepText: idStep.text,
+      idCounter: (idStepIdx + 1) + '/' + idsteps.length,
+      idPrev: () => this.step('idStep', -1, idsteps.length - 1), idNext: () => this.step('idStep', 1, idsteps.length - 1),
+      // bursts
+      burstTypes, burstLens, burstSizes, burstBeats,
+      burstName: burstMeta[type].name, burstDesc: burstMeta[type].desc, burstAccent: burstColor,
+      burstSummary: type + ' · LEN=' + len + ' · SIZE=' + size + 'B',
+      burstFootnote,
+      // reference
+      variants, cheat,
+    };
+  }
+}
+</script>
+</body>
+</html>

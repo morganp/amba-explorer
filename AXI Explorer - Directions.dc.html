@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;padding:0;}
+  *{box-sizing:border-box;}
+  ::selection{background:oklch(0.78 0.14 235 / 0.35);}
+  ::-webkit-scrollbar{height:10px;width:10px;}
+  ::-webkit-scrollbar-thumb{background:oklch(0.34 0.01 255);border-radius:6px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:oklch(0.145 0.012 258);color:oklch(0.93 0.005 258);font-family:'IBM Plex Sans',system-ui,sans-serif;padding:44px 48px 64px;">
+
+  <header style="max-width:1760px;margin:0 auto 40px;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.32em;color:oklch(0.62 0.01 258);text-transform:uppercase;margin-bottom:14px;">AXI Interface Explorer · Visual Direction Study</div>
+    <h1 style="font-size:38px;line-height:1.1;font-weight:600;margin:0 0 14px;letter-spacing:-0.02em;max-width:900px;">Three takes on the dark-mode AXI explorer</h1>
+    <p style="font-size:16px;line-height:1.6;color:oklch(0.66 0.008 258);max-width:680px;margin:0;">Each direction shares the same DNA — terminal aesthetic, the five channels color-coded, waveforms front and center. They differ in how the page is <em>framed</em>: as a capture, as code, or as a circuit. Pick one (or mix) and I'll build the full interactive page.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:22px;">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:12px;padding:5px 11px;border-radius:7px;color:oklch(0.80 0.15 35);background:color-mix(in oklch, oklch(0.80 0.15 35) 13%, transparent);border:1px solid color-mix(in oklch, oklch(0.80 0.15 35) 35%, transparent);">AW · Write Address</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:12px;padding:5px 11px;border-radius:7px;color:oklch(0.85 0.15 90);background:color-mix(in oklch, oklch(0.85 0.15 90) 13%, transparent);border:1px solid color-mix(in oklch, oklch(0.85 0.15 90) 35%, transparent);">W · Write Data</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:12px;padding:5px 11px;border-radius:7px;color:oklch(0.80 0.15 155);background:color-mix(in oklch, oklch(0.80 0.15 155) 13%, transparent);border:1px solid color-mix(in oklch, oklch(0.80 0.15 155) 35%, transparent);">B · Write Response</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:12px;padding:5px 11px;border-radius:7px;color:oklch(0.78 0.14 235);background:color-mix(in oklch, oklch(0.78 0.14 235) 13%, transparent);border:1px solid color-mix(in oklch, oklch(0.78 0.14 235) 35%, transparent);">AR · Read Address</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:12px;padding:5px 11px;border-radius:7px;color:oklch(0.72 0.17 305);background:color-mix(in oklch, oklch(0.72 0.17 305) 13%, transparent);border:1px solid color-mix(in oklch, oklch(0.72 0.17 305) 35%, transparent);">R · Read Data</span>
+    </div>
+  </header>
+
+  <div style="max-width:1760px;margin:0 auto;display:flex;gap:30px;align-items:flex-start;flex-wrap:wrap;">
+
+    <!-- ============ DIRECTION A — LOGIC ANALYZER ============ -->
+    <section style="flex:1 1 520px;max-width:560px;min-width:480px;">
+      <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:6px;">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:oklch(0.78 0.14 235);font-weight:600;">01</span>
+        <h2 style="margin:0;font-size:21px;font-weight:600;letter-spacing:-0.01em;">Logic Analyzer</h2>
+      </div>
+      <p style="margin:0 0 16px;font-size:13.5px;line-height:1.55;color:oklch(0.62 0.008 258);">Waveform <em>is</em> the page. Glowing traces on a scope grid, a draggable playhead, signals read like a real capture.</p>
+
+      <div style="background:oklch(0.175 0.013 258);border:1px solid oklch(0.30 0.012 258);border-radius:13px;overflow:hidden;">
+        <div style="display:flex;align-items:center;gap:8px;padding:11px 15px;background:oklch(0.13 0.01 258);border-bottom:1px solid oklch(0.27 0.011 258);">
+          <span style="width:11px;height:11px;border-radius:50%;background:oklch(0.62 0.16 25);"></span>
+          <span style="width:11px;height:11px;border-radius:50%;background:oklch(0.82 0.13 85);"></span>
+          <span style="width:11px;height:11px;border-radius:50%;background:oklch(0.78 0.15 150);"></span>
+          <span style="margin-left:8px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:oklch(0.58 0.01 258);">write_txn.vcd — captured</span>
+          <span style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:11px;color:oklch(0.78 0.14 235);">● REC</span>
+        </div>
+
+        <div style="padding:16px 16px 6px;background:oklch(0.115 0.01 258);">
+          {{ waveA }}
+        </div>
+
+        <div style="display:flex;align-items:center;gap:10px;padding:13px 16px;border-top:1px solid oklch(0.24 0.011 258);background:oklch(0.155 0.012 258);">
+          <div style="display:flex;gap:5px;">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:14px;color:oklch(0.55 0.01 258);width:26px;height:26px;display:grid;place-items:center;border:1px solid oklch(0.30 0.012 258);border-radius:6px;">◀</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:14px;color:oklch(0.93 0.005 258);width:26px;height:26px;display:grid;place-items:center;border:1px solid oklch(0.40 0.012 258);border-radius:6px;background:oklch(0.22 0.013 258);">▶</span>
+          </div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.5;">
+            <span style="color:oklch(0.55 0.01 258);">t=2 · </span><span style="color:oklch(0.80 0.15 35);">AWVALID&amp;AWREADY</span><span style="color:oklch(0.78 0.55 258 / 0);"> </span><span style="color:oklch(0.85 0.005 258);"> → address handshake</span>
+          </div>
+          <span style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:11px;color:oklch(0.55 0.01 258);">3 / 8</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ DIRECTION B — PROTOCOL IDE ============ -->
+    <section style="flex:1 1 520px;max-width:560px;min-width:480px;">
+      <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:6px;">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:oklch(0.78 0.14 235);font-weight:600;">02</span>
+        <h2 style="margin:0;font-size:21px;font-weight:600;letter-spacing:-0.01em;">Protocol IDE</h2>
+      </div>
+      <p style="margin:0 0 16px;font-size:13.5px;line-height:1.55;color:oklch(0.62 0.008 258);">Framed like a code editor. Signals listed in a gutter tree, channel hues double as syntax tokens, waveform sits in a docked panel beside an explainer.</p>
+
+      <div style="background:oklch(0.165 0.013 258);border:1px solid oklch(0.30 0.012 258);border-radius:13px;overflow:hidden;">
+        <div style="display:flex;align-items:stretch;background:oklch(0.135 0.01 258);border-bottom:1px solid oklch(0.27 0.011 258);font-family:'JetBrains Mono',monospace;font-size:11.5px;">
+          <span style="padding:11px 15px;color:oklch(0.88 0.005 258);background:oklch(0.165 0.013 258);border-right:1px solid oklch(0.27 0.011 258);border-top:2px solid oklch(0.78 0.14 235);">axi_read.sv</span>
+          <span style="padding:11px 15px;color:oklch(0.5 0.01 258);">channels.md</span>
+        </div>
+
+        <div style="display:flex;">
+          <div style="width:158px;flex:0 0 auto;padding:12px 10px;background:oklch(0.145 0.011 258);border-right:1px solid oklch(0.25 0.011 258);font-family:'JetBrains Mono',monospace;font-size:11.5px;line-height:2;">
+            <div style="color:oklch(0.55 0.01 258);margin-bottom:4px;">▾ read channel</div>
+            <div style="padding-left:14px;color:oklch(0.78 0.14 235);">AR <span style="color:oklch(0.5 0.01 258);">addr</span></div>
+            <div style="padding-left:14px;color:oklch(0.78 0.14 235);">AR <span style="color:oklch(0.5 0.01 258);">valid</span></div>
+            <div style="padding-left:14px;color:oklch(0.78 0.14 235);">AR <span style="color:oklch(0.5 0.01 258);">ready</span></div>
+            <div style="padding-left:14px;color:oklch(0.72 0.17 305);">R&nbsp; <span style="color:oklch(0.5 0.01 258);">data</span></div>
+            <div style="padding-left:14px;color:oklch(0.72 0.17 305);">R&nbsp; <span style="color:oklch(0.5 0.01 258);">valid</span></div>
+            <div style="padding-left:14px;color:oklch(0.72 0.17 305);">R&nbsp; <span style="color:oklch(0.5 0.01 258);">ready</span></div>
+          </div>
+
+          <div style="flex:1;padding:14px 14px 6px;min-width:0;overflow:hidden;">
+            {{ waveB }}
+          </div>
+        </div>
+
+        <div style="padding:13px 16px;border-top:1px solid oklch(0.24 0.011 258);background:oklch(0.135 0.01 258);font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.6;">
+          <span style="color:oklch(0.5 0.01 258);">// </span><span style="color:oklch(0.78 0.14 235);">AR</span><span style="color:oklch(0.7 0.01 258);"> handshake @ t2, master reads </span><span style="color:oklch(0.72 0.17 305);">R</span><span style="color:oklch(0.7 0.01 258);"> beats t4–t5</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ DIRECTION C — BUS SCHEMATIC ============ -->
+    <section style="flex:1 1 520px;max-width:560px;min-width:480px;">
+      <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:6px;">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:oklch(0.78 0.14 235);font-weight:600;">03</span>
+        <h2 style="margin:0;font-size:21px;font-weight:600;letter-spacing:-0.01em;">Bus Schematic</h2>
+      </div>
+      <p style="margin:0 0 16px;font-size:13.5px;line-height:1.55;color:oklch(0.62 0.008 258);">Spatial &amp; conceptual. Master ↔ slave with the five channels as colored pipes; packets animate along them. Waveform is a thin readout below.</p>
+
+      <div style="background:oklch(0.175 0.013 258);border:1px solid oklch(0.30 0.012 258);border-radius:13px;overflow:hidden;">
+        <div style="display:flex;align-items:center;gap:8px;padding:11px 15px;background:oklch(0.13 0.01 258);border-bottom:1px solid oklch(0.27 0.011 258);font-family:'JetBrains Mono',monospace;font-size:11.5px;color:oklch(0.58 0.01 258);">
+          topology · 1 manager → 1 subordinate
+        </div>
+
+        <div style="padding:22px 18px 18px;">
+          <div style="display:flex;align-items:center;gap:0;">
+            <div style="flex:0 0 92px;text-align:center;padding:16px 8px;border:1.5px solid oklch(0.42 0.012 258);border-radius:10px;background:oklch(0.21 0.013 258);font-family:'JetBrains Mono',monospace;">
+              <div style="font-size:13px;color:oklch(0.92 0.005 258);font-weight:600;">CPU</div>
+              <div style="font-size:10px;color:oklch(0.55 0.01 258);margin-top:3px;">Manager</div>
+            </div>
+
+            <div style="flex:1;display:flex;flex-direction:column;gap:7px;padding:0 4px;">
+              <div style="display:flex;align-items:center;gap:7px;"><span style="flex:1;height:3px;border-radius:2px;background:oklch(0.80 0.15 35);position:relative;"><span style="position:absolute;right:-1px;top:-3px;border-left:7px solid oklch(0.80 0.15 35);border-top:4.5px solid transparent;border-bottom:4.5px solid transparent;"></span></span><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:oklch(0.80 0.15 35);width:30px;">AW→</span></div>
+              <div style="display:flex;align-items:center;gap:7px;"><span style="flex:1;height:3px;border-radius:2px;background:oklch(0.85 0.15 90);position:relative;"><span style="position:absolute;right:-1px;top:-3px;border-left:7px solid oklch(0.85 0.15 90);border-top:4.5px solid transparent;border-bottom:4.5px solid transparent;"></span></span><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:oklch(0.85 0.15 90);width:30px;">W→</span></div>
+              <div style="display:flex;align-items:center;gap:7px;"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:oklch(0.80 0.15 155);width:30px;text-align:right;">←B</span><span style="flex:1;height:3px;border-radius:2px;background:oklch(0.80 0.15 155);position:relative;"><span style="position:absolute;left:-1px;top:-3px;border-right:7px solid oklch(0.80 0.15 155);border-top:4.5px solid transparent;border-bottom:4.5px solid transparent;"></span></span></div>
+              <div style="height:1px;background:oklch(0.26 0.011 258);margin:3px 0;"></div>
+              <div style="display:flex;align-items:center;gap:7px;"><span style="flex:1;height:3px;border-radius:2px;background:oklch(0.78 0.14 235);position:relative;"><span style="position:absolute;right:-1px;top:-3px;border-left:7px solid oklch(0.78 0.14 235);border-top:4.5px solid transparent;border-bottom:4.5px solid transparent;"></span><span style="position:absolute;left:34%;top:-2.5px;width:8px;height:8px;border-radius:50%;background:oklch(0.78 0.14 235);box-shadow:0 0 8px oklch(0.78 0.14 235);"></span></span><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:oklch(0.78 0.14 235);width:30px;">AR→</span></div>
+              <div style="display:flex;align-items:center;gap:7px;"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:oklch(0.72 0.17 305);width:30px;text-align:right;">←R</span><span style="flex:1;height:3px;border-radius:2px;background:oklch(0.72 0.17 305);position:relative;"><span style="position:absolute;left:-1px;top:-3px;border-right:7px solid oklch(0.72 0.17 305);border-top:4.5px solid transparent;border-bottom:4.5px solid transparent;"></span></span></div>
+            </div>
+
+            <div style="flex:0 0 92px;text-align:center;padding:16px 8px;border:1.5px solid oklch(0.42 0.012 258);border-radius:10px;background:oklch(0.21 0.013 258);font-family:'JetBrains Mono',monospace;">
+              <div style="font-size:13px;color:oklch(0.92 0.005 258);font-weight:600;">DDR</div>
+              <div style="font-size:10px;color:oklch(0.55 0.01 258);margin-top:3px;">Subordinate</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="padding:8px 16px 12px;border-top:1px solid oklch(0.24 0.011 258);background:oklch(0.135 0.01 258);">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:oklch(0.5 0.01 258);margin:4px 0 6px;">readout · AR</div>
+          {{ waveC }}
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <footer style="max-width:1760px;margin:40px auto 0;padding-top:24px;border-top:1px solid oklch(0.24 0.011 258);font-size:13px;color:oklch(0.55 0.01 258);font-family:'JetBrains Mono',monospace;">
+    Reply with a direction (or a mix — e.g. "01's waveform with 03's topology header") and I'll build the full multi-section explorer: 5 channels, handshake, bursts, read/write walkthroughs, IDs, AXI vs Lite vs Stream, and a signal cheat sheet.
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  buildWave(opts) {
+    const h = React.createElement;
+    const cycles = opts.cycles || 8;
+    const w = opts.w || 36;
+    const t = opts.theme || {};
+    const rowH = t.rowH || 30;
+    const hi = 7, lo = rowH - 8, mid = (hi + lo) / 2;
+    const traceW = cycles * w;
+    const labelW = t.labelW || 78;
+    const mono = "'JetBrains Mono', monospace";
+
+    function stepPath(bits, ww) {
+      let x = 0;
+      let d = `M0,${bits[0] ? hi : lo}`;
+      for (let i = 0; i < bits.length; i++) {
+        const y = bits[i] ? hi : lo;
+        d += ` L${x},${y}`;
+        x += ww;
+        d += ` L${x},${y}`;
+      }
+      return d;
+    }
+
+    const rows = opts.signals.map((s, idx) => {
+      const kids = [];
+      if (t.grid) {
+        for (let c = 0; c <= cycles; c++) {
+          kids.push(h('line', { key: 'g' + c, x1: c * w, y1: 0, x2: c * w, y2: rowH, stroke: t.gridColor || 'oklch(0.28 0.01 258)', strokeWidth: 1 }));
+        }
+      }
+      if (s.type === 'clk') {
+        const bits = [];
+        for (let c = 0; c < cycles; c++) { bits.push(1); bits.push(0); }
+        kids.push(h('path', { key: 'p', d: stepPath(bits, w / 2), fill: 'none', stroke: s.color, strokeWidth: 1.4 }));
+      } else if (s.type === 'bus') {
+        const x0 = s.from * w, x1 = s.to * w;
+        const pts = `${x0},${mid} ${x0 + 6},${hi} ${x1 - 6},${hi} ${x1},${mid} ${x1 - 6},${lo} ${x0 + 6},${lo}`;
+        kids.push(h('line', { key: 'l0', x1: 0, y1: mid, x2: x0, y2: mid, stroke: t.gridColor || 'oklch(0.34 0.01 258)', strokeWidth: 1, strokeDasharray: '3 3' }));
+        kids.push(h('polygon', { key: 'b', points: pts, fill: `color-mix(in oklch, ${s.color} 14%, transparent)`, stroke: s.color, strokeWidth: 1.4 }));
+        kids.push(h('line', { key: 'l1', x1: x1, y1: mid, x2: traceW, y2: mid, stroke: t.gridColor || 'oklch(0.34 0.01 258)', strokeWidth: 1, strokeDasharray: '3 3' }));
+        if (s.value) kids.push(h('text', { key: 't', x: (x0 + x1) / 2, y: mid + 4, fill: s.color, fontSize: 11, fontFamily: mono, textAnchor: 'middle' }, s.value));
+      } else {
+        kids.push(h('path', { key: 'p', d: stepPath(s.bits, w), fill: 'none', stroke: s.color, strokeWidth: 1.9, strokeLinejoin: 'round', style: t.glow ? { filter: `drop-shadow(0 0 5px ${s.color})` } : undefined }));
+      }
+      const svg = h('svg', { key: 's', width: traceW, height: rowH, style: { display: 'block', overflow: 'visible' } }, kids);
+      const label = h('div', { key: 'l', style: { width: labelW, flex: '0 0 auto', fontFamily: mono, fontSize: 11, color: s.type === 'clk' ? (t.labelColor || 'oklch(0.6 0.01 258)') : s.color, textAlign: 'right', paddingRight: 11, lineHeight: rowH + 'px', letterSpacing: '0.02em', whiteSpace: 'nowrap' } }, s.name);
+      return h('div', { key: idx, style: { display: 'flex', alignItems: 'center', height: rowH } }, [label, svg]);
+    });
+
+    let overlay = null;
+    if (opts.transfer != null) {
+      const left = labelW + opts.transfer * w + w / 2;
+      overlay = h('div', { key: 'cur', style: { position: 'absolute', top: 0, bottom: 2, left: left, width: 0, borderLeft: `1.5px dashed ${t.cursorColor || 'oklch(0.85 0.005 258)'}`, pointerEvents: 'none' } },
+        h('span', { style: { position: 'absolute', top: -7, left: -5, width: 9, height: 9, borderRadius: '50%', background: t.cursorColor || 'oklch(0.85 0.005 258)' } }));
+    }
+    return h('div', { style: { position: 'relative', display: 'inline-block' } }, [...rows, overlay]);
+  }
+
+  renderVals() {
+    const C = {
+      AW: 'oklch(0.80 0.15 35)',
+      W: 'oklch(0.85 0.15 90)',
+      B: 'oklch(0.80 0.15 155)',
+      AR: 'oklch(0.78 0.14 235)',
+      R: 'oklch(0.72 0.17 305)',
+    };
+    const clk = { name: 'ACLK', type: 'clk', color: 'oklch(0.7 0.01 258)' };
+
+    const waveA = this.buildWave({
+      cycles: 8, w: 36, transfer: 2,
+      theme: { glow: true, grid: true, gridColor: 'oklch(0.26 0.008 258)', cursorColor: 'oklch(0.88 0.005 258)', rowH: 30 },
+      signals: [
+        clk,
+        { name: 'AWVALID', type: 'sig', color: C.AW, bits: [0, 1, 1, 0, 0, 0, 0, 0] },
+        { name: 'AWREADY', type: 'sig', color: C.AW, bits: [0, 0, 1, 0, 0, 0, 0, 0] },
+        { name: 'WVALID', type: 'sig', color: C.W, bits: [0, 0, 1, 1, 0, 0, 0, 0] },
+        { name: 'WREADY', type: 'sig', color: C.W, bits: [0, 0, 0, 1, 0, 0, 0, 0] },
+        { name: 'BVALID', type: 'sig', color: C.B, bits: [0, 0, 0, 0, 0, 1, 0, 0] },
+        { name: 'BREADY', type: 'sig', color: C.B, bits: [0, 0, 0, 0, 1, 1, 0, 0] },
+      ],
+    });
+
+    const waveB = this.buildWave({
+      cycles: 8, w: 34, transfer: 2,
+      theme: { glow: false, grid: false, gridColor: 'oklch(0.30 0.01 258)', cursorColor: C.AR, rowH: 30, labelW: 70 },
+      signals: [
+        clk,
+        { name: 'ARADDR', type: 'bus', color: C.AR, from: 1, to: 3, value: '0x40' },
+        { name: 'ARVALID', type: 'sig', color: C.AR, bits: [0, 1, 1, 0, 0, 0, 0, 0] },
+        { name: 'ARREADY', type: 'sig', color: C.AR, bits: [0, 0, 1, 0, 0, 0, 0, 0] },
+        { name: 'RDATA', type: 'bus', color: C.R, from: 4, to: 6, value: '0xDEAD' },
+        { name: 'RVALID', type: 'sig', color: C.R, bits: [0, 0, 0, 0, 1, 1, 0, 0] },
+        { name: 'RREADY', type: 'sig', color: C.R, bits: [0, 0, 0, 0, 1, 1, 0, 0] },
+      ],
+    });
+
+    const waveC = this.buildWave({
+      cycles: 8, w: 40, transfer: 3,
+      theme: { glow: false, grid: true, gridColor: 'oklch(0.27 0.008 258)', cursorColor: 'oklch(0.8 0.005 258)', rowH: 26, labelW: 74 },
+      signals: [
+        clk,
+        { name: 'ARVALID', type: 'sig', color: C.AR, bits: [0, 1, 1, 1, 0, 0, 0, 0] },
+        { name: 'ARREADY', type: 'sig', color: C.AR, bits: [0, 0, 0, 1, 0, 0, 0, 0] },
+      ],
+    });
+
+    return { waveA, waveB, waveC };
+  }
+}
+</script>
+</body>
+</html>
