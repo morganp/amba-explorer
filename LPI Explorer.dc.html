@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;padding:0;}
+  *{box-sizing:border-box;}
+  ::selection{background:oklch(0.78 0.15 155 / 0.32);}
+  ::-webkit-scrollbar{height:10px;width:10px;}
+  ::-webkit-scrollbar-thumb{background:oklch(0.34 0.01 258);border-radius:6px;}
+  ::-webkit-scrollbar-thumb:hover{background:oklch(0.42 0.01 258);}
+  ::-webkit-scrollbar-track{background:transparent;}
+  @keyframes flowR{0%{left:-6%;opacity:0;}12%{opacity:1;}88%{opacity:1;}100%{left:102%;opacity:0;}}
+  @keyframes flowL{0%{left:102%;opacity:0;}12%{opacity:1;}88%{opacity:1;}100%{left:-6%;opacity:0;}}
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:oklch(0.145 0.012 258);color:oklch(0.93 0.005 258);font-family:'IBM Plex Sans',system-ui,sans-serif;">
+
+  <!-- ===================== TOPOLOGY HEADER ===================== -->
+  <header style="position:sticky;top:0;z-index:30;background:oklch(0.13 0.011 258);border-bottom:1px solid oklch(0.27 0.011 258);padding:14px 26px;backdrop-filter:blur(6px);">
+    <div style="display:flex;align-items:center;gap:26px;max-width:1500px;margin:0 auto;">
+      <div style="flex:0 0 auto;">
+        <a href="AMBA%20Explorer.dc.html" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.26em;color:oklch(0.58 0.01 258);text-transform:uppercase;transition:color .12s ease;" style-hover="color:oklch(0.82 0.005 258);"><span style="font-size:13px;letter-spacing:0;">←</span> AMBA</a>
+        <div style="font-size:18px;font-weight:600;letter-spacing:-0.01em;margin-top:1px;">{{ headerTitle }}</div>
+      </div>
+
+      <!-- controller ↔ component topology -->
+      <div style="flex:1;display:flex;align-items:center;gap:0;min-width:0;">
+        <div style="flex:0 0 104px;text-align:center;padding:11px 6px;border:1.5px solid oklch(0.42 0.012 258);border-radius:9px;background:oklch(0.20 0.013 258);font-family:'JetBrains Mono',monospace;">
+          <div style="font-size:12px;color:oklch(0.92 0.005 258);font-weight:600;">{{ ctrlTop }}</div>
+          <div style="font-size:9.5px;color:oklch(0.55 0.01 258);margin-top:2px;">Controller</div>
+        </div>
+
+        <div style="flex:1;display:grid;grid-template-columns:1fr;gap:5px;padding:0 6px;min-width:0;">
+          <sc-for list="{{ topoWires }}" as="wire" hint-placeholder-count="4">
+            <div onClick="{{ wire.onClick }}" style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:{{ wire.color }};width:64px;flex:0 0 auto;text-align:right;">{{ wire.label }}</span>
+              <span style="flex:1;height:3px;border-radius:2px;background:{{ wire.color }};position:relative;box-shadow:{{ wire.glow }};">
+                <span style="{{ wire.dot }}"></span>
+                <span style="{{ wire.arrow }}"></span>
+              </span>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="flex:0 0 104px;text-align:center;padding:11px 6px;border:1.5px solid oklch(0.42 0.012 258);border-radius:9px;background:oklch(0.20 0.013 258);font-family:'JetBrains Mono',monospace;">
+          <div style="font-size:12px;color:oklch(0.92 0.005 258);font-weight:600;">GPU</div>
+          <div style="font-size:9.5px;color:oklch(0.55 0.01 258);margin-top:2px;">Component</div>
+        </div>
+      </div>
+
+      <div style="flex:0 0 170px;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.5;color:oklch(0.6 0.01 258);border-left:1px solid oklch(0.27 0.011 258);padding-left:18px;min-height:38px;">
+        <span style="color:{{ hintColor }};font-weight:600;">{{ hintLabel }}</span><br>
+        <span style="color:oklch(0.6 0.01 258);">{{ hintText }}</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================== BODY: NAV + MAIN ===================== -->
+  <div style="display:grid;grid-template-columns:236px 1fr;max-width:1500px;margin:0 auto;align-items:start;">
+
+    <!-- NAV -->
+    <nav style="position:sticky;top:115px;align-self:start;padding:22px 14px 40px;border-right:1px solid oklch(0.24 0.011 258);font-family:'JetBrains Mono',monospace;">
+      <sc-for list="{{ navGroups }}" as="grp" hint-placeholder-count="2">
+        <div style="margin-bottom:18px;">
+          <div style="font-size:10px;letter-spacing:0.18em;color:oklch(0.48 0.01 258);text-transform:uppercase;padding:0 10px 7px;">{{ grp.title }}</div>
+          <sc-for list="{{ grp.items }}" as="it" hint-placeholder-count="4">
+            <div onClick="{{ it.onClick }}" style="display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:7px;cursor:pointer;font-size:13px;margin-bottom:2px;background:{{ it.bg }};color:{{ it.color }};border-left:2px solid {{ it.bar }};opacity:{{ it.op }};" style-hover="background:oklch(0.21 0.012 258);">
+              <span style="width:7px;height:7px;border-radius:2px;background:{{ it.dot }};flex:0 0 auto;"></span>
+              {{ it.label }}
+            </div>
+          </sc-for>
+        </div>
+      </sc-for>
+      <div style="margin:18px 10px 0;padding-top:16px;border-top:1px solid oklch(0.22 0.01 258);font-size:10.5px;line-height:1.6;color:oklch(0.52 0.01 258);">{{ navNote }}</div>
+    </nav>
+
+    <!-- MAIN -->
+    <main style="padding:30px 38px 80px;min-width:0;">
+
+      <!-- ============ OVERVIEW ============ -->
+      <sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+        <div data-screen-label="Overview">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.62 0.13 165);text-transform:uppercase;">Q-Channel / Overview</div>
+          <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">A four-wire low-power handshake</h1>
+          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:720px;margin:0 0 26px;">The Q-Channel lets a <strong style="color:oklch(0.86 0.01 258);">controller</strong> ask a <strong style="color:oklch(0.86 0.01 258);">component</strong> to become quiescent — so its clock or power can be safely removed — and bring it back. It is the simplest AMBA low-power interface: one request wire, two acknowledge wires, and an activity hint. Start with the <strong style="color:oklch(0.78 0.15 155);">Quiescence Handshake</strong> to watch the waveform and state machine move together.</p>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:14px;margin-bottom:30px;">
+            <sc-for list="{{ signalCards }}" as="c" hint-placeholder-count="4">
+              <div onClick="{{ goHandshake }}" style="background:oklch(0.175 0.013 258);border:1px solid oklch(0.28 0.012 258);border-top:2px solid {{ c.color }};border-radius:11px;padding:16px 17px;cursor:pointer;transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;" style-hover="{{ c.hoverStyle }}">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;gap:8px;">
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:{{ c.color }};">{{ c.name }}</span>
+                  <span style="display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:oklch(0.6 0.01 258);background:oklch(0.13 0.01 258);border:1px solid oklch(0.27 0.012 258);border-radius:6px;padding:3px 7px;">{{ c.dirText }}</span>
+                </div>
+                <div style="font-size:12.5px;line-height:1.5;color:oklch(0.66 0.008 258);">{{ c.desc }}</div>
+                <div style="margin-top:11px;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:{{ c.color }};opacity:0.85;">{{ c.polarity }}</div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.16em;color:oklch(0.5 0.01 258);text-transform:uppercase;margin-bottom:12px;">The six handshake states</div>
+          <div style="display:flex;flex-wrap:wrap;gap:9px;max-width:900px;">
+            <sc-for list="{{ stateChips }}" as="s" hint-placeholder-count="6">
+              <div onClick="{{ s.onClick }}" style="display:flex;flex-direction:column;gap:5px;background:oklch(0.175 0.013 258);border:1px solid oklch(0.28 0.012 258);border-left:3px solid {{ s.color }};border-radius:9px;padding:11px 13px;cursor:pointer;min-width:150px;" style-hover="background:oklch(0.2 0.014 258);">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:{{ s.color }};">{{ s.label }}</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:oklch(0.58 0.01 258);">{{ s.levels }}</span>
+                <span style="font-size:11.5px;color:oklch(0.64 0.008 258);line-height:1.4;">{{ s.short }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ HANDSHAKE (synced wave + state machine) ============ -->
+      <sc-if value="{{ isHandshake }}">
+        <div data-screen-label="Quiescence Handshake">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.62 0.13 165);text-transform:uppercase;">Q-Channel / Quiescence Handshake</div>
+          <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">Step the handshake, watch the state</h1>
+          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:740px;margin:0 0 18px;">Step through a transaction with ◀ ▶. The <strong style="color:oklch(0.86 0.01 258);">waveform</strong> and the <strong style="color:oklch(0.86 0.01 258);">state machine</strong> move together — or click any state node to jump there. Start with <em>Accept</em>, then try the harder paths.</p>
+
+          <div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;">
+            <sc-for list="{{ scenarios }}" as="s" hint-placeholder-count="3">
+              <div onClick="{{ s.onClick }}" style="display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:12.5px;padding:8px 14px;border-radius:8px;cursor:pointer;background:{{ s.bg }};color:{{ s.color }};border:1px solid {{ s.border }};">
+                <span style="width:8px;height:8px;border-radius:50%;background:{{ s.dot }};"></span>{{ s.label }}
+              </div>
+            </sc-for>
+          </div>
+
+          <!-- STEP CONTROL BAR -->
+          <div style="margin-bottom:14px;background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-radius:13px;display:flex;align-items:stretch;overflow:hidden;">
+            <div style="display:flex;gap:6px;align-items:center;padding:0 16px;border-right:1px solid oklch(0.24 0.011 258);">
+              <div onClick="{{ stepPrev }}" style="font-family:'JetBrains Mono',monospace;font-size:15px;color:oklch(0.7 0.01 258);width:30px;height:30px;display:grid;place-items:center;border:1px solid oklch(0.32 0.012 258);border-radius:7px;cursor:pointer;" style-hover="background:oklch(0.22 0.013 258);">◀</div>
+              <div onClick="{{ stepNext }}" style="font-family:'JetBrains Mono',monospace;font-size:15px;color:oklch(0.93 0.005 258);width:30px;height:30px;display:grid;place-items:center;border:1px solid oklch(0.4 0.012 258);border-radius:7px;cursor:pointer;background:oklch(0.22 0.013 258);" style-hover="background:oklch(0.27 0.013 258);">▶</div>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:oklch(0.55 0.01 258);margin-left:4px;">{{ stepCounter }}</span>
+            </div>
+            <div style="flex:1;padding:13px 18px;">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:{{ stepAccent }};letter-spacing:0.05em;margin-bottom:3px;">{{ stepLabel }}</div>
+              <div style="font-size:13.5px;line-height:1.5;color:oklch(0.82 0.006 258);">{{ stepText }}</div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:18px;flex-wrap:wrap;align-items:stretch;">
+            <!-- WAVEFORM -->
+            <div style="flex:1 1 430px;min-width:340px;background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-radius:13px;overflow:hidden;display:flex;flex-direction:column;">
+              <div style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:oklch(0.118 0.01 258);border-bottom:1px solid oklch(0.26 0.011 258);font-family:'JetBrains Mono',monospace;font-size:11px;color:oklch(0.56 0.01 258);">
+                <span style="width:9px;height:9px;border-radius:50%;background:oklch(0.62 0.16 25);"></span>
+                <span style="width:9px;height:9px;border-radius:50%;background:oklch(0.82 0.13 85);"></span>
+                <span style="width:9px;height:9px;border-radius:50%;background:oklch(0.78 0.15 150);"></span>
+                <span style="margin-left:6px;">{{ waveFile }}</span>
+              </div>
+              <div style="padding:18px 18px 12px;background:oklch(0.115 0.01 258);overflow-x:auto;flex:1;">{{ qWave }}</div>
+            </div>
+
+            <!-- STATE MACHINE -->
+            <div style="flex:1 1 380px;min-width:330px;background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-radius:13px;overflow:hidden;display:flex;flex-direction:column;">
+              <div style="padding:10px 16px;background:oklch(0.118 0.01 258);border-bottom:1px solid oklch(0.26 0.011 258);font-family:'JetBrains Mono',monospace;font-size:11px;color:oklch(0.56 0.01 258);display:flex;justify-content:space-between;align-items:center;">
+                <span>state machine</span>
+                <span style="color:oklch(0.5 0.01 258);">click a node to jump</span>
+              </div>
+              <div style="padding:14px;flex:1;">{{ qSM }}</div>
+              <div style="padding:0 16px 15px;display:flex;flex-wrap:wrap;gap:7px;align-items:center;">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:{{ curStateColor }};font-weight:700;margin-right:4px;">{{ curStateLabel }}</span>
+                <sc-for list="{{ curLevels }}" as="l" hint-placeholder-count="3">
+                  <span style="display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:{{ l.color }};background:color-mix(in oklch, {{ l.color }} 13%, transparent);border:1px solid color-mix(in oklch, {{ l.color }} 40%, transparent);border-radius:6px;padding:2px 8px;">{{ l.sig }} <strong style="font-weight:700;">{{ l.val }}</strong></span>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:12px;color:oklch(0.6 0.01 258);background:oklch(0.17 0.013 258);border:1px solid oklch(0.27 0.012 258);border-radius:9px;padding:11px 15px;max-width:560px;">
+            <span style="color:{{ inspColor }};font-weight:600;">{{ inspLabel }}</span> · <span style="color:oklch(0.7 0.008 258);">{{ inspText }}</span>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ STATE MACHINE (standalone explore) ============ -->
+      <sc-if value="{{ isStateMachine }}">
+        <div data-screen-label="State Machine">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.62 0.13 165);text-transform:uppercase;">Q-Channel / State Machine</div>
+          <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">The full state machine</h1>
+          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:740px;margin:0 0 22px;">Two loops share <strong style="color:oklch(0.78 0.15 155);">Q_RUN</strong> and <strong style="color:oklch(0.74 0.14 245);">Q_REQUEST</strong>: the upper <em>accept</em> path gates the clock; the lower <em>deny</em> path keeps the component running. Every transition is one signal edge. Click a state to inspect it.</p>
+
+          <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start;">
+            <div style="flex:1 1 460px;min-width:340px;background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-radius:13px;padding:18px;">{{ smStandalone }}
+              <div style="margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:10px;color:oklch(0.5 0.01 258);line-height:1.6;">Node values — <span style="color:oklch(0.74 0.14 245);">Rn</span>=QREQn · <span style="color:oklch(0.78 0.15 155);">An</span>=QACCEPTn · <span style="color:oklch(0.66 0.18 28);">D</span>=QDENY &nbsp;(1=HIGH, 0=LOW)</div>
+            </div>
+            <div style="flex:1 1 300px;min-width:280px;background:oklch(0.175 0.013 258);border:1px solid oklch(0.28 0.012 258);border-top:2px solid {{ selColor }};border-radius:13px;padding:20px;">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:{{ selColor }};margin-bottom:4px;">{{ selLabel }}</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:oklch(0.56 0.01 258);margin-bottom:14px;">{{ selOperational }}</div>
+              <div style="display:flex;gap:7px;margin-bottom:16px;flex-wrap:wrap;">
+                <sc-for list="{{ selLevels }}" as="l" hint-placeholder-count="3">
+                  <span style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;font-family:'JetBrains Mono',monospace;background:color-mix(in oklch, {{ l.color }} 12%, transparent);border:1px solid color-mix(in oklch, {{ l.color }} 40%, transparent);border-radius:8px;padding:7px 11px;">
+                    <span style="font-size:9.5px;color:{{ l.color }};">{{ l.sig }}</span>
+                    <span style="font-size:14px;font-weight:700;color:{{ l.color }};">{{ l.lvl }}</span>
+                  </span>
+                </sc-for>
+              </div>
+              <div style="font-size:13.5px;line-height:1.6;color:oklch(0.74 0.008 258);">{{ selDesc }}</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ CHEAT SHEET ============ -->
+      <sc-if value="{{ isCheat }}">
+        <div data-screen-label="Signal Reference">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.62 0.13 165);text-transform:uppercase;">Q-Channel / Signal Reference</div>
+          <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">Signals &amp; state table</h1>
+          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:720px;margin:0 0 24px;">Four wires, six states. <span style="color:oklch(0.56 0.01 258);">CTL→CMP</span> = driven by the controller, <span style="color:oklch(0.56 0.01 258);">CMP→CTL</span> = driven by the component.</p>
+
+          <div style="background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-radius:12px;overflow:hidden;max-width:880px;margin-bottom:26px;">
+            <div style="display:grid;grid-template-columns:120px 96px 110px 1fr;gap:14px;padding:11px 18px;background:oklch(0.135 0.011 258);border-bottom:1px solid oklch(0.26 0.011 258);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:oklch(0.5 0.01 258);text-transform:uppercase;">
+              <span>Signal</span><span>Driver</span><span>Asserted</span><span>Meaning</span>
+            </div>
+            <sc-for list="{{ cheatSignals }}" as="r" hint-placeholder-count="4">
+              <div style="display:grid;grid-template-columns:120px 96px 110px 1fr;gap:14px;align-items:center;padding:10px 18px;border-top:1px solid oklch(0.21 0.01 258);" style-hover="background:oklch(0.19 0.013 258);">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:{{ r.color }};">{{ r.sig }}</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:oklch(0.62 0.01 258);">{{ r.driver }}</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:{{ r.color }};">{{ r.assert }}</span>
+                <span style="font-size:12.5px;color:oklch(0.68 0.008 258);line-height:1.45;">{{ r.meaning }}</span>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.16em;color:oklch(0.5 0.01 258);text-transform:uppercase;margin-bottom:11px;">State table</div>
+          <div style="background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-radius:12px;overflow:hidden;max-width:880px;">
+            <div style="display:grid;grid-template-columns:130px 66px 66px 66px 1fr;gap:12px;padding:11px 18px;background:oklch(0.135 0.011 258);border-bottom:1px solid oklch(0.26 0.011 258);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;color:oklch(0.5 0.01 258);text-transform:uppercase;">
+              <span>State</span><span style="text-align:center;">QREQn</span><span style="text-align:center;">QACCEPTn</span><span style="text-align:center;">QDENY</span><span>Meaning</span>
+            </div>
+            <sc-for list="{{ cheatStates }}" as="r" hint-placeholder-count="6">
+              <div style="display:grid;grid-template-columns:130px 66px 66px 66px 1fr;gap:12px;align-items:center;padding:10px 18px;border-top:1px solid oklch(0.21 0.01 258);" style-hover="background:oklch(0.19 0.013 258);">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:{{ r.color }};">{{ r.label }}</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;text-align:center;color:{{ r.reqColor }};">{{ r.req }}</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;text-align:center;color:{{ r.accColor }};">{{ r.acc }}</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;text-align:center;color:{{ r.denColor }};">{{ r.den }}</span>
+                <span style="font-size:12px;color:oklch(0.68 0.008 258);line-height:1.45;">{{ r.meaning }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:oklch(0.5 0.01 258);line-height:1.6;max-width:880px;">Only one of the acknowledge signals (QACCEPTn / QDENY) changes per transition — this keeps the handshake safe across asynchronous clock/power domains. QACTIVE is independent of the handshake and can change at any time.</div>
+        </div>
+      </sc-if>
+
+      <!-- ============ P-OVERVIEW ============ -->
+      <sc-if value="{{ isPOverview }}">
+        <div data-screen-label="P-Channel Overview">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.62 0.13 165);text-transform:uppercase;">P-Channel / Overview</div>
+          <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">Negotiated power-state transitions</h1>
+          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:730px;margin:0 0 26px;">The P-Channel lets a <strong style="color:oklch(0.86 0.01 258);">power controller</strong> move a <strong style="color:oklch(0.86 0.01 258);">component</strong> between power states — on, retention, off — through a four-phase handshake. Where the Q-Channel has a single request wire, the P-Channel adds <strong style="color:oklch(0.72 0.14 305);">PSTATE</strong> to carry which state is wanted and <strong style="color:oklch(0.82 0.14 85);">PACTIVE</strong> as a per-mode activity vector. Open <strong style="color:oklch(0.78 0.15 155);">Power Transition</strong> to step a request through.</p>
+
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.16em;color:oklch(0.5 0.01 258);text-transform:uppercase;margin-bottom:12px;">Device power states</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;max-width:900px;margin-bottom:30px;">
+            <sc-for list="{{ pPowerStates }}" as="p" hint-placeholder-count="4">
+              <div style="flex:1 1 180px;background:oklch(0.175 0.013 258);border:1px solid oklch(0.28 0.012 258);border-left:3px solid {{ p.color }};border-radius:10px;padding:13px 15px;">
+                <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:6px;">
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:{{ p.color }};">{{ p.name }}</span>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:oklch(0.55 0.01 258);">{{ p.sub }}</span>
+                </div>
+                <div style="font-size:12px;line-height:1.5;color:oklch(0.66 0.008 258);">{{ p.desc }}</div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:14px;margin-bottom:30px;">
+            <sc-for list="{{ pSignalCards }}" as="c" hint-placeholder-count="5">
+              <div onClick="{{ goPTransition }}" style="background:oklch(0.175 0.013 258);border:1px solid oklch(0.28 0.012 258);border-top:2px solid {{ c.color }};border-radius:11px;padding:16px 17px;cursor:pointer;transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;" style-hover="{{ c.hoverStyle }}">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;gap:8px;">
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:{{ c.color }};">{{ c.name }}</span>
+                  <span style="display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:oklch(0.6 0.01 258);background:oklch(0.13 0.01 258);border:1px solid oklch(0.27 0.012 258);border-radius:6px;padding:3px 7px;">{{ c.dirText }}</span>
+                </div>
+                <div style="font-size:12.5px;line-height:1.5;color:oklch(0.66 0.008 258);">{{ c.desc }}</div>
+                <div style="margin-top:11px;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:{{ c.color }};opacity:0.85;">{{ c.polarity }}</div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.16em;color:oklch(0.5 0.01 258);text-transform:uppercase;margin-bottom:12px;">The six handshake states</div>
+          <div style="display:flex;flex-wrap:wrap;gap:9px;max-width:900px;">
+            <sc-for list="{{ pStateChips }}" as="s" hint-placeholder-count="6">
+              <div onClick="{{ s.onClick }}" style="display:flex;flex-direction:column;gap:5px;background:oklch(0.175 0.013 258);border:1px solid oklch(0.28 0.012 258);border-left:3px solid {{ s.color }};border-radius:9px;padding:11px 13px;cursor:pointer;min-width:150px;" style-hover="background:oklch(0.2 0.014 258);">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:{{ s.color }};">{{ s.label }}</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:oklch(0.58 0.01 258);">{{ s.levels }}</span>
+                <span style="font-size:11.5px;color:oklch(0.64 0.008 258);line-height:1.4;">{{ s.short }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ P-TRANSITION (synced wave + state machine) ============ -->
+      <sc-if value="{{ isPTransition }}">
+        <div data-screen-label="Power Transition">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.62 0.13 165);text-transform:uppercase;">P-Channel / Power Transition</div>
+          <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">Step a power-state request</h1>
+          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:740px;margin:0 0 18px;">Step through a transition with ◀ ▶. The <strong style="color:oklch(0.86 0.01 258);">waveform</strong> and the <strong style="color:oklch(0.86 0.01 258);">state machine</strong> move together — or click any state node to jump there. Start with <em>Power-down</em>, then try a denial and a wake-up.</p>
+
+          <div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;">
+            <sc-for list="{{ pScenarios }}" as="s" hint-placeholder-count="3">
+              <div onClick="{{ s.onClick }}" style="display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:12.5px;padding:8px 14px;border-radius:8px;cursor:pointer;background:{{ s.bg }};color:{{ s.color }};border:1px solid {{ s.border }};">
+                <span style="width:8px;height:8px;border-radius:50%;background:{{ s.dot }};"></span>{{ s.label }}
+              </div>
+            </sc-for>
+          </div>
+
+          <!-- STEP CONTROL BAR -->
+          <div style="margin-bottom:14px;background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-radius:13px;display:flex;align-items:stretch;overflow:hidden;">
+            <div style="display:flex;gap:6px;align-items:center;padding:0 16px;border-right:1px solid oklch(0.24 0.011 258);">
+              <div onClick="{{ pStepPrev }}" style="font-family:'JetBrains Mono',monospace;font-size:15px;color:oklch(0.7 0.01 258);width:30px;height:30px;display:grid;place-items:center;border:1px solid oklch(0.32 0.012 258);border-radius:7px;cursor:pointer;" style-hover="background:oklch(0.22 0.013 258);">◀</div>
+              <div onClick="{{ pStepNext }}" style="font-family:'JetBrains Mono',monospace;font-size:15px;color:oklch(0.93 0.005 258);width:30px;height:30px;display:grid;place-items:center;border:1px solid oklch(0.4 0.012 258);border-radius:7px;cursor:pointer;background:oklch(0.22 0.013 258);" style-hover="background:oklch(0.27 0.013 258);">▶</div>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:oklch(0.55 0.01 258);margin-left:4px;">{{ pStepCounter }}</span>
+            </div>
+            <div style="flex:1;padding:13px 18px;">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:{{ pStepAccent }};letter-spacing:0.05em;margin-bottom:3px;">{{ pStepLabel }}</div>
+              <div style="font-size:13.5px;line-height:1.5;color:oklch(0.82 0.006 258);">{{ pStepText }}</div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:18px;flex-wrap:wrap;align-items:stretch;">
+            <!-- WAVEFORM -->
+            <div style="flex:1 1 430px;min-width:340px;background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-radius:13px;overflow:hidden;display:flex;flex-direction:column;">
+              <div style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:oklch(0.118 0.01 258);border-bottom:1px solid oklch(0.26 0.011 258);font-family:'JetBrains Mono',monospace;font-size:11px;color:oklch(0.56 0.01 258);">
+                <span style="width:9px;height:9px;border-radius:50%;background:oklch(0.62 0.16 25);"></span>
+                <span style="width:9px;height:9px;border-radius:50%;background:oklch(0.82 0.13 85);"></span>
+                <span style="width:9px;height:9px;border-radius:50%;background:oklch(0.78 0.15 150);"></span>
+                <span style="margin-left:6px;">{{ pWaveFile }}</span>
+              </div>
+              <div style="padding:18px 18px 12px;background:oklch(0.115 0.01 258);overflow-x:auto;flex:1;">{{ pWave }}</div>
+            </div>
+
+            <!-- STATE MACHINE -->
+            <div style="flex:1 1 380px;min-width:330px;background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-radius:13px;overflow:hidden;display:flex;flex-direction:column;">
+              <div style="padding:10px 16px;background:oklch(0.118 0.01 258);border-bottom:1px solid oklch(0.26 0.011 258);font-family:'JetBrains Mono',monospace;font-size:11px;color:oklch(0.56 0.01 258);display:flex;justify-content:space-between;align-items:center;">
+                <span>state machine</span>
+                <span style="color:oklch(0.5 0.01 258);">click a node to jump</span>
+              </div>
+              <div style="padding:14px;flex:1;">{{ pSM }}</div>
+              <div style="padding:0 16px 15px;display:flex;flex-wrap:wrap;gap:7px;align-items:center;">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:{{ pCurStateColor }};font-weight:700;margin-right:4px;">{{ pCurStateLabel }}</span>
+                <sc-for list="{{ pCurLevels }}" as="l" hint-placeholder-count="3">
+                  <span style="display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:{{ l.color }};background:color-mix(in oklch, {{ l.color }} 13%, transparent);border:1px solid color-mix(in oklch, {{ l.color }} 40%, transparent);border-radius:6px;padding:2px 8px;">{{ l.sig }} <strong style="font-weight:700;">{{ l.val }}</strong></span>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:12px;color:oklch(0.6 0.01 258);background:oklch(0.17 0.013 258);border:1px solid oklch(0.27 0.012 258);border-radius:9px;padding:11px 15px;max-width:560px;">
+            <span style="color:{{ inspColor }};font-weight:600;">{{ inspLabel }}</span> · <span style="color:oklch(0.7 0.008 258);">{{ inspText }}</span>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ P-STATE MACHINE (standalone explore) ============ -->
+      <sc-if value="{{ isPStateMachine }}">
+        <div data-screen-label="P-Channel State Machine">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.62 0.13 165);text-transform:uppercase;">P-Channel / State Machine</div>
+          <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">The four-phase handshake</h1>
+          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:740px;margin:0 0 22px;">Two loops share <strong style="color:oklch(0.78 0.15 155);">P_STABLE</strong> and <strong style="color:oklch(0.74 0.14 245);">P_REQUEST</strong>: the upper <em>accept</em> path commits the new PSTATE; the lower <em>deny</em> path keeps the current state. Every transition is one signal edge. Click a state to inspect it.</p>
+
+          <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start;">
+            <div style="flex:1 1 460px;min-width:340px;background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-radius:13px;padding:18px;">{{ pSmStandalone }}
+              <div style="margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:10px;color:oklch(0.5 0.01 258);line-height:1.6;">Node values — <span style="color:oklch(0.74 0.14 245);">R</span>=PREQ · <span style="color:oklch(0.78 0.15 155);">A</span>=PACCEPT · <span style="color:oklch(0.66 0.18 28);">D</span>=PDENY &nbsp;(1=HIGH, 0=LOW)</div>
+            </div>
+            <div style="flex:1 1 300px;min-width:280px;background:oklch(0.175 0.013 258);border:1px solid oklch(0.28 0.012 258);border-top:2px solid {{ pSelColor }};border-radius:13px;padding:20px;">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:{{ pSelColor }};margin-bottom:4px;">{{ pSelLabel }}</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:oklch(0.56 0.01 258);margin-bottom:14px;">{{ pSelOperational }}</div>
+              <div style="display:flex;gap:7px;margin-bottom:16px;flex-wrap:wrap;">
+                <sc-for list="{{ pSelLevels }}" as="l" hint-placeholder-count="3">
+                  <span style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;font-family:'JetBrains Mono',monospace;background:color-mix(in oklch, {{ l.color }} 12%, transparent);border:1px solid color-mix(in oklch, {{ l.color }} 40%, transparent);border-radius:8px;padding:7px 11px;">
+                    <span style="font-size:9.5px;color:{{ l.color }};">{{ l.sig }}</span>
+                    <span style="font-size:14px;font-weight:700;color:{{ l.color }};">{{ l.lvl }}</span>
+                  </span>
+                </sc-for>
+              </div>
+              <div style="font-size:13.5px;line-height:1.6;color:oklch(0.74 0.008 258);">{{ pSelDesc }}</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ P-CHEAT SHEET ============ -->
+      <sc-if value="{{ isPCheat }}">
+        <div data-screen-label="P-Channel Signal Reference">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.62 0.13 165);text-transform:uppercase;">P-Channel / Signal Reference</div>
+          <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">Signals &amp; state table</h1>
+          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:720px;margin:0 0 24px;">Five wires, six states. <span style="color:oklch(0.56 0.01 258);">CTL→CMP</span> = driven by the controller, <span style="color:oklch(0.56 0.01 258);">CMP→CTL</span> = driven by the component.</p>
+
+          <div style="background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-radius:12px;overflow:hidden;max-width:880px;margin-bottom:26px;">
+            <div style="display:grid;grid-template-columns:120px 96px 110px 1fr;gap:14px;padding:11px 18px;background:oklch(0.135 0.011 258);border-bottom:1px solid oklch(0.26 0.011 258);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:oklch(0.5 0.01 258);text-transform:uppercase;">
+              <span>Signal</span><span>Driver</span><span>Asserted</span><span>Meaning</span>
+            </div>
+            <sc-for list="{{ pCheatSignals }}" as="r" hint-placeholder-count="5">
+              <div style="display:grid;grid-template-columns:120px 96px 110px 1fr;gap:14px;align-items:center;padding:10px 18px;border-top:1px solid oklch(0.21 0.01 258);" style-hover="background:oklch(0.19 0.013 258);">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:{{ r.color }};">{{ r.sig }}</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:oklch(0.62 0.01 258);">{{ r.driver }}</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:{{ r.color }};">{{ r.assert }}</span>
+                <span style="font-size:12.5px;color:oklch(0.68 0.008 258);line-height:1.45;">{{ r.meaning }}</span>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.16em;color:oklch(0.5 0.01 258);text-transform:uppercase;margin-bottom:11px;">State table</div>
+          <div style="background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-radius:12px;overflow:hidden;max-width:880px;">
+            <div style="display:grid;grid-template-columns:130px 66px 66px 66px 1fr;gap:12px;padding:11px 18px;background:oklch(0.135 0.011 258);border-bottom:1px solid oklch(0.26 0.011 258);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;color:oklch(0.5 0.01 258);text-transform:uppercase;">
+              <span>State</span><span style="text-align:center;">PREQ</span><span style="text-align:center;">PACCEPT</span><span style="text-align:center;">PDENY</span><span>Meaning</span>
+            </div>
+            <sc-for list="{{ pCheatStates }}" as="r" hint-placeholder-count="6">
+              <div style="display:grid;grid-template-columns:130px 66px 66px 66px 1fr;gap:12px;align-items:center;padding:10px 18px;border-top:1px solid oklch(0.21 0.01 258);" style-hover="background:oklch(0.19 0.013 258);">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:{{ r.color }};">{{ r.label }}</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;text-align:center;color:{{ r.reqColor }};">{{ r.req }}</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;text-align:center;color:{{ r.accColor }};">{{ r.acc }}</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;text-align:center;color:{{ r.denColor }};">{{ r.den }}</span>
+                <span style="font-size:12px;color:oklch(0.68 0.008 258);line-height:1.45;">{{ r.meaning }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:oklch(0.5 0.01 258);line-height:1.6;max-width:880px;">PSTATE must be valid before PREQ is asserted and held stable until the handshake completes. Only one of PACCEPT / PDENY is asserted per transition. PACTIVE is independent of the handshake and can change at any time.</div>
+        </div>
+      </sc-if>
+
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  state = {
+    section: 'overview',
+    scenario: 'accept',
+    step: 0,
+    smSel: 'Q_RUN',
+    pScenario: 'accept',
+    pStep: 0,
+    pSmSel: 'P_STABLE',
+    hover: null,
+  };
+
+  C = {
+    active: 'oklch(0.82 0.14 85)',
+    req: 'oklch(0.74 0.14 245)',
+    accept: 'oklch(0.78 0.15 155)',
+    deny: 'oklch(0.66 0.18 28)',
+    clk: 'oklch(0.72 0.01 258)',
+    lpi: 'oklch(0.66 0.13 165)',
+  };
+
+  ST = {
+    Q_RUN: 'oklch(0.78 0.15 155)',
+    Q_REQUEST: 'oklch(0.74 0.14 245)',
+    Q_STOPPED: 'oklch(0.62 0.03 258)',
+    Q_EXIT: 'oklch(0.78 0.13 195)',
+    Q_DENIED: 'oklch(0.66 0.18 28)',
+    Q_CONTINUE: 'oklch(0.80 0.13 70)',
+  };
+
+  qStates = {
+    Q_RUN: { label: 'Q_RUN', req: 1, acc: 1, den: 0, op: 'operational', desc: 'Normal operation. QREQn and QACCEPTn are HIGH, QDENY is LOW. The controller guarantees the clock or power resource managed by the interface.' },
+    Q_REQUEST: { label: 'Q_REQUEST', req: 0, acc: 1, den: 0, op: 'operational', desc: 'The controller has driven QREQn LOW to request quiescence. The component keeps running and must respond by accepting (QACCEPTn LOW) or denying (QDENY HIGH).' },
+    Q_STOPPED: { label: 'Q_STOPPED', req: 0, acc: 0, den: 0, op: 'quiescent', desc: 'The component accepted by driving QACCEPTn LOW. This is the ONLY state in which the controller may remove the managed clock or power — so the clock can stop here.' },
+    Q_EXIT: { label: 'Q_EXIT', req: 1, acc: 0, den: 0, op: 'operational', desc: 'The controller drove QREQn HIGH to exit quiescence. The clock/power is guaranteed again. The component finishes by driving QACCEPTn HIGH, returning to Q_RUN.' },
+    Q_DENIED: { label: 'Q_DENIED', req: 0, acc: 1, den: 1, op: 'operational', desc: 'The component refused the request by driving QDENY HIGH (e.g. it is mid-operation). It stays operational; the controller must now withdraw the request.' },
+    Q_CONTINUE: { label: 'Q_CONTINUE', req: 1, acc: 1, den: 1, op: 'operational', desc: 'After a denial the controller withdrew the request (QREQn HIGH) while QDENY is still HIGH. The component stays operational and drives QDENY LOW to return to Q_RUN.' },
+  };
+
+  PC = {
+    active: 'oklch(0.82 0.14 85)',
+    req: 'oklch(0.74 0.14 245)',
+    pstate: 'oklch(0.72 0.14 305)',
+    accept: 'oklch(0.78 0.15 155)',
+    deny: 'oklch(0.66 0.18 28)',
+    clk: 'oklch(0.72 0.01 258)',
+    lpi: 'oklch(0.66 0.13 165)',
+  };
+
+  PST = {
+    P_STABLE: 'oklch(0.78 0.15 155)',
+    P_REQUEST: 'oklch(0.74 0.14 245)',
+    P_ACCEPT: 'oklch(0.78 0.13 195)',
+    P_COMPLETE: 'oklch(0.80 0.13 70)',
+    P_DENY: 'oklch(0.66 0.18 28)',
+    P_CONTINUE: 'oklch(0.72 0.14 305)',
+  };
+
+  pStates = {
+    P_STABLE: { label: 'P_STABLE', req: 0, acc: 0, den: 0, op: 'stable', desc: 'Settled in a power state. PREQ, PACCEPT and PDENY are all LOW. The component runs in whatever state PSTATE last settled to — the controller can begin a new transition at any time.' },
+    P_REQUEST: { label: 'P_REQUEST', req: 1, acc: 0, den: 0, op: 'transition', desc: 'The controller placed the target value on PSTATE and drove PREQ HIGH. The component must now respond — accept the new state, or deny the request.' },
+    P_ACCEPT: { label: 'P_ACCEPT', req: 1, acc: 1, den: 0, op: 'transition', desc: 'The component agreed by driving PACCEPT HIGH. PREQ is still HIGH; the four-phase handshake is half complete.' },
+    P_COMPLETE: { label: 'P_COMPLETE', req: 0, acc: 1, den: 0, op: 'settling', desc: 'The controller saw the accept and drove PREQ LOW. The component holds PACCEPT until it has finished switching — the new power state is now in effect.' },
+    P_DENY: { label: 'P_DENY', req: 1, acc: 0, den: 1, op: 'transition', desc: 'The component refused by driving PDENY HIGH instead of accepting — it cannot enter the requested state yet. PREQ is still HIGH.' },
+    P_CONTINUE: { label: 'P_CONTINUE', req: 0, acc: 0, den: 1, op: 'settling', desc: 'After the denial the controller withdrew the request (PREQ LOW). The component holds PDENY until it drops it; the original power state is retained.' },
+  };
+
+  pScenarioData(sc) {
+    const PC = this.PC;
+    if (sc === 'deny') {
+      return {
+        file: 'p_deny.vcd — transition refused',
+        cycles: 12,
+        signals: [
+          { type: 'clk', name: 'CLK', color: PC.clk },
+          { type: 'bus', name: 'PACTIVE', color: PC.active, src: 'cmp', segs: [{ from: 0, to: 12, value: 'RUN' }], desc: 'Activity vector. The component keeps voting for RUN — it is busy, which is why it refuses a retention request.', full: 'Activity Vector' },
+          { type: 'bus', name: 'PSTATE', color: PC.pstate, src: 'ctl', segs: [{ from: 0, to: 3, value: 'ON' }, { from: 3, to: 9, value: 'RET' }, { from: 9, to: 12, value: 'ON' }], desc: 'Requested power state. The controller asks for RET, then reverts to ON after the denial.', full: 'Power-State Request' },
+          { name: 'PREQ', color: PC.req, src: 'ctl', bits: [0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0], desc: 'Transition request (active HIGH). Asserted to request RET; withdrawn after the component denies.', full: 'Transition Request' },
+          { name: 'PACCEPT', color: PC.accept, src: 'cmp', bits: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], desc: 'Accept (active HIGH). Never asserted here — the component does not accept.', full: 'Accept' },
+          { name: 'PDENY', color: PC.deny, src: 'cmp', bits: [0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0], desc: 'Deny (active HIGH). Asserted to refuse the request; released after PREQ goes LOW.', full: 'Deny' },
+        ],
+        steps: [
+          { cy: 1, state: 'P_STABLE', sig: null, accent: this.PST.P_STABLE, label: '1 · P_STABLE', text: 'Running in ON. PREQ, PACCEPT and PDENY are LOW; PSTATE = ON.' },
+          { cy: 3, state: 'P_REQUEST', sig: 'req', accent: this.PST.P_REQUEST, label: '2 · P_REQUEST', text: 'The controller drives PSTATE = RET and asserts PREQ, asking the component to enter retention.' },
+          { cy: 5, state: 'P_DENY', sig: 'den', accent: this.PST.P_DENY, label: '3 · P_DENY', text: 'The component is mid-work and cannot stop, so it asserts PDENY instead of PACCEPT. It stays in ON.' },
+          { cy: 8, state: 'P_CONTINUE', sig: 'req', accent: this.PST.P_CONTINUE, label: '4 · P_CONTINUE', text: 'The controller withdraws the request (PREQ LOW) and reverts PSTATE to ON. PDENY is still HIGH; the component stays operational.' },
+          { cy: 9, state: 'P_STABLE', sig: 'den', accent: this.PST.P_STABLE, label: '5 · P_STABLE', text: 'The component releases PDENY. Back to a stable ON state — the controller can retry the transition later.' },
+        ],
+      };
+    }
+    if (sc === 'wakeup') {
+      return {
+        file: 'p_powerup.vcd — OFF → ON',
+        cycles: 13,
+        signals: [
+          { type: 'clk', name: 'CLK', color: PC.clk, gate: { from: 0, to: 5 } },
+          { type: 'bus', name: 'PACTIVE', color: PC.active, src: 'cmp', segs: [{ from: 0, to: 2, value: 'OFF' }, { from: 2, to: 13, value: 'RUN' }], desc: 'Activity vector. Raised to RUN when the component needs power again — the trigger for a power-up. Independent of the handshake.', full: 'Activity Vector' },
+          { type: 'bus', name: 'PSTATE', color: PC.pstate, src: 'ctl', segs: [{ from: 0, to: 4, value: 'OFF' }, { from: 4, to: 13, value: 'ON' }], desc: 'Requested power state. The controller sets ON to bring the component back.', full: 'Power-State Request' },
+          { name: 'PREQ', color: PC.req, src: 'ctl', bits: [0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0], desc: 'Transition request (active HIGH). Asserted to request the ON state.', full: 'Transition Request' },
+          { name: 'PACCEPT', color: PC.accept, src: 'cmp', bits: [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0], desc: 'Accept (active HIGH). Asserted to agree to power up; released after PREQ goes LOW.', full: 'Accept' },
+          { name: 'PDENY', color: PC.deny, src: 'cmp', bits: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], desc: 'Deny (active HIGH). Not used in a power-up.', full: 'Deny' },
+        ],
+        steps: [
+          { cy: 1, state: 'P_STABLE', sig: null, accent: this.PST.P_STABLE, label: '1 · P_STABLE', text: 'The component is in OFF — power and clock removed. PACTIVE = OFF.' },
+          { cy: 2, state: 'P_STABLE', sig: 'act', accent: this.PC.active, label: '2 · PACTIVE ↑', text: 'The component needs to run again, so it raises PACTIVE to RUN. This is only a hint — the handshake has not started yet.' },
+          { cy: 4, state: 'P_REQUEST', sig: 'req', accent: this.PST.P_REQUEST, label: '3 · P_REQUEST', text: 'Seeing the activity vote, the controller drives PSTATE = ON and asserts PREQ. Power and clock are restored.' },
+          { cy: 6, state: 'P_ACCEPT', sig: 'acc', accent: this.PST.P_ACCEPT, label: '4 · P_ACCEPT', text: 'The component asserts PACCEPT, agreeing to the power-up.' },
+          { cy: 8, state: 'P_COMPLETE', sig: 'req', accent: this.PST.P_COMPLETE, label: '5 · P_COMPLETE', text: 'The controller drops PREQ; the transition to ON is committed.' },
+          { cy: 9, state: 'P_STABLE', sig: 'acc', accent: this.PST.P_STABLE, label: '6 · P_STABLE', text: 'The component releases PACCEPT. Fully powered and stable in ON.' },
+        ],
+      };
+    }
+    // accept — power-down ON → OFF
+    return {
+      file: 'p_accept.vcd — ON → OFF',
+      cycles: 12,
+      signals: [
+        { type: 'clk', name: 'CLK', color: PC.clk, gate: { from: 6, to: 12 } },
+        { type: 'bus', name: 'PACTIVE', color: PC.active, src: 'cmp', segs: [{ from: 0, to: 2, value: 'RUN' }, { from: 2, to: 12, value: 'OFF' }], desc: 'Activity vector. Drops from RUN to OFF — the component signals it no longer needs to run, prompting a power-down.', full: 'Activity Vector' },
+        { type: 'bus', name: 'PSTATE', color: PC.pstate, src: 'ctl', segs: [{ from: 0, to: 3, value: 'ON' }, { from: 3, to: 12, value: 'OFF' }], desc: 'Requested power state. Set to OFF and held stable for the whole handshake.', full: 'Power-State Request' },
+        { name: 'PREQ', color: PC.req, src: 'ctl', bits: [0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0], desc: 'Transition request (active HIGH). Asserted once PSTATE is valid; deasserted after the component accepts.', full: 'Transition Request' },
+        { name: 'PACCEPT', color: PC.accept, src: 'cmp', bits: [0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0], desc: 'Accept (active HIGH). Asserted to agree to power down; released after PREQ goes LOW.', full: 'Accept' },
+        { name: 'PDENY', color: PC.deny, src: 'cmp', bits: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], desc: 'Deny (active HIGH). Stays LOW — the request is accepted, not denied.', full: 'Deny' },
+      ],
+      steps: [
+        { cy: 1, state: 'P_STABLE', sig: null, accent: this.PST.P_STABLE, label: '1 · P_STABLE', text: 'Operating in ON. PREQ, PACCEPT and PDENY are LOW; PSTATE = ON.' },
+        { cy: 2, state: 'P_STABLE', sig: 'act', accent: this.PC.active, label: '2 · PACTIVE ↓', text: 'PACTIVE drops to OFF — the component votes that it no longer needs to run. The handshake has not started yet.' },
+        { cy: 3, state: 'P_REQUEST', sig: 'req', accent: this.PST.P_REQUEST, label: '3 · P_REQUEST', text: 'The controller drives PSTATE = OFF and asserts PREQ, asking the component to power down.' },
+        { cy: 5, state: 'P_ACCEPT', sig: 'acc', accent: this.PST.P_ACCEPT, label: '4 · P_ACCEPT', text: 'The component asserts PACCEPT — it agrees to enter OFF. PREQ is still HIGH.' },
+        { cy: 8, state: 'P_COMPLETE', sig: 'req', accent: this.PST.P_COMPLETE, label: '5 · P_COMPLETE', text: 'The controller drops PREQ. The transition is committed — the component is now in OFF and power/clock can be removed.' },
+        { cy: 9, state: 'P_STABLE', sig: 'acc', accent: this.PST.P_STABLE, label: '6 · P_STABLE', text: 'The component releases PACCEPT. The handshake is complete and the interface is stable in OFF.' },
+      ],
+    };
+  }
+
+  go = (s) => this.setState({ section: s, hover: null });
+  setHover = (info) => this.setState({ hover: info });
+  step(dir, max) {
+    this.setState((st) => { let v = st.step + dir; if (v < 0) v = 0; if (v > max) v = max; return { step: v }; });
+  }
+
+  // controller/component driver tag for waveform labels
+  miniSrc(src, color) {
+    const h = React.createElement;
+    const ctl = src === 'ctl';
+    const off = 'oklch(0.46 0.01 258)';
+    const aw = 12, ah = 9, cyy = 4.5, hd = 5;
+    const arrowR = h('svg', { width: aw, height: ah, viewBox: '0 0 ' + aw + ' ' + ah, style: { display: 'block' } }, [
+      h('line', { key: 'l', x1: 0.5, y1: cyy, x2: aw - hd, y2: cyy, stroke: color, strokeWidth: 1.3, strokeLinecap: 'round' }),
+      h('polygon', { key: 'p', points: (aw - 0.5) + ',' + cyy + ' ' + (aw - hd) + ',' + (cyy - 2.6) + ' ' + (aw - hd) + ',' + (cyy + 2.6), fill: color }),
+    ]);
+    const arrowL = h('svg', { width: aw, height: ah, viewBox: '0 0 ' + aw + ' ' + ah, style: { display: 'block' } }, [
+      h('line', { key: 'l', x1: hd, y1: cyy, x2: aw - 0.5, y2: cyy, stroke: color, strokeWidth: 1.3, strokeLinecap: 'round' }),
+      h('polygon', { key: 'p', points: '0.5,' + cyy + ' ' + hd + ',' + (cyy - 2.6) + ' ' + hd + ',' + (cyy + 2.6), fill: color }),
+    ]);
+    const tag = (t) => h('span', { key: 't', style: { color: color, fontWeight: 600 } }, t);
+    const kids = ctl ? [tag('CTL'), arrowR] : [arrowL, tag('CMP')];
+    return h('span', { key: 'src', title: ctl ? 'Controller drives' : 'Component drives', style: { display: 'inline-flex', alignItems: 'center', gap: 3, fontFamily: "'JetBrains Mono', monospace", fontSize: 8.5, lineHeight: 1, flex: '0 0 auto' } }, kids);
+  }
+
+  // ---------- waveform builder ----------
+  buildWave(opts) {
+    const h = React.createElement;
+    const cycles = opts.cycles || 12;
+    const w = opts.w || 34;
+    const t = opts.theme || {};
+    const rowH = t.rowH || 30;
+    const hi = 7, lo = rowH - 8, mid = (hi + lo) / 2;
+    const traceW = cycles * w;
+    const labelW = t.labelW || 110;
+    const mono = "'JetBrains Mono', monospace";
+    const hovered = this.state.hover && this.state.hover.name;
+
+    function stepPath(bits, ww) {
+      let x = 0;
+      let d = 'M0,' + (bits[0] ? hi : lo);
+      for (let i = 0; i < bits.length; i++) {
+        const y = bits[i] ? hi : lo;
+        d += ' L' + x + ',' + y;
+        x += ww;
+        d += ' L' + x + ',' + y;
+      }
+      return d;
+    }
+
+    const headerRow = opts.axis ? (() => {
+      const cells = [];
+      for (let c = 0; c < cycles; c++) cells.push(h('div', { key: c, style: { width: w, flex: '0 0 auto', textAlign: 'center', fontFamily: mono, fontSize: 9.5, color: 'oklch(0.46 0.01 258)' } }, 'T' + c));
+      return h('div', { key: 'ax', style: { display: 'flex', height: 16, marginLeft: labelW } }, cells);
+    })() : null;
+
+    const rows = opts.signals.map((s, idx) => {
+      const kids = [];
+      if (t.grid) {
+        for (let c = 0; c <= cycles; c++) kids.push(h('line', { key: 'g' + c, x1: c * w, y1: 0, x2: c * w, y2: rowH, stroke: 'oklch(0.26 0.008 258)', strokeWidth: 1 }));
+      }
+      if (s.type === 'clk') {
+        const bits = [];
+        for (let c = 0; c < cycles; c++) {
+          const gated = s.gate && c >= s.gate.from && c < s.gate.to;
+          if (gated) { bits.push(0); bits.push(0); } else { bits.push(1); bits.push(0); }
+        }
+        kids.push(h('path', { key: 'p', d: stepPath(bits, w / 2), fill: 'none', stroke: s.color, strokeWidth: 1.4 }));
+        if (s.gate) {
+          const gx = s.gate.from * w, gw = (s.gate.to - s.gate.from) * w;
+          kids.push(h('rect', { key: 'gate', x: gx, y: 1, width: gw, height: rowH - 2, fill: 'color-mix(in oklch, oklch(0.62 0.03 258) 12%, transparent)', stroke: 'oklch(0.5 0.03 258)', strokeWidth: 1, strokeDasharray: '3 3', rx: 3 }));
+          kids.push(h('text', { key: 'gt', x: gx + gw / 2, y: mid + 3.5, fill: 'oklch(0.6 0.02 258)', fontSize: 9, fontFamily: mono, textAnchor: 'middle' }, 'gated'));
+        }
+      } else if (s.type === 'bus') {
+        (s.segs || []).forEach((sg, i) => {
+          const x0 = sg.from * w, x1 = sg.to * w;
+          const pts = x0 + ',' + mid + ' ' + (x0 + 6) + ',' + hi + ' ' + (x1 - 6) + ',' + hi + ' ' + x1 + ',' + mid + ' ' + (x1 - 6) + ',' + lo + ' ' + (x0 + 6) + ',' + lo;
+          kids.push(h('polygon', { key: 'b' + i, points: pts, fill: 'color-mix(in oklch, ' + s.color + ' 16%, transparent)', stroke: s.color, strokeWidth: 1.4 }));
+          if (sg.value) kids.push(h('text', { key: 'v' + i, x: (x0 + x1) / 2, y: mid + 4, fill: s.color, fontSize: 10.5, fontFamily: mono, textAnchor: 'middle' }, sg.value));
+        });
+        kids.unshift(h('line', { key: 'idle', x1: 0, y1: mid, x2: traceW, y2: mid, stroke: 'oklch(0.32 0.01 258)', strokeWidth: 1, strokeDasharray: '3 3' }));
+      } else {
+        kids.push(h('path', { key: 'p', d: stepPath(s.bits, w), fill: 'none', stroke: s.color, strokeWidth: 1.9, strokeLinejoin: 'round', style: t.glow ? { filter: 'drop-shadow(0 0 5px ' + s.color + ')' } : undefined }));
+      }
+      (s.marks || []).forEach((mc, i) => kids.push(h('circle', { key: 'm' + i, cx: mc * w, cy: mid, r: 3.6, fill: s.color, stroke: 'oklch(0.115 0.01 258)', strokeWidth: 1.4 })));
+
+      const svg = h('svg', { key: 's', width: traceW, height: rowH, style: { display: 'block', overflow: 'visible' } }, kids);
+      const isHov = hovered && s.name === hovered;
+      const srcEl = s.src ? this.miniSrc(s.src, s.color) : null;
+      const nameSpan = h('span', { key: 'n', style: { fontFamily: mono, fontSize: 11, color: s.type === 'clk' ? 'oklch(0.6 0.01 258)' : s.color, letterSpacing: '0.02em', whiteSpace: 'nowrap' } }, s.name);
+      const label = h('div', {
+        key: 'l',
+        onMouseEnter: s.desc ? () => this.setHover({ name: s.name, color: s.color, desc: s.desc, full: s.full }) : undefined,
+        onMouseLeave: s.desc ? () => this.setHover(null) : undefined,
+        style: { width: labelW, flex: '0 0 auto', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 6, paddingRight: 11, height: rowH, cursor: s.desc ? 'help' : 'default' },
+      }, [srcEl, nameSpan]);
+      return h('div', { key: idx, style: { display: 'flex', alignItems: 'center', height: rowH, background: isHov ? 'oklch(0.2 0.013 258)' : 'transparent', borderRadius: 5 } }, [label, svg]);
+    });
+
+    let overlay = null;
+    if (opts.playhead != null) {
+      const left = labelW + opts.playhead * w;
+      overlay = h('div', { key: 'cur', style: { position: 'absolute', top: opts.axis ? 16 : 0, bottom: 2, left: left, width: 0, borderLeft: '1.5px dashed ' + (t.cursorColor || 'oklch(0.88 0.005 258)'), pointerEvents: 'none', zIndex: 5 } },
+        h('span', { style: { position: 'absolute', top: -1, left: -5, width: 9, height: 9, borderRadius: '50%', background: t.cursorColor || 'oklch(0.88 0.005 258)' } }));
+    }
+    return h('div', { style: { position: 'relative', display: 'inline-block', minWidth: '100%' } }, [headerRow, ...rows, overlay]);
+  }
+
+  // ---------- scenario data ----------
+  scenarioData(sc) {
+    const C = this.C;
+    if (sc === 'deny') {
+      return {
+        file: 'q_deny.vcd — request refused',
+        cycles: 12,
+        signals: [
+          { type: 'clk', name: 'CLK', color: C.clk },
+          { name: 'QREQn', color: C.req, src: 'ctl', bits: [1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1], desc: 'Controller quiescence request (active LOW). Driven LOW to request, HIGH to withdraw.', full: 'Quiescence Request' },
+          { name: 'QACCEPTn', color: C.accept, src: 'cmp', bits: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], desc: 'Accept (active LOW). Stays HIGH here — the component never accepts.', full: 'Quiescence Accept' },
+          { name: 'QDENY', color: C.deny, src: 'cmp', bits: [0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0], desc: 'Deny (active HIGH). Driven HIGH to refuse the request; LOW again once the controller withdraws.', full: 'Quiescence Deny' },
+        ],
+        steps: [
+          { cy: 1, state: 'Q_RUN', sig: null, accent: this.ST.Q_RUN, label: '1 · Q_RUN', text: 'Operational. QREQn & QACCEPTn HIGH, QDENY LOW. The controller guarantees the clock/power.' },
+          { cy: 2, state: 'Q_REQUEST', sig: 'req', accent: this.ST.Q_REQUEST, label: '2 · Q_REQUEST', text: 'The controller drives QREQn LOW, requesting quiescence. The component is still running.' },
+          { cy: 4, state: 'Q_DENIED', sig: 'den', accent: this.ST.Q_DENIED, label: '3 · Q_DENIED', text: 'The component cannot stop right now, so it asserts QDENY HIGH instead of accepting. It stays operational — the clock keeps running.' },
+          { cy: 6, state: 'Q_CONTINUE', sig: 'req', accent: this.ST.Q_CONTINUE, label: '4 · Q_CONTINUE', text: 'The controller withdraws the request by driving QREQn HIGH. QDENY is still HIGH; the component remains operational.' },
+          { cy: 8, state: 'Q_RUN', sig: 'den', accent: this.ST.Q_RUN, label: '5 · Q_RUN', text: 'The component drives QDENY LOW and the interface is back to Q_RUN. The controller can retry the request later.' },
+        ],
+      };
+    }
+    if (sc === 'wakeup') {
+      return {
+        file: 'q_wakeup.vcd — exit via QACTIVE',
+        cycles: 13,
+        signals: [
+          { type: 'clk', name: 'CLK', color: C.clk, gate: { from: 0, to: 4 } },
+          { name: 'QACTIVE', color: C.active, src: 'cmp', bits: [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], desc: 'Component activity indicator. Raised HIGH to signal it has work to do. Independent of the handshake — purely a stimulus for the controller.', full: 'Activity Indicator' },
+          { name: 'QREQn', color: C.req, src: 'ctl', bits: [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1], desc: 'Quiescence request (active LOW). Already LOW (quiescent); driven HIGH by the controller to start the exit.', full: 'Quiescence Request' },
+          { name: 'QACCEPTn', color: C.accept, src: 'cmp', bits: [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1], desc: 'Accept (active LOW). LOW while stopped; driven HIGH to acknowledge the exit and return to Q_RUN.', full: 'Quiescence Accept' },
+          { name: 'QDENY', color: C.deny, src: 'cmp', bits: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], desc: 'Deny (active HIGH). Not used in a wake-up; stays LOW.', full: 'Quiescence Deny' },
+        ],
+        steps: [
+          { cy: 1, state: 'Q_STOPPED', sig: null, accent: this.ST.Q_STOPPED, label: '1 · Q_STOPPED', text: 'The component is quiescent: QREQn & QACCEPTn LOW, clock gated. QACTIVE is LOW.' },
+          { cy: 2, state: 'Q_STOPPED', sig: 'act', accent: this.C.active, label: '2 · QACTIVE ↑', text: 'The component needs to run again, so it raises QACTIVE. This is only a stimulus — the handshake state has not changed yet (QACTIVE is independent of the handshake).' },
+          { cy: 4, state: 'Q_EXIT', sig: 'req', accent: this.ST.Q_EXIT, label: '3 · Q_EXIT', text: 'Seeing QACTIVE, the controller begins the exit by driving QREQn HIGH. The clock/power is restored (CLK resumes).' },
+          { cy: 6, state: 'Q_RUN', sig: 'acc', accent: this.ST.Q_RUN, label: '4 · Q_RUN', text: 'The component drives QACCEPTn HIGH to complete the wake-up. Fully operational again.' },
+        ],
+      };
+    }
+    // accept (default)
+    return {
+      file: 'q_accept.vcd — quiescence entry & exit',
+      cycles: 12,
+      signals: [
+        { type: 'clk', name: 'CLK', color: C.clk, gate: { from: 4, to: 8 } },
+        { name: 'QREQn', color: C.req, src: 'ctl', bits: [1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1], desc: 'Controller quiescence request (active LOW). LOW = please become quiescent; HIGH = run / exit.', full: 'Quiescence Request' },
+        { name: 'QACCEPTn', color: C.accept, src: 'cmp', bits: [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1], desc: 'Component accept (active LOW). Driven LOW to accept and enter Q_STOPPED; HIGH to finish the exit.', full: 'Quiescence Accept' },
+        { name: 'QDENY', color: C.deny, src: 'cmp', bits: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], desc: 'Component deny (active HIGH). Stays LOW because the request is accepted, not denied.', full: 'Quiescence Deny' },
+      ],
+      steps: [
+        { cy: 1, state: 'Q_RUN', sig: null, accent: this.ST.Q_RUN, label: '1 · Q_RUN', text: 'Operational. QREQn & QACCEPTn are HIGH, QDENY LOW. The controller guarantees the component\u2019s clock/power.' },
+        { cy: 2, state: 'Q_REQUEST', sig: 'req', accent: this.ST.Q_REQUEST, label: '2 · Q_REQUEST', text: 'The controller drives QREQn LOW, asking the component to become quiescent. The component keeps running until it responds.' },
+        { cy: 4, state: 'Q_STOPPED', sig: 'acc', accent: this.ST.Q_STOPPED, label: '3 · Q_STOPPED', text: 'The component accepts by driving QACCEPTn LOW. Now quiescent — this is the only state where the controller may gate the clock, so CLK stops.' },
+        { cy: 8, state: 'Q_EXIT', sig: 'req', accent: this.ST.Q_EXIT, label: '4 · Q_EXIT', text: 'The controller drives QREQn HIGH to bring the component back. Clock/power is guaranteed again, so CLK resumes; the component is waking.' },
+        { cy: 10, state: 'Q_RUN', sig: 'acc', accent: this.ST.Q_RUN, label: '5 · Q_RUN', text: 'The component completes the exit by driving QACCEPTn HIGH. Back to normal operation.' },
+      ],
+    };
+  }
+
+  qCfg() {
+    return {
+      states: this.qStates, ST: this.ST,
+      N: { Q_RUN: [24, 135], Q_REQUEST: [186, 135], Q_STOPPED: [360, 44], Q_EXIT: [508, 44], Q_DENIED: [360, 226], Q_CONTINUE: [508, 226] },
+      edges: [
+        { id: 'Q_RUN|Q_REQUEST', d: 'M140,160 L186,160', lx: 163, ly: 150, label: 'QREQn↓' },
+        { id: 'Q_REQUEST|Q_STOPPED', d: 'M300,142 L360,82', lx: 318, ly: 104, label: 'QACCEPTn↓' },
+        { id: 'Q_STOPPED|Q_EXIT', d: 'M476,69 L508,69', lx: 492, ly: 59, label: 'QREQn↑' },
+        { id: 'Q_EXIT|Q_RUN', d: 'M566,44 L566,18 L82,18 L82,135', lx: 324, ly: 13, label: 'QACCEPTn↑' },
+        { id: 'Q_REQUEST|Q_DENIED', d: 'M300,178 L360,238', lx: 318, ly: 214, label: 'QDENY↑' },
+        { id: 'Q_DENIED|Q_CONTINUE', d: 'M476,251 L508,251', lx: 492, ly: 241, label: 'QREQn↑' },
+        { id: 'Q_CONTINUE|Q_RUN', d: 'M566,276 L566,302 L82,302 L82,185', lx: 324, ly: 308, label: 'QDENY↓' },
+      ],
+      sub: (s) => 'Rn' + s.req + ' An' + s.acc + ' D' + s.den,
+    };
+  }
+
+  pCfg() {
+    return {
+      states: this.pStates, ST: this.PST,
+      N: { P_STABLE: [24, 135], P_REQUEST: [186, 135], P_ACCEPT: [360, 44], P_COMPLETE: [508, 44], P_DENY: [360, 226], P_CONTINUE: [508, 226] },
+      edges: [
+        { id: 'P_STABLE|P_REQUEST', d: 'M140,160 L186,160', lx: 163, ly: 150, label: 'PREQ↑' },
+        { id: 'P_REQUEST|P_ACCEPT', d: 'M300,142 L360,82', lx: 318, ly: 104, label: 'PACCEPT↑' },
+        { id: 'P_ACCEPT|P_COMPLETE', d: 'M476,69 L508,69', lx: 492, ly: 59, label: 'PREQ↓' },
+        { id: 'P_COMPLETE|P_STABLE', d: 'M566,44 L566,18 L82,18 L82,135', lx: 324, ly: 13, label: 'PACCEPT↓' },
+        { id: 'P_REQUEST|P_DENY', d: 'M300,178 L360,238', lx: 318, ly: 214, label: 'PDENY↑' },
+        { id: 'P_DENY|P_CONTINUE', d: 'M476,251 L508,251', lx: 492, ly: 241, label: 'PREQ↓' },
+        { id: 'P_CONTINUE|P_STABLE', d: 'M566,276 L566,302 L82,302 L82,185', lx: 324, ly: 308, label: 'PDENY↓' },
+      ],
+      sub: (s) => 'R' + s.req + ' A' + s.acc + ' D' + s.den,
+    };
+  }
+
+  // ---------- state machine renderer (SVG) ----------
+  renderFSM(cfg, activeId, activeEdge, onNode) {
+    const h = React.createElement;
+    const ST = cfg.ST;
+    const states = cfg.states;
+    const sub = cfg.sub;
+    const W = 116, Hn = 50;
+    const N = cfg.N;
+    const edges = cfg.edges;
+    const defs = h('defs', { key: 'defs' }, [
+      h('marker', { key: 'a', id: 'lpiArrowA', markerWidth: 9, markerHeight: 9, refX: 6.5, refY: 3, orient: 'auto' }, h('path', { d: 'M0,0 L6.5,3 L0,6 Z', fill: 'oklch(0.9 0.01 258)' })),
+      h('marker', { key: 'd', id: 'lpiArrowD', markerWidth: 9, markerHeight: 9, refX: 6.5, refY: 3, orient: 'auto' }, h('path', { d: 'M0,0 L6.5,3 L0,6 Z', fill: 'oklch(0.4 0.01 258)' })),
+    ]);
+    const edgeEls = edges.map((e) => {
+      const on = activeEdge === e.id;
+      const toState = e.id.split('|')[1];
+      const col = on ? ST[toState] : 'oklch(0.34 0.01 258)';
+      const lblW = e.label.length * 6 + 8;
+      return h('g', { key: e.id }, [
+        h('path', { key: 'p', d: e.d, fill: 'none', stroke: col, strokeWidth: on ? 2.4 : 1.4, markerEnd: 'url(#' + (on ? 'lpiArrowA' : 'lpiArrowD') + ')', style: on ? { filter: 'drop-shadow(0 0 4px ' + col + ')' } : undefined }),
+        h('rect', { key: 'lb', x: e.lx - lblW / 2, y: e.ly - 8, width: lblW, height: 14, rx: 3, fill: 'oklch(0.115 0.01 258)', opacity: 0.92 }),
+        h('text', { key: 'lt', x: e.lx, y: e.ly + 2.5, fill: on ? ST[toState] : 'oklch(0.55 0.01 258)', fontSize: 9.5, fontWeight: on ? 700 : 400, fontFamily: "'JetBrains Mono', monospace", textAnchor: 'middle' }, e.label),
+      ]);
+    });
+    const nodeEls = Object.keys(N).map((id) => {
+      const [x, y] = N[id];
+      const s = states[id];
+      const col = ST[id];
+      const on = activeId === id;
+      return h('g', { key: id, style: { cursor: 'pointer' }, onClick: () => onNode && onNode(id) }, [
+        h('rect', { key: 'r', x: x, y: y, width: W, height: Hn, rx: 10, fill: on ? 'color-mix(in oklch, ' + col + ' 22%, oklch(0.17 0.013 258))' : 'oklch(0.185 0.012 258)', stroke: on ? col : 'oklch(0.32 0.012 258)', strokeWidth: on ? 2.2 : 1.2, style: on ? { filter: 'drop-shadow(0 0 7px ' + col + ')' } : undefined }),
+        h('text', { key: 't', x: x + W / 2, y: y + 21, fill: on ? 'oklch(0.97 0.005 258)' : 'oklch(0.74 0.008 258)', fontSize: 13, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", textAnchor: 'middle' }, s.label),
+        h('text', { key: 'sub', x: x + W / 2, y: y + 37, fill: on ? col : 'oklch(0.5 0.01 258)', fontSize: 9.5, fontFamily: "'JetBrains Mono', monospace", textAnchor: 'middle' }, sub(s)),
+      ]);
+    });
+    return h('svg', { viewBox: '0 0 640 322', style: { display: 'block', width: '100%', height: 'auto' } }, [defs, ...edgeEls, ...nodeEls]);
+  }
+
+  renderVals() {
+    const C = this.C;
+    const ST = this.ST;
+    const st = this.state;
+    const sec = st.section;
+
+    // ---- nav ----
+    const mk = (id, label, color, disabled) => {
+      const active = sec === id;
+      return {
+        label, onClick: () => this.go(id),
+        bg: active ? 'oklch(0.21 0.014 258)' : 'transparent',
+        color: active ? 'oklch(0.95 0.005 258)' : (disabled ? 'oklch(0.45 0.01 258)' : 'oklch(0.66 0.008 258)'),
+        bar: active ? color : 'transparent',
+        dot: active ? color : 'oklch(0.4 0.01 258)',
+        op: disabled ? 0.6 : 1,
+      };
+    };
+    const PC = this.PC, PST = this.PST;
+    const channel = sec.indexOf('p_') === 0 ? 'P' : 'Q';
+    const navGroups = [
+      { title: 'Q-Channel', items: [mk('overview', 'Overview', C.lpi), mk('handshake', 'Quiescence Handshake', C.accept), mk('statemachine', 'State Machine', C.req), mk('cheat', 'Signal Reference', 'oklch(0.8 0.005 258)')] },
+      { title: 'P-Channel', items: [mk('p_overview', 'Overview', PC.lpi), mk('p_transition', 'Power Transition', PC.accept), mk('p_statemachine', 'State Machine', PC.req), mk('p_cheat', 'Signal Reference', 'oklch(0.8 0.005 258)')] },
+    ];
+    const navNote = channel === 'P'
+      ? 'P-Channel signals are active HIGH — asserted = HIGH. PSTATE and PACTIVE are multi-bit buses, not single wires.'
+      : 'Active-LOW signals are named with a trailing n (QREQn, QACCEPTn) — asserted = LOW.';
+
+    // ---- scenario + steps ----
+    const data = this.scenarioData(st.scenario);
+    const stepIdx = Math.min(st.step, data.steps.length - 1);
+    const cur = data.steps[stepIdx];
+    const prev = stepIdx > 0 ? data.steps[stepIdx - 1] : null;
+    const activeEdge = (prev && prev.state !== cur.state) ? (prev.state + '|' + cur.state) : null;
+
+    const qWave = this.buildWave({
+      cycles: data.cycles, w: 34, axis: true, playhead: cur.cy,
+      theme: { glow: true, grid: true, rowH: 30, labelW: 118, cursorColor: 'oklch(0.88 0.005 258)' },
+      signals: data.signals,
+    });
+
+    // jump-to-state from node click
+    const jumpTo = (id) => {
+      const i = data.steps.findIndex((s) => s.state === id);
+      if (i >= 0) this.setState({ step: i });
+    };
+    const qSM = this.renderFSM(this.qCfg(), cur.state, activeEdge, jumpTo);
+
+    const scenarios = [
+      { key: 'accept', label: 'Accept', dotC: ST.Q_RUN },
+      { key: 'deny', label: 'Deny', dotC: ST.Q_DENIED },
+      { key: 'wakeup', label: 'Wake-up', dotC: C.active },
+    ].map((s) => {
+      const a = st.scenario === s.key;
+      return { label: s.label, dot: s.dotC, onClick: () => this.setState({ scenario: s.key, step: 0 }), bg: a ? 'color-mix(in oklch, ' + s.dotC + ' 15%, oklch(0.165 0.013 258))' : 'oklch(0.165 0.013 258)', color: a ? 'oklch(0.96 0.005 258)' : 'oklch(0.62 0.008 258)', border: a ? s.dotC : 'oklch(0.28 0.012 258)' };
+    });
+
+    // current-state signal chips
+    const cs = this.qStates[cur.state];
+    const lvl = (v) => v ? 'HIGH' : 'LOW';
+    const curLevels = [
+      { sig: 'QREQn', val: lvl(cs.req), color: C.req },
+      { sig: 'QACCEPTn', val: lvl(cs.acc), color: C.accept },
+      { sig: 'QDENY', val: lvl(cs.den), color: C.deny },
+    ];
+
+    // topology glow (signal that changed this step)
+    const glow = (k) => (cur.sig === k) ? '0 0 12px ' : 'none';
+    const glowAct = cur.sig === 'act' ? '0 0 12px ' + C.active : 'none';
+    const glowReq = cur.sig === 'req' ? '0 0 12px ' + C.req : 'none';
+    const glowAcc = cur.sig === 'acc' ? '0 0 12px ' + C.accept : 'none';
+    const glowDen = cur.sig === 'den' ? '0 0 12px ' + C.deny : 'none';
+
+    // ---- standalone state machine ----
+    const smStandalone = this.renderFSM(this.qCfg(), st.smSel, null, (id) => this.setState({ smSel: id }));
+    const sel = this.qStates[st.smSel];
+    const selLevels = [
+      { sig: 'QREQn', lvl: lvl(sel.req), color: C.req },
+      { sig: 'QACCEPTn', lvl: lvl(sel.acc), color: C.accept },
+      { sig: 'QDENY', lvl: lvl(sel.den), color: C.deny },
+    ];
+
+    // ---- overview cards ----
+    const signalCards = [
+      { name: 'QACTIVE', color: C.active, dirText: 'CMP→CTL', polarity: 'activity hint', desc: 'The component\u2019s activity indicator. HIGH = it has work to do; LOW hints it may accept quiescence. Independent of the handshake.' },
+      { name: 'QREQn', color: C.req, dirText: 'CTL→CMP', polarity: 'active LOW', desc: 'The controller\u2019s quiescence request. Driven LOW to ask the component to stop; HIGH to keep it running or wake it.' },
+      { name: 'QACCEPTn', color: C.accept, dirText: 'CMP→CTL', polarity: 'active LOW', desc: 'The component accepts a request by driving QACCEPTn LOW, entering the quiescent state.' },
+      { name: 'QDENY', color: C.deny, dirText: 'CMP→CTL', polarity: 'active HIGH', desc: 'The component refuses a request by driving QDENY HIGH, staying operational.' },
+    ].map((c) => ({ ...c, hoverStyle: 'transform:translateY(-3px);border-color:color-mix(in oklch, ' + c.color + ' 55%, oklch(0.28 0.012 258));box-shadow:0 0 0 1px color-mix(in oklch, ' + c.color + ' 36%, transparent), 0 12px 28px -12px ' + c.color + ';' }));
+
+    const order = ['Q_RUN', 'Q_REQUEST', 'Q_STOPPED', 'Q_EXIT', 'Q_DENIED', 'Q_CONTINUE'];
+    const shortDesc = {
+      Q_RUN: 'Running normally.', Q_REQUEST: 'Stop requested.', Q_STOPPED: 'Quiescent — clock may gate.',
+      Q_EXIT: 'Coming back up.', Q_DENIED: 'Request refused.', Q_CONTINUE: 'Recovering after deny.',
+    };
+    const stateChips = order.map((id) => {
+      const s = this.qStates[id];
+      return { label: s.label, color: ST[id], short: shortDesc[id], levels: 'Rn' + s.req + '  An' + s.acc + '  D' + s.den, onClick: () => this.setState({ section: 'statemachine', smSel: id }) };
+    });
+
+    // ---- cheat ----
+    const cheatSignals = [
+      { sig: 'QACTIVE', color: C.active, driver: 'CMP→CTL', assert: 'HIGH', meaning: 'Component has activity / wants to run. A stimulus to the controller; independent of the handshake.' },
+      { sig: 'QREQn', color: C.req, driver: 'CTL→CMP', assert: 'LOW', meaning: 'Controller requests the component to become quiescent.' },
+      { sig: 'QACCEPTn', color: C.accept, driver: 'CMP→CTL', assert: 'LOW', meaning: 'Component accepts the quiescence request and stops.' },
+      { sig: 'QDENY', color: C.deny, driver: 'CMP→CTL', assert: 'HIGH', meaning: 'Component denies the request and stays operational.' },
+    ];
+    const bit = (v, c) => ({ t: v ? '1' : '0', c: v ? c : 'oklch(0.5 0.01 258)' });
+    const cheatStates = order.map((id) => {
+      const s = this.qStates[id];
+      const r = bit(s.req, C.req), a = bit(s.acc, C.accept), d = bit(s.den, C.deny);
+      return { label: s.label, color: ST[id], req: r.t, reqColor: r.c, acc: a.t, accColor: a.c, den: d.t, denColor: d.c, meaning: s.desc.split('.')[0] + '.' };
+    });
+
+    // ===================== P-CHANNEL =====================
+    const pdata = this.pScenarioData(st.pScenario);
+    const pIdx = Math.min(st.pStep, pdata.steps.length - 1);
+    const pcur = pdata.steps[pIdx];
+    const pprev = pIdx > 0 ? pdata.steps[pIdx - 1] : null;
+    const pEdge = (pprev && pprev.state !== pcur.state) ? (pprev.state + '|' + pcur.state) : null;
+    const pWave = this.buildWave({
+      cycles: pdata.cycles, w: 34, axis: true, playhead: pcur.cy,
+      theme: { glow: true, grid: true, rowH: 30, labelW: 118, cursorColor: 'oklch(0.88 0.005 258)' },
+      signals: pdata.signals,
+    });
+    const pJump = (id) => { const i = pdata.steps.findIndex((s) => s.state === id); if (i >= 0) this.setState({ pStep: i }); };
+    const pSM = this.renderFSM(this.pCfg(), pcur.state, pEdge, pJump);
+    const pScenarios = [
+      { key: 'accept', label: 'Power-down', dotC: PST.P_STABLE },
+      { key: 'deny', label: 'Deny', dotC: PST.P_DENY },
+      { key: 'wakeup', label: 'Power-up', dotC: PC.active },
+    ].map((s) => {
+      const a = st.pScenario === s.key;
+      return { label: s.label, dot: s.dotC, onClick: () => this.setState({ pScenario: s.key, pStep: 0 }), bg: a ? 'color-mix(in oklch, ' + s.dotC + ' 15%, oklch(0.165 0.013 258))' : 'oklch(0.165 0.013 258)', color: a ? 'oklch(0.96 0.005 258)' : 'oklch(0.62 0.008 258)', border: a ? s.dotC : 'oklch(0.28 0.012 258)' };
+    });
+    const pcs = this.pStates[pcur.state];
+    const pCurLevels = [
+      { sig: 'PREQ', val: lvl(pcs.req), color: PC.req },
+      { sig: 'PACCEPT', val: lvl(pcs.acc), color: PC.accept },
+      { sig: 'PDENY', val: lvl(pcs.den), color: PC.deny },
+    ];
+    const pSmStandalone = this.renderFSM(this.pCfg(), st.pSmSel, null, (id) => this.setState({ pSmSel: id }));
+    const psel = this.pStates[st.pSmSel];
+    const pSelLevels = [
+      { sig: 'PREQ', lvl: lvl(psel.req), color: PC.req },
+      { sig: 'PACCEPT', lvl: lvl(psel.acc), color: PC.accept },
+      { sig: 'PDENY', lvl: lvl(psel.den), color: PC.deny },
+    ];
+    const goPTransition = () => this.go('p_transition');
+    const pSignalCards = [
+      { name: 'PACTIVE', color: PC.active, dirText: 'CMP→CTL', polarity: 'activity vector', desc: 'Per-mode activity hint from the component. Each bit votes for a power mode it wants kept available. Independent of the handshake.' },
+      { name: 'PSTATE', color: PC.pstate, dirText: 'CTL→CMP', polarity: 'state bus', desc: 'The power state the controller wants. Driven valid before PREQ and held stable for the whole handshake.' },
+      { name: 'PREQ', color: PC.req, dirText: 'CTL→CMP', polarity: 'active HIGH', desc: 'Transition request. Asserted to ask the component to move to PSTATE; deasserted once it has responded.' },
+      { name: 'PACCEPT', color: PC.accept, dirText: 'CMP→CTL', polarity: 'active HIGH', desc: 'The component accepts the requested transition and switches to the new power state.' },
+      { name: 'PDENY', color: PC.deny, dirText: 'CMP→CTL', polarity: 'active HIGH', desc: 'The component refuses the transition and stays in its current state.' },
+    ].map((c) => ({ ...c, hoverStyle: 'transform:translateY(-3px);border-color:color-mix(in oklch, ' + c.color + ' 55%, oklch(0.28 0.012 258));box-shadow:0 0 0 1px color-mix(in oklch, ' + c.color + ' 36%, transparent), 0 12px 28px -12px ' + c.color + ';' }));
+    const pPowerStates = [
+      { name: 'ON', sub: 'P0 · full power', color: PST.P_STABLE, desc: 'Fully powered and clocked. Normal operation.' },
+      { name: 'RET', sub: 'P1 · clock stopped', color: PC.req, desc: 'Clock removed; state retained at full voltage.' },
+      { name: 'DEEP', sub: 'P2 · low-V retention', color: PC.pstate, desc: 'Voltage dropped to retention level; logic frozen.' },
+      { name: 'OFF', sub: 'P3 · powered down', color: 'oklch(0.6 0.02 258)', desc: 'Power removed. State lost unless saved elsewhere.' },
+    ];
+    const pOrder = ['P_STABLE', 'P_REQUEST', 'P_ACCEPT', 'P_COMPLETE', 'P_DENY', 'P_CONTINUE'];
+    const pShort = {
+      P_STABLE: 'Settled in a state.', P_REQUEST: 'Transition requested.', P_ACCEPT: 'Transition accepted.',
+      P_COMPLETE: 'New state committed.', P_DENY: 'Request refused.', P_CONTINUE: 'Staying put after deny.',
+    };
+    const pStateChips = pOrder.map((id) => {
+      const s = this.pStates[id];
+      return { label: s.label, color: PST[id], short: pShort[id], levels: 'R' + s.req + '  A' + s.acc + '  D' + s.den, onClick: () => this.setState({ section: 'p_statemachine', pSmSel: id }) };
+    });
+    const pCheatSignals = [
+      { sig: 'PACTIVE', color: PC.active, driver: 'CMP→CTL', assert: 'HIGH', meaning: 'Component votes for a power mode it wants available. A hint to the controller; independent of the handshake.' },
+      { sig: 'PSTATE', color: PC.pstate, driver: 'CTL→CMP', assert: 'valid', meaning: 'Encodes the requested power state. Valid before PREQ and stable until the handshake ends.' },
+      { sig: 'PREQ', color: PC.req, driver: 'CTL→CMP', assert: 'HIGH', meaning: 'Controller requests the PSTATE transition.' },
+      { sig: 'PACCEPT', color: PC.accept, driver: 'CMP→CTL', assert: 'HIGH', meaning: 'Component accepts and enters the new power state.' },
+      { sig: 'PDENY', color: PC.deny, driver: 'CMP→CTL', assert: 'HIGH', meaning: 'Component denies and stays in its current state.' },
+    ];
+    const pCheatStates = pOrder.map((id) => {
+      const s = this.pStates[id];
+      const r = bit(s.req, PC.req), a = bit(s.acc, PC.accept), d = bit(s.den, PC.deny);
+      return { label: s.label, color: PST[id], req: r.t, reqColor: r.c, acc: a.t, accColor: a.c, den: d.t, denColor: d.c, meaning: s.desc.split('.')[0] + '.' };
+    });
+
+    // ---- topology header (channel-aware) ----
+    const headerTitle = channel === 'P' ? 'LPI · P-Channel Explorer' : 'LPI · Q-Channel Explorer';
+    const ctrlTop = channel === 'P' ? 'PWR CTRL' : 'CLK / PWR';
+    const goPrimary = () => this.go(channel === 'P' ? 'p_transition' : 'handshake');
+    const wire = (label, color, dir, glowOn, delay) => ({
+      label, color,
+      glow: glowOn ? '0 0 12px ' + color : 'none',
+      dot: 'position:absolute;top:-2.5px;width:8px;height:8px;border-radius:50%;background:' + color + ';box-shadow:0 0 7px ' + color + ';animation:' + (dir === 'R' ? 'flowR' : 'flowL') + ' 2.8s linear infinite ' + delay + ';',
+      arrow: dir === 'R'
+        ? 'position:absolute;right:-1px;top:-3px;border-left:7px solid ' + color + ';border-top:4.5px solid transparent;border-bottom:4.5px solid transparent;'
+        : 'position:absolute;left:-1px;top:-3px;border-right:7px solid ' + color + ';border-top:4.5px solid transparent;border-bottom:4.5px solid transparent;',
+      onClick: goPrimary,
+    });
+    let topoWires;
+    if (channel === 'P') {
+      const g = (k) => (sec === 'p_transition' && pcur.sig === k);
+      topoWires = [
+        wire('PACTIVE', PC.active, 'L', g('act'), '.2s'),
+        wire('PREQ', PC.req, 'R', g('req'), '0s'),
+        wire('PSTATE', PC.pstate, 'R', g('req'), '.1s'),
+        wire('PACCEPT', PC.accept, 'L', g('acc'), '.4s'),
+        wire('PDENY', PC.deny, 'L', g('den'), '.6s'),
+      ];
+    } else {
+      const g = (k) => (sec === 'handshake' && cur.sig === k);
+      topoWires = [
+        wire('QACTIVE', C.active, 'L', g('act'), '.2s'),
+        wire('QREQn', C.req, 'R', g('req'), '0s'),
+        wire('QACCEPTn', C.accept, 'L', g('acc'), '.4s'),
+        wire('QDENY', C.deny, 'L', g('den'), '.6s'),
+      ];
+    }
+
+    // ---- header hint ----
+    let hintLabel = channel === 'P' ? 'P-CHANNEL' : 'Q-CHANNEL';
+    let hintColor = channel === 'P' ? PC.lpi : C.lpi;
+    let hintText = channel === 'P' ? 'power-state handshake' : 'low-power handshake';
+    if (sec === 'handshake') { hintLabel = cur.state; hintColor = ST[cur.state]; hintText = st.scenario + ' path'; }
+    else if (sec === 'statemachine') { hintLabel = st.smSel; hintColor = ST[st.smSel]; hintText = 'state detail'; }
+    else if (sec === 'p_transition') { hintLabel = pcur.state; hintColor = PST[pcur.state]; hintText = st.pScenario + ' path'; }
+    else if (sec === 'p_statemachine') { hintLabel = st.pSmSel; hintColor = PST[st.pSmSel]; hintText = 'state detail'; }
+
+    // ---- inspector ----
+    let insp = { label: 'hint', color: 'oklch(0.6 0.01 258)', text: 'hover any signal label to inspect it' };
+    if (st.hover && st.hover.desc) insp = { label: st.hover.full || st.hover.name, color: st.hover.color, text: st.hover.desc };
+
+    return {
+      navGroups,
+      isOverview: sec === 'overview', isHandshake: sec === 'handshake', isStateMachine: sec === 'statemachine', isCheat: sec === 'cheat',
+      isPOverview: sec === 'p_overview', isPTransition: sec === 'p_transition', isPStateMachine: sec === 'p_statemachine', isPCheat: sec === 'p_cheat',
+      goHandshake: () => this.go('handshake'), goPTransition,
+      headerTitle, ctrlTop, navNote, topoWires,
+      hintLabel, hintColor, hintText,
+      // handshake
+      qWave, qSM, scenarios, waveFile: data.file,
+      stepLabel: cur.label, stepText: cur.text, stepAccent: cur.accent,
+      stepCounter: (stepIdx + 1) + '/' + data.steps.length,
+      stepPrev: () => this.step(-1, data.steps.length - 1), stepNext: () => this.step(1, data.steps.length - 1),
+      curStateLabel: cur.state, curStateColor: ST[cur.state], curLevels,
+      inspLabel: insp.label, inspColor: insp.color, inspText: insp.text,
+      // state machine
+      smStandalone, selLabel: sel.label, selColor: ST[st.smSel], selDesc: sel.desc, selLevels, selOperational: sel.op === 'quiescent' ? 'quiescent · clock may be removed' : 'operational',
+      // overview
+      signalCards, stateChips,
+      // cheat
+      cheatSignals, cheatStates,
+      // ===== P-channel =====
+      pWave, pSM, pScenarios, pWaveFile: pdata.file,
+      pStepLabel: pcur.label, pStepText: pcur.text, pStepAccent: pcur.accent,
+      pStepCounter: (pIdx + 1) + '/' + pdata.steps.length,
+      pStepPrev: () => this.setState((s) => ({ pStep: Math.max(0, s.pStep - 1) })),
+      pStepNext: () => this.setState((s) => ({ pStep: Math.min(pdata.steps.length - 1, s.pStep + 1) })),
+      pCurStateLabel: pcur.state, pCurStateColor: PST[pcur.state], pCurLevels,
+      pSmStandalone, pSelLabel: psel.label, pSelColor: PST[st.pSmSel], pSelDesc: psel.desc, pSelLevels,
+      pSelOperational: psel.op === 'stable' ? 'stable · settled power state' : (psel.op === 'settling' ? 'settling · handshake completing' : 'transition in progress'),
+      pSignalCards, pPowerStates, pStateChips,
+      pCheatSignals, pCheatStates,
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;padding:0;}
+  *{box-sizing:border-box;}
+  ::selection{background:oklch(0.80 0.13 70 / 0.32);}
+  ::-webkit-scrollbar{height:10px;width:10px;}
+  ::-webkit-scrollbar-thumb{background:oklch(0.34 0.01 258);border-radius:6px;}
+  ::-webkit-scrollbar-thumb:hover{background:oklch(0.42 0.01 258);}
+  ::-webkit-scrollbar-track{background:transparent;}
+  @keyframes flowR{0%{left:-6%;opacity:0;}12%{opacity:1;}88%{opacity:1;}100%{left:102%;opacity:0;}}
+  @keyframes flowL{0%{left:102%;opacity:0;}12%{opacity:1;}88%{opacity:1;}100%{left:-6%;opacity:0;}}
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:oklch(0.145 0.012 258);color:oklch(0.93 0.005 258);font-family:'IBM Plex Sans',system-ui,sans-serif;">
+
+  <!-- ===================== TOPOLOGY HEADER ===================== -->
+  <header style="position:sticky;top:0;z-index:30;background:oklch(0.13 0.011 258);border-bottom:1px solid oklch(0.27 0.011 258);padding:14px 26px;backdrop-filter:blur(6px);">
+    <div style="display:flex;align-items:center;gap:26px;max-width:1500px;margin:0 auto;">
+      <div style="flex:0 0 auto;">
+        <a href="AMBA%20Explorer.dc.html" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.26em;color:oklch(0.58 0.01 258);text-transform:uppercase;" style-hover="color:oklch(0.82 0.005 258);"><span style="font-size:13px;letter-spacing:0;">←</span> AMBA</a>
+        <div style="font-size:18px;font-weight:600;letter-spacing:-0.01em;margin-top:1px;">{{ headerTitle }}</div>
+      </div>
+
+      <div style="flex:1;display:flex;align-items:center;gap:0;min-width:0;">
+        <div style="flex:0 0 112px;text-align:center;padding:11px 6px;border:1.5px solid oklch(0.42 0.012 258);border-radius:9px;background:oklch(0.20 0.013 258);font-family:'JetBrains Mono',monospace;">
+          <div style="font-size:12px;color:oklch(0.92 0.005 258);font-weight:600;">{{ ctrlTop }}</div>
+          <div style="font-size:9.5px;color:oklch(0.55 0.01 258);margin-top:2px;">Bridge</div>
+        </div>
+
+        <div style="flex:1;display:grid;grid-template-columns:1fr;gap:4px;padding:0 6px;min-width:0;">
+          <sc-for list="{{ topoWires }}" as="wire" hint-placeholder-count="5">
+            <div onClick="{{ wire.onClick }}" style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:{{ wire.color }};width:66px;flex:0 0 auto;text-align:right;">{{ wire.label }}</span>
+              <span style="flex:1;height:3px;border-radius:2px;background:{{ wire.color }};position:relative;box-shadow:{{ wire.glow }};">
+                <span style="{{ wire.dot }}"></span>
+                <span style="{{ wire.arrow }}"></span>
+              </span>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="flex:0 0 112px;text-align:center;padding:11px 6px;border:1.5px solid oklch(0.42 0.012 258);border-radius:9px;background:oklch(0.20 0.013 258);font-family:'JetBrains Mono',monospace;">
+          <div style="font-size:12px;color:oklch(0.92 0.005 258);font-weight:600;">COMPLETER</div>
+          <div style="font-size:9.5px;color:oklch(0.55 0.01 258);margin-top:2px;">Peripheral</div>
+        </div>
+      </div>
+
+      <div style="flex:0 0 170px;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.5;color:oklch(0.6 0.01 258);border-left:1px solid oklch(0.27 0.011 258);padding-left:18px;min-height:38px;">
+        <span style="color:{{ hintColor }};font-weight:600;">{{ hintLabel }}</span><br>
+        <span style="color:oklch(0.6 0.01 258);">{{ hintText }}</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================== BODY ===================== -->
+  <div style="display:grid;grid-template-columns:236px 1fr;max-width:1500px;margin:0 auto;align-items:start;">
+
+    <!-- NAV -->
+    <nav style="position:sticky;top:115px;align-self:start;padding:22px 14px 40px;border-right:1px solid oklch(0.24 0.011 258);font-family:'JetBrains Mono',monospace;">
+      <sc-for list="{{ navGroups }}" as="grp" hint-placeholder-count="1">
+        <div style="margin-bottom:18px;">
+          <div style="font-size:10px;letter-spacing:0.18em;color:oklch(0.48 0.01 258);text-transform:uppercase;padding:0 10px 7px;">{{ grp.title }}</div>
+          <sc-for list="{{ grp.items }}" as="it" hint-placeholder-count="4">
+            <div onClick="{{ it.onClick }}" style="display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:7px;cursor:pointer;font-size:13px;margin-bottom:2px;background:{{ it.bg }};color:{{ it.color }};border-left:2px solid {{ it.bar }};opacity:{{ it.op }};" style-hover="background:oklch(0.21 0.012 258);">
+              <span style="width:7px;height:7px;border-radius:2px;background:{{ it.dot }};flex:0 0 auto;"></span>
+              {{ it.label }}
+            </div>
+          </sc-for>
+        </div>
+      </sc-for>
+      <div style="margin:18px 10px 0;padding-top:16px;border-top:1px solid oklch(0.22 0.01 258);font-size:10.5px;line-height:1.6;color:oklch(0.52 0.01 258);">{{ navNote }}</div>
+    </nav>
+
+    <!-- MAIN -->
+    <main style="padding:30px 38px 80px;min-width:0;">
+
+      <!-- ============ OVERVIEW ============ -->
+      <sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+        <div data-screen-label="APB Overview">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.72 0.13 72);text-transform:uppercase;">APB / Overview</div>
+          <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">A simple two-phase peripheral bus</h1>
+          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:730px;margin:0 0 26px;">APB is the low-power, low-bandwidth member of AMBA — built for register and peripheral access. Every transfer is just two phases: a one-cycle <strong style="color:oklch(0.80 0.13 70);">SETUP</strong>, then an <strong style="color:oklch(0.78 0.15 155);">ACCESS</strong> phase the completer can stretch with wait states. No bursts, no pipelining. Open <strong style="color:oklch(0.80 0.13 70);">Transfer</strong> to step a read and a write through.</p>
+
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.16em;color:oklch(0.5 0.01 258);text-transform:uppercase;margin-bottom:12px;">The two-phase transfer</div>
+          <div style="display:flex;align-items:stretch;gap:0;flex-wrap:wrap;max-width:760px;margin-bottom:30px;">
+            <sc-for list="{{ phases }}" as="ph" hint-placeholder-count="3">
+              <sc-if value="{{ ph.notFirst }}"><div style="display:flex;align-items:center;padding:0 6px;color:oklch(0.5 0.06 70);font-size:18px;">→</div></sc-if>
+              <div style="flex:1 1 0;min-width:150px;background:oklch(0.175 0.013 258);border:1px solid oklch(0.28 0.012 258);border-top:2px solid {{ ph.color }};border-radius:11px;padding:14px 16px;">
+                <div style="font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;color:{{ ph.color }};margin-bottom:5px;">{{ ph.name }}</div>
+                <div style="font-size:12px;line-height:1.5;color:oklch(0.66 0.008 258);">{{ ph.desc }}</div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(236px,1fr));gap:14px;margin-bottom:30px;">
+            <sc-for list="{{ signalCards }}" as="c" hint-placeholder-count="6">
+              <div onClick="{{ goTransfer }}" style="background:oklch(0.175 0.013 258);border:1px solid oklch(0.28 0.012 258);border-top:2px solid {{ c.color }};border-radius:11px;padding:16px 17px;cursor:pointer;transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;" style-hover="{{ c.hoverStyle }}">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;gap:8px;">
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:{{ c.color }};">{{ c.name }}</span>
+                  <span style="display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:oklch(0.6 0.01 258);background:oklch(0.13 0.01 258);border:1px solid oklch(0.27 0.012 258);border-radius:6px;padding:3px 7px;">{{ c.dirText }}</span>
+                </div>
+                <div style="font-size:12.5px;line-height:1.5;color:oklch(0.66 0.008 258);">{{ c.desc }}</div>
+                <div style="margin-top:11px;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:{{ c.color }};opacity:0.85;">{{ c.polarity }}</div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.16em;color:oklch(0.5 0.01 258);text-transform:uppercase;margin-bottom:12px;">The three operating states</div>
+          <div style="display:flex;flex-wrap:wrap;gap:9px;max-width:760px;">
+            <sc-for list="{{ stateChips }}" as="s" hint-placeholder-count="3">
+              <div onClick="{{ s.onClick }}" style="display:flex;flex-direction:column;gap:5px;background:oklch(0.175 0.013 258);border:1px solid oklch(0.28 0.012 258);border-left:3px solid {{ s.color }};border-radius:9px;padding:11px 13px;cursor:pointer;min-width:160px;" style-hover="background:oklch(0.2 0.014 258);">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:{{ s.color }};">{{ s.label }}</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:oklch(0.58 0.01 258);">{{ s.levels }}</span>
+                <span style="font-size:11.5px;color:oklch(0.64 0.008 258);line-height:1.4;">{{ s.short }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ TRANSFER (synced wave + state machine) ============ -->
+      <sc-if value="{{ isTransfer }}">
+        <div data-screen-label="APB Transfer">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.72 0.13 72);text-transform:uppercase;">APB / Transfer</div>
+          <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">Step a transfer, watch the state</h1>
+          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:740px;margin:0 0 18px;">Step through a transfer with ◀ ▶. The <strong style="color:oklch(0.86 0.01 258);">waveform</strong> and the <strong style="color:oklch(0.86 0.01 258);">state machine</strong> move together — or click any state node to jump there. Start with <em>Write</em> (it has a wait state), then try a back-to-back pair and an error.</p>
+
+          <div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;">
+            <sc-for list="{{ scenarios }}" as="s" hint-placeholder-count="4">
+              <div onClick="{{ s.onClick }}" style="display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:12.5px;padding:8px 14px;border-radius:8px;cursor:pointer;background:{{ s.bg }};color:{{ s.color }};border:1px solid {{ s.border }};">
+                <span style="width:8px;height:8px;border-radius:50%;background:{{ s.dot }};"></span>{{ s.label }}
+              </div>
+            </sc-for>
+          </div>
+
+          <!-- STEP CONTROL BAR -->
+          <div style="margin-bottom:14px;background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-radius:13px;display:flex;align-items:stretch;overflow:hidden;">
+            <div style="display:flex;gap:6px;align-items:center;padding:0 16px;border-right:1px solid oklch(0.24 0.011 258);">
+              <div onClick="{{ stepPrev }}" style="font-family:'JetBrains Mono',monospace;font-size:15px;color:oklch(0.7 0.01 258);width:30px;height:30px;display:grid;place-items:center;border:1px solid oklch(0.32 0.012 258);border-radius:7px;cursor:pointer;" style-hover="background:oklch(0.22 0.013 258);">◀</div>
+              <div onClick="{{ stepNext }}" style="font-family:'JetBrains Mono',monospace;font-size:15px;color:oklch(0.93 0.005 258);width:30px;height:30px;display:grid;place-items:center;border:1px solid oklch(0.4 0.012 258);border-radius:7px;cursor:pointer;background:oklch(0.22 0.013 258);" style-hover="background:oklch(0.27 0.013 258);">▶</div>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:oklch(0.55 0.01 258);margin-left:4px;">{{ stepCounter }}</span>
+            </div>
+            <div style="flex:1;padding:13px 18px;">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:{{ stepAccent }};letter-spacing:0.05em;margin-bottom:3px;">{{ stepLabel }}</div>
+              <div style="font-size:13.5px;line-height:1.5;color:oklch(0.82 0.006 258);">{{ stepText }}</div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:18px;flex-wrap:wrap;align-items:stretch;">
+            <!-- WAVEFORM -->
+            <div style="flex:1 1 440px;min-width:340px;background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-radius:13px;overflow:hidden;display:flex;flex-direction:column;">
+              <div style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:oklch(0.118 0.01 258);border-bottom:1px solid oklch(0.26 0.011 258);font-family:'JetBrains Mono',monospace;font-size:11px;color:oklch(0.56 0.01 258);">
+                <span style="width:9px;height:9px;border-radius:50%;background:oklch(0.62 0.16 25);"></span>
+                <span style="width:9px;height:9px;border-radius:50%;background:oklch(0.82 0.13 85);"></span>
+                <span style="width:9px;height:9px;border-radius:50%;background:oklch(0.78 0.15 150);"></span>
+                <span style="margin-left:6px;">{{ waveFile }}</span>
+              </div>
+              <div style="padding:18px 18px 12px;background:oklch(0.115 0.01 258);overflow-x:auto;flex:1;">{{ wave }}</div>
+            </div>
+
+            <!-- STATE MACHINE -->
+            <div style="flex:1 1 360px;min-width:330px;background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-radius:13px;overflow:hidden;display:flex;flex-direction:column;">
+              <div style="padding:10px 16px;background:oklch(0.118 0.01 258);border-bottom:1px solid oklch(0.26 0.011 258);font-family:'JetBrains Mono',monospace;font-size:11px;color:oklch(0.56 0.01 258);display:flex;justify-content:space-between;align-items:center;">
+                <span>state machine</span>
+                <span style="color:oklch(0.5 0.01 258);">click a node to jump</span>
+              </div>
+              <div style="padding:16px 14px;flex:1;display:flex;align-items:center;">{{ sm }}</div>
+              <div style="padding:0 16px 15px;display:flex;flex-wrap:wrap;gap:7px;align-items:center;">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:{{ curStateColor }};font-weight:700;margin-right:4px;">{{ curStateLabel }}</span>
+                <sc-for list="{{ curLevels }}" as="l" hint-placeholder-count="3">
+                  <span style="display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:{{ l.color }};background:color-mix(in oklch, {{ l.color }} 13%, transparent);border:1px solid color-mix(in oklch, {{ l.color }} 40%, transparent);border-radius:6px;padding:2px 8px;">{{ l.sig }} <strong style="font-weight:700;">{{ l.val }}</strong></span>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:12px;color:oklch(0.6 0.01 258);background:oklch(0.17 0.013 258);border:1px solid oklch(0.27 0.012 258);border-radius:9px;padding:11px 15px;max-width:560px;">
+            <span style="color:{{ inspColor }};font-weight:600;">{{ inspLabel }}</span> · <span style="color:oklch(0.7 0.008 258);">{{ inspText }}</span>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ STATE MACHINE (standalone) ============ -->
+      <sc-if value="{{ isStateMachine }}">
+        <div data-screen-label="APB State Machine">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.72 0.13 72);text-transform:uppercase;">APB / State Machine</div>
+          <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">IDLE · SETUP · ACCESS</h1>
+          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:740px;margin:0 0 22px;">Three states, driven entirely by <strong style="color:oklch(0.80 0.13 70);">PSEL</strong> and <strong style="color:oklch(0.72 0.16 48);">PENABLE</strong>. From ACCESS, the completer's <strong style="color:oklch(0.84 0.15 128);">PREADY</strong> decides the exit: stay (wait state), loop to a new SETUP (back-to-back), or return to IDLE. Click a state to inspect it.</p>
+
+          <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start;">
+            <div style="flex:1 1 480px;min-width:340px;background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-radius:13px;padding:20px 18px;">{{ smStandalone }}
+              <div style="margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:10px;color:oklch(0.5 0.01 258);line-height:1.6;">Node values — <span style="color:oklch(0.80 0.13 70);">SEL</span>=PSEL · <span style="color:oklch(0.72 0.16 48);">EN</span>=PENABLE &nbsp;(1=HIGH, 0=LOW)</div>
+            </div>
+            <div style="flex:1 1 300px;min-width:280px;background:oklch(0.175 0.013 258);border:1px solid oklch(0.28 0.012 258);border-top:2px solid {{ selColor }};border-radius:13px;padding:20px;">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:{{ selColor }};margin-bottom:4px;">{{ selLabel }}</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:oklch(0.56 0.01 258);margin-bottom:14px;">{{ selOperational }}</div>
+              <div style="display:flex;gap:7px;margin-bottom:16px;flex-wrap:wrap;">
+                <sc-for list="{{ selLevels }}" as="l" hint-placeholder-count="2">
+                  <span style="display:inline-flex;flex-direction:column;align-items:center;gap:3px;font-family:'JetBrains Mono',monospace;background:color-mix(in oklch, {{ l.color }} 12%, transparent);border:1px solid color-mix(in oklch, {{ l.color }} 40%, transparent);border-radius:8px;padding:7px 12px;">
+                    <span style="font-size:9.5px;color:{{ l.color }};">{{ l.sig }}</span>
+                    <span style="font-size:14px;font-weight:700;color:{{ l.color }};">{{ l.lvl }}</span>
+                  </span>
+                </sc-for>
+              </div>
+              <div style="font-size:13.5px;line-height:1.6;color:oklch(0.74 0.008 258);">{{ selDesc }}</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ SIGNAL REFERENCE ============ -->
+      <sc-if value="{{ isCheat }}">
+        <div data-screen-label="APB Signal Reference">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.72 0.13 72);text-transform:uppercase;">APB / Signal Reference</div>
+          <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">Signals &amp; state table</h1>
+          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:720px;margin:0 0 24px;"><span style="color:oklch(0.56 0.01 258);">REQ→CMP</span> = driven by the requester (bridge), <span style="color:oklch(0.56 0.01 258);">CMP→REQ</span> = driven by the completer (peripheral).</p>
+
+          <div style="background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-radius:12px;overflow:hidden;max-width:900px;margin-bottom:26px;">
+            <div style="display:grid;grid-template-columns:120px 96px 96px 1fr;gap:14px;padding:11px 18px;background:oklch(0.135 0.011 258);border-bottom:1px solid oklch(0.26 0.011 258);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:oklch(0.5 0.01 258);text-transform:uppercase;">
+              <span>Signal</span><span>Driver</span><span>Asserted</span><span>Meaning</span>
+            </div>
+            <sc-for list="{{ cheatSignals }}" as="r" hint-placeholder-count="9">
+              <div style="display:grid;grid-template-columns:120px 96px 96px 1fr;gap:14px;align-items:center;padding:10px 18px;border-top:1px solid oklch(0.21 0.01 258);" style-hover="background:oklch(0.19 0.013 258);">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:{{ r.color }};">{{ r.sig }}</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:oklch(0.62 0.01 258);">{{ r.driver }}</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:{{ r.color }};">{{ r.assert }}</span>
+                <span style="font-size:12.5px;color:oklch(0.68 0.008 258);line-height:1.45;">{{ r.meaning }}</span>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.16em;color:oklch(0.5 0.01 258);text-transform:uppercase;margin-bottom:11px;">State table</div>
+          <div style="background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-radius:12px;overflow:hidden;max-width:900px;">
+            <div style="display:grid;grid-template-columns:130px 80px 80px 1fr;gap:12px;padding:11px 18px;background:oklch(0.135 0.011 258);border-bottom:1px solid oklch(0.26 0.011 258);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;color:oklch(0.5 0.01 258);text-transform:uppercase;">
+              <span>State</span><span style="text-align:center;">PSEL</span><span style="text-align:center;">PENABLE</span><span>Meaning</span>
+            </div>
+            <sc-for list="{{ cheatStates }}" as="r" hint-placeholder-count="3">
+              <div style="display:grid;grid-template-columns:130px 80px 80px 1fr;gap:12px;align-items:center;padding:10px 18px;border-top:1px solid oklch(0.21 0.01 258);" style-hover="background:oklch(0.19 0.013 258);">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:{{ r.color }};">{{ r.label }}</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;text-align:center;color:{{ r.selColor }};">{{ r.sel }}</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;text-align:center;color:{{ r.enColor }};">{{ r.en }}</span>
+                <span style="font-size:12px;color:oklch(0.68 0.008 258);line-height:1.45;">{{ r.meaning }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:oklch(0.5 0.01 258);line-height:1.6;max-width:900px;">SETUP always lasts exactly one cycle. ACCESS holds until PREADY is HIGH; every cycle PREADY is LOW is a wait state. PSLVERR and PRDATA are sampled on the cycle PREADY is HIGH. APB4 adds PSTRB (write byte lanes) and PPROT (protection); APB5 adds wakeup/user signals.</div>
+        </div>
+      </sc-if>
+
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  state = { section: 'overview', scenario: 'write', step: 0, smSel: 'IDLE', hover: null };
+
+  C = {
+    sel: 'oklch(0.80 0.13 70)', enable: 'oklch(0.72 0.16 48)', write: 'oklch(0.74 0.14 245)',
+    addr: 'oklch(0.72 0.14 305)', wdata: 'oklch(0.78 0.13 195)', rdata: 'oklch(0.78 0.15 155)',
+    ready: 'oklch(0.84 0.15 128)', err: 'oklch(0.66 0.18 28)', clk: 'oklch(0.72 0.01 258)', apb: 'oklch(0.74 0.12 70)',
+  };
+  ST = { IDLE: 'oklch(0.62 0.03 258)', SETUP: 'oklch(0.80 0.13 70)', ACCESS: 'oklch(0.78 0.15 155)' };
+
+  apbStates = {
+    IDLE: { label: 'IDLE', sel: 0, en: 0, op: 'idle', desc: 'No transfer. PSEL and PENABLE are LOW; the peripheral is not selected and the bus is quiet.' },
+    SETUP: { label: 'SETUP', sel: 1, en: 0, op: 'setup', desc: 'The requester asserts PSEL with PENABLE still LOW, driving PADDR, PWRITE and (for a write) PWDATA. SETUP always lasts exactly one clock.' },
+    ACCESS: { label: 'ACCESS', sel: 1, en: 1, op: 'access', desc: 'PENABLE is HIGH. The transfer holds here until the completer drives PREADY HIGH — extra cycles with PREADY LOW are wait states. Data moves on the cycle PREADY is HIGH.' },
+  };
+
+  go = (s) => this.setState({ section: s, hover: null });
+  setHover = (info) => this.setState({ hover: info });
+  step(dir, max) { this.setState((st) => { let v = st.step + dir; if (v < 0) v = 0; if (v > max) v = max; return { step: v }; }); }
+
+  miniSrc(src, color) {
+    const h = React.createElement;
+    const req = src === 'req';
+    const aw = 12, ah = 9, cyy = 4.5, hd = 5;
+    const arrowR = h('svg', { width: aw, height: ah, viewBox: '0 0 ' + aw + ' ' + ah, style: { display: 'block' } }, [
+      h('line', { key: 'l', x1: 0.5, y1: cyy, x2: aw - hd, y2: cyy, stroke: color, strokeWidth: 1.3, strokeLinecap: 'round' }),
+      h('polygon', { key: 'p', points: (aw - 0.5) + ',' + cyy + ' ' + (aw - hd) + ',' + (cyy - 2.6) + ' ' + (aw - hd) + ',' + (cyy + 2.6), fill: color }),
+    ]);
+    const arrowL = h('svg', { width: aw, height: ah, viewBox: '0 0 ' + aw + ' ' + ah, style: { display: 'block' } }, [
+      h('line', { key: 'l', x1: hd, y1: cyy, x2: aw - 0.5, y2: cyy, stroke: color, strokeWidth: 1.3, strokeLinecap: 'round' }),
+      h('polygon', { key: 'p', points: '0.5,' + cyy + ' ' + hd + ',' + (cyy - 2.6) + ' ' + hd + ',' + (cyy + 2.6), fill: color }),
+    ]);
+    const tag = (t) => h('span', { key: 't', style: { color: color, fontWeight: 600 } }, t);
+    const kids = req ? [tag('REQ'), arrowR] : [arrowL, tag('CMP')];
+    return h('span', { key: 'src', title: req ? 'Requester drives' : 'Completer drives', style: { display: 'inline-flex', alignItems: 'center', gap: 3, fontFamily: "'JetBrains Mono', monospace", fontSize: 8.5, lineHeight: 1, flex: '0 0 auto' } }, kids);
+  }
+
+  buildWave(opts) {
+    const h = React.createElement;
+    const cycles = opts.cycles || 12;
+    const w = opts.w || 34;
+    const t = opts.theme || {};
+    const rowH = t.rowH || 30;
+    const hi = 7, lo = rowH - 8, mid = (hi + lo) / 2;
+    const traceW = cycles * w;
+    const labelW = t.labelW || 120;
+    const mono = "'JetBrains Mono', monospace";
+    const hovered = this.state.hover && this.state.hover.name;
+
+    function stepPath(bits, ww) {
+      let x = 0;
+      let d = 'M0,' + (bits[0] ? hi : lo);
+      for (let i = 0; i < bits.length; i++) {
+        const y = bits[i] ? hi : lo;
+        d += ' L' + x + ',' + y;
+        x += ww;
+        d += ' L' + x + ',' + y;
+      }
+      return d;
+    }
+
+    const headerRow = opts.axis ? (() => {
+      const cells = [];
+      for (let c = 0; c < cycles; c++) cells.push(h('div', { key: c, style: { width: w, flex: '0 0 auto', textAlign: 'center', fontFamily: mono, fontSize: 9.5, color: 'oklch(0.46 0.01 258)' } }, 'T' + c));
+      return h('div', { key: 'ax', style: { display: 'flex', height: 16, marginLeft: labelW } }, cells);
+    })() : null;
+
+    const rows = opts.signals.map((s, idx) => {
+      const kids = [];
+      if (t.grid) {
+        for (let c = 0; c <= cycles; c++) kids.push(h('line', { key: 'g' + c, x1: c * w, y1: 0, x2: c * w, y2: rowH, stroke: 'oklch(0.26 0.008 258)', strokeWidth: 1 }));
+      }
+      if (s.type === 'clk') {
+        const bits = [];
+        for (let c = 0; c < cycles; c++) { bits.push(1); bits.push(0); }
+        kids.push(h('path', { key: 'p', d: stepPath(bits, w / 2), fill: 'none', stroke: s.color, strokeWidth: 1.4 }));
+      } else if (s.type === 'bus') {
+        (s.segs || []).forEach((sg, i) => {
+          const x0 = sg.from * w, x1 = sg.to * w;
+          const pts = x0 + ',' + mid + ' ' + (x0 + 6) + ',' + hi + ' ' + (x1 - 6) + ',' + hi + ' ' + x1 + ',' + mid + ' ' + (x1 - 6) + ',' + lo + ' ' + (x0 + 6) + ',' + lo;
+          kids.push(h('polygon', { key: 'b' + i, points: pts, fill: 'color-mix(in oklch, ' + s.color + ' 16%, transparent)', stroke: s.color, strokeWidth: 1.4 }));
+          if (sg.value) kids.push(h('text', { key: 'v' + i, x: (x0 + x1) / 2, y: mid + 4, fill: s.color, fontSize: 10.5, fontFamily: mono, textAnchor: 'middle' }, sg.value));
+        });
+        kids.unshift(h('line', { key: 'idle', x1: 0, y1: mid, x2: traceW, y2: mid, stroke: 'oklch(0.32 0.01 258)', strokeWidth: 1, strokeDasharray: '3 3' }));
+      } else {
+        kids.push(h('path', { key: 'p', d: stepPath(s.bits, w), fill: 'none', stroke: s.color, strokeWidth: 1.9, strokeLinejoin: 'round', style: t.glow ? { filter: 'drop-shadow(0 0 5px ' + s.color + ')' } : undefined }));
+      }
+      (s.marks || []).forEach((mc, i) => kids.push(h('circle', { key: 'm' + i, cx: mc * w, cy: mid, r: 3.6, fill: s.color, stroke: 'oklch(0.115 0.01 258)', strokeWidth: 1.4 })));
+
+      const svg = h('svg', { key: 's', width: traceW, height: rowH, style: { display: 'block', overflow: 'visible' } }, kids);
+      const isHov = hovered && s.name === hovered;
+      const srcEl = s.src ? this.miniSrc(s.src, s.color) : null;
+      const nameSpan = h('span', { key: 'n', style: { fontFamily: mono, fontSize: 11, color: s.type === 'clk' ? 'oklch(0.6 0.01 258)' : s.color, letterSpacing: '0.02em', whiteSpace: 'nowrap' } }, s.name);
+      const label = h('div', {
+        key: 'l',
+        onMouseEnter: s.desc ? () => this.setHover({ name: s.name, color: s.color, desc: s.desc, full: s.full }) : undefined,
+        onMouseLeave: s.desc ? () => this.setHover(null) : undefined,
+        style: { width: labelW, flex: '0 0 auto', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 6, paddingRight: 11, height: rowH, cursor: s.desc ? 'help' : 'default' },
+      }, [srcEl, nameSpan]);
+      return h('div', { key: idx, style: { display: 'flex', alignItems: 'center', height: rowH, background: isHov ? 'oklch(0.2 0.013 258)' : 'transparent', borderRadius: 5 } }, [label, svg]);
+    });
+
+    let overlay = null;
+    if (opts.playhead != null) {
+      const left = labelW + opts.playhead * w;
+      overlay = h('div', { key: 'cur', style: { position: 'absolute', top: opts.axis ? 16 : 0, bottom: 2, left: left, width: 0, borderLeft: '1.5px dashed ' + (t.cursorColor || 'oklch(0.88 0.005 258)'), pointerEvents: 'none', zIndex: 5 } },
+        h('span', { style: { position: 'absolute', top: -1, left: -5, width: 9, height: 9, borderRadius: '50%', background: t.cursorColor || 'oklch(0.88 0.005 258)' } }));
+    }
+    return h('div', { style: { position: 'relative', display: 'inline-block', minWidth: '100%' } }, [headerRow, ...rows, overlay]);
+  }
+
+  scenarioData(sc) {
+    const C = this.C;
+    const clk = { type: 'clk', name: 'PCLK', color: C.clk };
+    if (sc === 'read') {
+      return {
+        file: 'apb_read.vcd — single read',
+        cycles: 7,
+        signals: [
+          clk,
+          { name: 'PSEL', color: C.sel, src: 'req', bits: [0, 1, 1, 0, 0, 0, 0], desc: 'Peripheral select. HIGH for SETUP and ACCESS.', full: 'Select' },
+          { name: 'PENABLE', color: C.enable, src: 'req', bits: [0, 0, 1, 0, 0, 0, 0], desc: 'Enable. LOW in SETUP, HIGH in ACCESS.', full: 'Enable' },
+          { name: 'PWRITE', color: C.write, src: 'req', bits: [0, 0, 0, 0, 0, 0, 0], desc: 'Direction. LOW here — a read.', full: 'Direction' },
+          { type: 'bus', name: 'PADDR', color: C.addr, src: 'req', segs: [{ from: 1, to: 3, value: '0x44' }], desc: 'Target address, valid from SETUP through ACCESS.', full: 'Address' },
+          { type: 'bus', name: 'PRDATA', color: C.rdata, src: 'cmp', segs: [{ from: 2, to: 3, value: '0x3C' }], desc: 'Read data, returned by the completer on the cycle PREADY is HIGH.', full: 'Read Data' },
+          { name: 'PREADY', color: C.ready, src: 'cmp', bits: [1, 1, 1, 1, 1, 1, 1], desc: 'Completer ready. HIGH throughout — no wait states, so ACCESS completes in one cycle.', full: 'Ready' },
+        ],
+        steps: [
+          { cy: 0, state: 'IDLE', sig: null, accent: this.ST.IDLE, label: '1 · IDLE', text: 'No transfer. PSEL is LOW — the bus is idle.' },
+          { cy: 1, state: 'SETUP', sig: 'sel', accent: this.ST.SETUP, label: '2 · SETUP', text: 'The bridge selects the peripheral: PSEL HIGH, PENABLE LOW. PWRITE LOW marks a read and PADDR is driven. This phase lasts one cycle.' },
+          { cy: 2, state: 'ACCESS', sig: 'en', accent: this.ST.ACCESS, label: '3 · ACCESS', text: 'PENABLE goes HIGH and PREADY is already HIGH — the completer returns PRDATA and the requester captures it. A single-cycle read.' },
+          { cy: 3, state: 'IDLE', sig: null, accent: this.ST.IDLE, label: '4 · IDLE', text: 'PSEL and PENABLE drop. The bus returns to IDLE.' },
+        ],
+      };
+    }
+    if (sc === 'b2b') {
+      return {
+        file: 'apb_b2b.vcd — back-to-back writes',
+        cycles: 9,
+        signals: [
+          clk,
+          { name: 'PSEL', color: C.sel, src: 'req', bits: [0, 1, 1, 1, 1, 0, 0, 0, 0], desc: 'Select. Stays HIGH across both transfers — it never returns to IDLE between them.', full: 'Select' },
+          { name: 'PENABLE', color: C.enable, src: 'req', bits: [0, 0, 1, 0, 1, 0, 0, 0, 0], desc: 'Enable. Drops back to LOW between the two ACCESS phases, marking a fresh SETUP.', full: 'Enable' },
+          { name: 'PWRITE', color: C.write, src: 'req', bits: [0, 1, 1, 1, 1, 0, 0, 0, 0], desc: 'Direction. HIGH — both transfers are writes.', full: 'Direction' },
+          { type: 'bus', name: 'PADDR', color: C.addr, src: 'req', segs: [{ from: 1, to: 3, value: '0x40' }, { from: 3, to: 5, value: '0x44' }], desc: 'Address. A new value for each transfer, held stable across its SETUP + ACCESS.', full: 'Address' },
+          { type: 'bus', name: 'PWDATA', color: C.wdata, src: 'req', segs: [{ from: 1, to: 3, value: '0xA5' }, { from: 3, to: 5, value: '0x5A' }], desc: 'Write data for each transfer.', full: 'Write Data' },
+          { name: 'PREADY', color: C.ready, src: 'cmp', bits: [1, 1, 1, 1, 1, 1, 1, 1, 1], desc: 'Completer ready. HIGH — each ACCESS completes in a single cycle.', full: 'Ready' },
+        ],
+        steps: [
+          { cy: 0, state: 'IDLE', sig: null, accent: this.ST.IDLE, label: '1 · IDLE', text: 'Bus idle before the burst of two writes.' },
+          { cy: 1, state: 'SETUP', sig: 'sel', accent: this.ST.SETUP, label: '2 · SETUP', text: 'First transfer — SETUP for address 0x40 with write data 0xA5.' },
+          { cy: 2, state: 'ACCESS', sig: 'en', accent: this.ST.ACCESS, label: '3 · ACCESS', text: 'ACCESS — 0xA5 is written to 0x40; PREADY HIGH completes it.' },
+          { cy: 3, state: 'SETUP', sig: 'sel', accent: this.ST.SETUP, label: '4 · SETUP', text: 'Instead of returning to IDLE, PENABLE drops while PSEL stays HIGH — a new SETUP for 0x44. This is a back-to-back transfer.' },
+          { cy: 4, state: 'ACCESS', sig: 'en', accent: this.ST.ACCESS, label: '5 · ACCESS', text: 'ACCESS for the second write — 0x5A to 0x44.' },
+          { cy: 5, state: 'IDLE', sig: null, accent: this.ST.IDLE, label: '6 · IDLE', text: 'Both transfers done; the bus goes IDLE.' },
+        ],
+      };
+    }
+    if (sc === 'error') {
+      return {
+        file: 'apb_error.vcd — read with PSLVERR',
+        cycles: 7,
+        signals: [
+          clk,
+          { name: 'PSEL', color: C.sel, src: 'req', bits: [0, 1, 1, 0, 0, 0, 0], desc: 'Select.', full: 'Select' },
+          { name: 'PENABLE', color: C.enable, src: 'req', bits: [0, 0, 1, 0, 0, 0, 0], desc: 'Enable.', full: 'Enable' },
+          { name: 'PWRITE', color: C.write, src: 'req', bits: [0, 0, 0, 0, 0, 0, 0], desc: 'Direction. LOW — a read.', full: 'Direction' },
+          { type: 'bus', name: 'PADDR', color: C.addr, src: 'req', segs: [{ from: 1, to: 3, value: '0x48' }], desc: 'Address being read — one the peripheral rejects.', full: 'Address' },
+          { type: 'bus', name: 'PRDATA', color: C.rdata, src: 'cmp', segs: [{ from: 2, to: 3, value: '????' }], desc: 'Read data. Invalid on an errored transfer — it must not be used.', full: 'Read Data' },
+          { name: 'PREADY', color: C.ready, src: 'cmp', bits: [1, 1, 1, 1, 1, 1, 1], desc: 'Completer ready. HIGH — the transfer still completes, just with an error.', full: 'Ready' },
+          { name: 'PSLVERR', color: C.err, src: 'cmp', bits: [0, 0, 1, 0, 0, 0, 0], desc: 'Error response. Sampled with PREADY HIGH; HIGH means the transfer failed.', full: 'Slave Error' },
+        ],
+        steps: [
+          { cy: 0, state: 'IDLE', sig: null, accent: this.ST.IDLE, label: '1 · IDLE', text: 'Bus idle.' },
+          { cy: 1, state: 'SETUP', sig: 'sel', accent: this.ST.SETUP, label: '2 · SETUP', text: 'SETUP for a read of 0x48.' },
+          { cy: 2, state: 'ACCESS', sig: 'err', accent: this.C.err, label: '3 · ACCESS · ERROR', text: 'PENABLE and PREADY are HIGH, so the transfer completes — but the peripheral also raises PSLVERR. The access failed; PRDATA is invalid and must be discarded.' },
+          { cy: 3, state: 'IDLE', sig: null, accent: this.ST.IDLE, label: '4 · IDLE', text: 'Bus returns to IDLE. The requester handles the error.' },
+        ],
+      };
+    }
+    // write (default) — with one wait state
+    return {
+      file: 'apb_write.vcd — write with wait state',
+      cycles: 8,
+      signals: [
+        clk,
+        { name: 'PSEL', color: C.sel, src: 'req', bits: [0, 1, 1, 1, 0, 0, 0, 0], desc: 'Peripheral select. HIGH for the whole transfer (SETUP + ACCESS).', full: 'Select' },
+        { name: 'PENABLE', color: C.enable, src: 'req', bits: [0, 0, 1, 1, 0, 0, 0, 0], desc: 'Enable. LOW in SETUP, HIGH in ACCESS. Stays HIGH through the wait state.', full: 'Enable' },
+        { name: 'PWRITE', color: C.write, src: 'req', bits: [0, 1, 1, 1, 0, 0, 0, 0], desc: 'Direction. HIGH here — a write, so PWDATA is valid.', full: 'Direction' },
+        { type: 'bus', name: 'PADDR', color: C.addr, src: 'req', segs: [{ from: 1, to: 4, value: '0x40' }], desc: 'Target address, held stable from SETUP through the end of ACCESS.', full: 'Address' },
+        { type: 'bus', name: 'PWDATA', color: C.wdata, src: 'req', segs: [{ from: 1, to: 4, value: '0xA5' }], desc: 'Write data, held valid until the transfer completes.', full: 'Write Data' },
+        { name: 'PREADY', color: C.ready, src: 'cmp', bits: [1, 1, 0, 1, 1, 1, 1, 1], desc: 'Completer ready. LOW in the first ACCESS cycle inserts a wait state; HIGH the next cycle completes the write.', full: 'Ready' },
+      ],
+      steps: [
+        { cy: 0, state: 'IDLE', sig: null, accent: this.ST.IDLE, label: '1 · IDLE', text: 'No transfer. PSEL is LOW — the bus is idle.' },
+        { cy: 1, state: 'SETUP', sig: 'sel', accent: this.ST.SETUP, label: '2 · SETUP', text: 'The bridge selects the peripheral: PSEL HIGH, PENABLE LOW, with PADDR, PWRITE and PWDATA driven. SETUP lasts exactly one cycle.' },
+        { cy: 2, state: 'ACCESS', sig: 'en', accent: this.ST.ACCESS, label: '3 · ACCESS · wait', text: 'PENABLE goes HIGH — the ACCESS phase. But PREADY is LOW, so the peripheral inserts a wait state; the transfer is held and PWDATA stays valid.' },
+        { cy: 3, state: 'ACCESS', sig: 'rdy', accent: this.ST.ACCESS, label: '4 · ACCESS · ready', text: 'PREADY is now HIGH: the peripheral has captured the write data. The transfer completes on this edge.' },
+        { cy: 4, state: 'IDLE', sig: null, accent: this.ST.IDLE, label: '5 · IDLE', text: 'PSEL and PENABLE drop. The bus returns to IDLE.' },
+      ],
+    };
+  }
+
+  renderAPBMachine(activeId, activeEdge, onNode) {
+    const h = React.createElement;
+    const ST = this.ST;
+    const states = this.apbStates;
+    const W = 110, Hn = 52;
+    const N = { IDLE: [30, 92], SETUP: [255, 92], ACCESS: [480, 92] };
+    const edges = [
+      { id: 'IDLE|SETUP', d: 'M140,118 L255,118', lx: 197, ly: 108, label: 'PSEL\u2191' },
+      { id: 'SETUP|ACCESS', d: 'M365,118 L480,118', lx: 422, ly: 108, label: 'PENABLE\u2191' },
+      { id: 'ACCESS|ACCESS', d: 'M592,104 C636,104 636,132 592,132', lx: 636, ly: 118, label: 'wait' },
+      { id: 'ACCESS|SETUP', d: 'M500,92 C500,40 310,40 310,92', lx: 405, ly: 33, label: 'PREADY \u00b7 more' },
+      { id: 'ACCESS|IDLE', d: 'M512,144 C512,200 84,200 84,144', lx: 298, ly: 208, label: 'PREADY \u00b7 done' },
+    ];
+    const defs = h('defs', { key: 'defs' }, [
+      h('marker', { key: 'a', id: 'apbArrowA', markerWidth: 9, markerHeight: 9, refX: 6.5, refY: 3, orient: 'auto' }, h('path', { d: 'M0,0 L6.5,3 L0,6 Z', fill: 'oklch(0.9 0.01 258)' })),
+      h('marker', { key: 'd', id: 'apbArrowD', markerWidth: 9, markerHeight: 9, refX: 6.5, refY: 3, orient: 'auto' }, h('path', { d: 'M0,0 L6.5,3 L0,6 Z', fill: 'oklch(0.4 0.01 258)' })),
+    ]);
+    const edgeEls = edges.map((e) => {
+      const on = activeEdge === e.id;
+      const toState = e.id.split('|')[1];
+      const col = on ? ST[toState] : 'oklch(0.34 0.01 258)';
+      const lblW = e.label.length * 5.7 + 10;
+      return h('g', { key: e.id }, [
+        h('path', { key: 'p', d: e.d, fill: 'none', stroke: col, strokeWidth: on ? 2.4 : 1.4, markerEnd: 'url(#' + (on ? 'apbArrowA' : 'apbArrowD') + ')', style: on ? { filter: 'drop-shadow(0 0 4px ' + col + ')' } : undefined }),
+        h('rect', { key: 'lb', x: e.lx - lblW / 2, y: e.ly - 8, width: lblW, height: 14, rx: 3, fill: 'oklch(0.115 0.01 258)', opacity: 0.92 }),
+        h('text', { key: 'lt', x: e.lx, y: e.ly + 2.5, fill: on ? ST[toState] : 'oklch(0.55 0.01 258)', fontSize: 9.5, fontWeight: on ? 700 : 400, fontFamily: "'JetBrains Mono', monospace", textAnchor: 'middle' }, e.label),
+      ]);
+    });
+    const nodeEls = Object.keys(N).map((id) => {
+      const [x, y] = N[id];
+      const s = states[id];
+      const col = ST[id];
+      const on = activeId === id;
+      return h('g', { key: id, style: { cursor: 'pointer' }, onClick: () => onNode && onNode(id) }, [
+        h('rect', { key: 'r', x: x, y: y, width: W, height: Hn, rx: 10, fill: on ? 'color-mix(in oklch, ' + col + ' 22%, oklch(0.17 0.013 258))' : 'oklch(0.185 0.012 258)', stroke: on ? col : 'oklch(0.32 0.012 258)', strokeWidth: on ? 2.2 : 1.2, style: on ? { filter: 'drop-shadow(0 0 7px ' + col + ')' } : undefined }),
+        h('text', { key: 't', x: x + W / 2, y: y + 23, fill: on ? 'oklch(0.97 0.005 258)' : 'oklch(0.74 0.008 258)', fontSize: 14, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", textAnchor: 'middle' }, s.label),
+        h('text', { key: 'sub', x: x + W / 2, y: y + 39, fill: on ? col : 'oklch(0.5 0.01 258)', fontSize: 9.5, fontFamily: "'JetBrains Mono', monospace", textAnchor: 'middle' }, 'SEL' + s.sel + '  EN' + s.en),
+      ]);
+    });
+    return h('svg', { viewBox: '0 0 664 226', style: { display: 'block', width: '100%', height: 'auto' } }, [defs, ...edgeEls, ...nodeEls]);
+  }
+
+  renderVals() {
+    const C = this.C, ST = this.ST, st = this.state, sec = st.section;
+
+    const mk = (id, label, color) => {
+      const a = sec === id;
+      return { label, onClick: () => this.go(id), bg: a ? 'oklch(0.21 0.014 258)' : 'transparent', color: a ? 'oklch(0.95 0.005 258)' : 'oklch(0.66 0.008 258)', bar: a ? color : 'transparent', dot: a ? color : 'oklch(0.4 0.01 258)', op: 1 };
+    };
+    const navGroups = [{ title: 'APB', items: [mk('overview', 'Overview', C.apb), mk('transfer', 'Transfer', C.sel), mk('statemachine', 'State Machine', C.rdata), mk('cheat', 'Signal Reference', 'oklch(0.8 0.005 258)')] }];
+    const navNote = 'AMBA APB is simple and non-pipelined: every transfer is one SETUP cycle then an ACCESS phase that PREADY can stretch with wait states. No bursts, no pipelining.';
+
+    const data = this.scenarioData(st.scenario);
+    const stepIdx = Math.min(st.step, data.steps.length - 1);
+    const cur = data.steps[stepIdx];
+    const prev = stepIdx > 0 ? data.steps[stepIdx - 1] : null;
+    let activeEdge = null;
+    if (prev) {
+      if (prev.state === cur.state) activeEdge = cur.state === 'ACCESS' ? 'ACCESS|ACCESS' : null;
+      else activeEdge = prev.state + '|' + cur.state;
+    }
+
+    const wave = this.buildWave({ cycles: data.cycles, w: 34, axis: true, playhead: cur.cy, theme: { glow: true, grid: true, rowH: 30, labelW: 128, cursorColor: 'oklch(0.88 0.005 258)' }, signals: data.signals });
+    const jumpTo = (id) => { const i = data.steps.findIndex((s) => s.state === id); if (i >= 0) this.setState({ step: i }); };
+    const sm = this.renderAPBMachine(cur.state, activeEdge, jumpTo);
+
+    const scenarios = [
+      { key: 'write', label: 'Write', dotC: C.sel },
+      { key: 'read', label: 'Read', dotC: C.rdata },
+      { key: 'b2b', label: 'Back-to-back', dotC: C.enable },
+      { key: 'error', label: 'Error', dotC: C.err },
+    ].map((s) => {
+      const a = st.scenario === s.key;
+      return { label: s.label, dot: s.dotC, onClick: () => this.setState({ scenario: s.key, step: 0 }), bg: a ? 'color-mix(in oklch, ' + s.dotC + ' 15%, oklch(0.165 0.013 258))' : 'oklch(0.165 0.013 258)', color: a ? 'oklch(0.96 0.005 258)' : 'oklch(0.62 0.008 258)', border: a ? s.dotC : 'oklch(0.28 0.012 258)' };
+    });
+
+    const lvl = (v) => v ? 'HIGH' : 'LOW';
+    const liveBit = (name) => { const s = data.signals.find((x) => x.name === name); return s && s.bits ? s.bits[cur.cy] : null; };
+    const aps = this.apbStates[cur.state];
+    const curLevels = [
+      { sig: 'PSEL', val: lvl(aps.sel), color: C.sel },
+      { sig: 'PENABLE', val: lvl(aps.en), color: C.enable },
+      { sig: 'PREADY', val: lvl(liveBit('PREADY')), color: C.ready },
+    ];
+
+    const goTransfer = () => this.go('transfer');
+    const g = (k) => (sec === 'transfer' && cur.sig === k);
+    const wire = (label, color, dir, glowOn, delay) => ({
+      label, color,
+      glow: glowOn ? '0 0 12px ' + color : 'none',
+      dot: 'position:absolute;top:-2.5px;width:8px;height:8px;border-radius:50%;background:' + color + ';box-shadow:0 0 7px ' + color + ';animation:' + (dir === 'R' ? 'flowR' : 'flowL') + ' 2.8s linear infinite ' + delay + ';',
+      arrow: dir === 'R'
+        ? 'position:absolute;right:-1px;top:-3px;border-left:7px solid ' + color + ';border-top:4.5px solid transparent;border-bottom:4.5px solid transparent;'
+        : 'position:absolute;left:-1px;top:-3px;border-right:7px solid ' + color + ';border-top:4.5px solid transparent;border-bottom:4.5px solid transparent;',
+      onClick: goTransfer,
+    });
+    const topoWires = [
+      wire('PSEL', C.sel, 'R', g('sel'), '0s'),
+      wire('PENABLE', C.enable, 'R', g('en'), '.15s'),
+      wire('PADDR', C.addr, 'R', g('sel'), '.3s'),
+      wire('PRDATA', C.rdata, 'L', g('en'), '.2s'),
+      wire('PREADY', C.ready, 'L', g('rdy'), '.4s'),
+    ];
+
+    const smStandalone = this.renderAPBMachine(st.smSel, null, (id) => this.setState({ smSel: id }));
+    const sel = this.apbStates[st.smSel];
+    const selLevels = [
+      { sig: 'PSEL', lvl: lvl(sel.sel), color: C.sel },
+      { sig: 'PENABLE', lvl: lvl(sel.en), color: C.enable },
+    ];
+    const opText = { idle: 'idle \u00b7 bus quiet', setup: 'setup \u00b7 one cycle', access: 'access \u00b7 held until PREADY' };
+
+    const phases = [
+      { name: 'IDLE', color: ST.IDLE, desc: 'Bus quiet. PSEL is LOW; nothing selected.' },
+      { name: 'SETUP', color: ST.SETUP, desc: 'PSEL asserted, address & control driven. One cycle.' },
+      { name: 'ACCESS', color: ST.ACCESS, desc: 'PENABLE HIGH. Data moves once PREADY is HIGH.' },
+    ].map((p, i) => ({ ...p, notFirst: i > 0 }));
+
+    const signalCards = [
+      { name: 'PSEL', color: C.sel, dirText: 'REQ\u2192CMP', polarity: 'select', desc: 'Selects the peripheral. HIGH for the whole transfer — SETUP and ACCESS.' },
+      { name: 'PENABLE', color: C.enable, dirText: 'REQ\u2192CMP', polarity: 'enable', desc: 'LOW in SETUP, HIGH in ACCESS. Its rising edge marks the second phase of every transfer.' },
+      { name: 'PWRITE', color: C.write, dirText: 'REQ\u2192CMP', polarity: 'direction', desc: 'HIGH = write (PWDATA valid), LOW = read (PRDATA returned).' },
+      { name: 'PADDR', color: C.addr, dirText: 'REQ\u2192CMP', polarity: 'address bus', desc: 'Target address, driven from SETUP and held stable through ACCESS.' },
+      { name: 'PREADY', color: C.ready, dirText: 'CMP\u2192REQ', polarity: 'ready', desc: 'The completer holds PREADY LOW to insert wait states; HIGH completes the transfer.' },
+      { name: 'PSLVERR', color: C.err, dirText: 'CMP\u2192REQ', polarity: 'error', desc: 'Sampled with PREADY HIGH. Signals the transfer failed; otherwise ignored.' },
+    ].map((c) => ({ ...c, hoverStyle: 'transform:translateY(-3px);border-color:color-mix(in oklch, ' + c.color + ' 55%, oklch(0.28 0.012 258));box-shadow:0 0 0 1px color-mix(in oklch, ' + c.color + ' 36%, transparent), 0 12px 28px -12px ' + c.color + ';' }));
+
+    const order = ['IDLE', 'SETUP', 'ACCESS'];
+    const shortDesc = { IDLE: 'Bus idle.', SETUP: 'Select asserted.', ACCESS: 'Data transferred.' };
+    const stateChips = order.map((id) => {
+      const s = this.apbStates[id];
+      return { label: s.label, color: ST[id], short: shortDesc[id], levels: 'SEL' + s.sel + '  EN' + s.en, onClick: () => this.setState({ section: 'statemachine', smSel: id }) };
+    });
+
+    const cheatSignals = [
+      { sig: 'PCLK', color: C.clk, driver: '\u2014', assert: 'rising', meaning: 'Bus clock. All APB signals are sampled on the rising edge.' },
+      { sig: 'PSEL', color: C.sel, driver: 'REQ\u2192CMP', assert: 'HIGH', meaning: 'Selects a peripheral; HIGH for SETUP and ACCESS.' },
+      { sig: 'PENABLE', color: C.enable, driver: 'REQ\u2192CMP', assert: 'HIGH', meaning: 'Marks the ACCESS phase (HIGH); LOW during SETUP.' },
+      { sig: 'PWRITE', color: C.write, driver: 'REQ\u2192CMP', assert: 'HIGH=wr', meaning: 'Transfer direction: HIGH write, LOW read.' },
+      { sig: 'PADDR', color: C.addr, driver: 'REQ\u2192CMP', assert: 'valid', meaning: 'Address, valid from SETUP through ACCESS.' },
+      { sig: 'PWDATA', color: C.wdata, driver: 'REQ\u2192CMP', assert: 'valid', meaning: 'Write data, valid while PWRITE is HIGH.' },
+      { sig: 'PRDATA', color: C.rdata, driver: 'CMP\u2192REQ', assert: 'valid', meaning: 'Read data, returned when PWRITE is LOW and PREADY HIGH.' },
+      { sig: 'PREADY', color: C.ready, driver: 'CMP\u2192REQ', assert: 'HIGH', meaning: 'Completer ready. LOW extends ACCESS with wait states.' },
+      { sig: 'PSLVERR', color: C.err, driver: 'CMP\u2192REQ', assert: 'HIGH', meaning: 'Error response, sampled with PREADY HIGH.' },
+    ];
+    const bit = (v, c) => ({ t: v ? '1' : '0', c: v ? c : 'oklch(0.5 0.01 258)' });
+    const cheatStates = order.map((id) => {
+      const s = this.apbStates[id];
+      const a = bit(s.sel, C.sel), b = bit(s.en, C.enable);
+      return { label: s.label, color: ST[id], sel: a.t, selColor: a.c, en: b.t, enColor: b.c, meaning: s.desc.split('.')[0] + '.' };
+    });
+
+    let hintLabel = 'APB', hintColor = C.apb, hintText = 'peripheral bus';
+    if (sec === 'transfer') { hintLabel = cur.state; hintColor = ST[cur.state]; hintText = st.scenario + ' transfer'; }
+    else if (sec === 'statemachine') { hintLabel = st.smSel; hintColor = ST[st.smSel]; hintText = 'state detail'; }
+
+    let insp = { label: 'hint', color: 'oklch(0.6 0.01 258)', text: 'hover any signal label to inspect it' };
+    if (st.hover && st.hover.desc) insp = { label: st.hover.full || st.hover.name, color: st.hover.color, text: st.hover.desc };
+
+    return {
+      navGroups, navNote,
+      headerTitle: 'APB \u00b7 Transfer Explorer', ctrlTop: 'REQUESTER',
+      topoWires, hintLabel, hintColor, hintText,
+      isOverview: sec === 'overview', isTransfer: sec === 'transfer', isStateMachine: sec === 'statemachine', isCheat: sec === 'cheat',
+      goTransfer,
+      wave, sm, scenarios, waveFile: data.file,
+      stepLabel: cur.label, stepText: cur.text, stepAccent: cur.accent, stepCounter: (stepIdx + 1) + '/' + data.steps.length,
+      stepPrev: () => this.step(-1, data.steps.length - 1), stepNext: () => this.step(1, data.steps.length - 1),
+      curStateLabel: cur.state, curStateColor: ST[cur.state], curLevels,
+      inspLabel: insp.label, inspColor: insp.color, inspText: insp.text,
+      smStandalone, selLabel: sel.label, selColor: ST[st.smSel], selDesc: sel.desc, selLevels, selOperational: opText[sel.op],
+      phases, signalCards, stateChips,
+      cheatSignals, cheatStates,
+    };
+  }
+}
+</script>
+</body>
+</html>

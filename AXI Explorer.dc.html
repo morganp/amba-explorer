@@ -30,11 +30,11 @@
   <header style="position:sticky;top:0;z-index:30;background:oklch(0.13 0.011 258);border-bottom:1px solid oklch(0.27 0.011 258);padding:14px 26px;backdrop-filter:blur(6px);">
     <div style="display:flex;align-items:center;gap:26px;max-width:1500px;margin:0 auto;">
       <div style="flex:0 0 auto;">
-        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.26em;color:oklch(0.58 0.01 258);text-transform:uppercase;">AMBA AXI</div>
-        <div style="font-size:18px;font-weight:600;letter-spacing:-0.01em;margin-top:1px;">Interface Explorer</div>
+        <a href="AMBA%20Explorer.dc.html" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.26em;color:oklch(0.58 0.01 258);text-transform:uppercase;transition:color .12s ease;" style-hover="color:oklch(0.82 0.005 258);"><span style="font-size:13px;letter-spacing:0;">←</span> AMBA</a>
+        <div style="font-size:18px;font-weight:600;letter-spacing:-0.01em;margin-top:1px;">AXI · Interface Explorer</div>
       </div>
 
-      <!-- master ↔ slave topology -->
+      <!-- manager ↔ subordinate topology -->
       <div style="flex:1;display:flex;align-items:center;gap:0;min-width:0;">
         <div style="flex:0 0 88px;text-align:center;padding:11px 6px;border:1.5px solid oklch(0.42 0.012 258);border-radius:9px;background:oklch(0.20 0.013 258);font-family:'JetBrains Mono',monospace;">
           <div style="font-size:12px;color:oklch(0.92 0.005 258);font-weight:600;">CPU</div>
@@ -226,7 +226,7 @@
         <div>
           <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.58 0.01 258);text-transform:uppercase;">Transactions / Read</div>
           <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">Anatomy of a read</h1>
-          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:700px;margin:0 0 20px;">A read uses two channels: the master requests an address on <strong style="color:oklch(0.78 0.14 235);">AR</strong>, then the slave returns data beats on <strong style="color:oklch(0.72 0.17 305);">R</strong>. The read response (<code style="font-family:'JetBrains Mono',monospace;">RRESP</code>) rides with each beat; <code style="font-family:'JetBrains Mono',monospace;">RLAST</code> marks the end of the burst.</p>
+          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:700px;margin:0 0 20px;">A read uses two channels: the manager requests an address on <strong style="color:oklch(0.78 0.14 235);">AR</strong>, then the subordinate returns data beats on <strong style="color:oklch(0.72 0.17 305);">R</strong>. The read response (<code style="font-family:'JetBrains Mono',monospace;">RRESP</code>) rides with each beat; <code style="font-family:'JetBrains Mono',monospace;">RLAST</code> marks the end of the burst.</p>
 
           <div style="background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-radius:13px;overflow:hidden;">
             <div style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:oklch(0.118 0.01 258);border-bottom:1px solid oklch(0.26 0.011 258);font-family:'JetBrains Mono',monospace;font-size:11px;color:oklch(0.56 0.01 258);">
@@ -318,7 +318,7 @@
         <div>
           <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.58 0.01 258);text-transform:uppercase;">Transactions / IDs &amp; Ordering</div>
           <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">Transaction IDs &amp; out-of-order</h1>
-          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:720px;margin:0 0 22px;">Each transaction carries an ID (<code style="font-family:'JetBrains Mono',monospace;">AxID</code>). Transactions with <strong style="color:oklch(0.88 0.005 258);">different</strong> IDs have no ordering guarantee — a slave may return them in any order, enabling pipelining. Same-ID transactions must stay ordered. Step through two outstanding reads returning out of order.</p>
+          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:720px;margin:0 0 22px;">Each transaction carries an ID (<code style="font-family:'JetBrains Mono',monospace;">AxID</code>). Transactions with <strong style="color:oklch(0.88 0.005 258);">different</strong> IDs have no ordering guarantee — a subordinate may return them in any order, enabling pipelining. Same-ID transactions must stay ordered. Step through two outstanding reads returning out of order.</p>
 
           <div style="background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-radius:13px;overflow:hidden;max-width:820px;">
             <div style="padding:18px 18px 8px;background:oklch(0.115 0.01 258);overflow-x:auto;">{{ idWave }}</div>
@@ -337,13 +337,158 @@
           <div style="margin-top:18px;display:flex;gap:14px;flex-wrap:wrap;max-width:820px;">
             <div style="flex:1 1 240px;background:oklch(0.17 0.013 258);border:1px solid oklch(0.27 0.012 258);border-left:2px solid oklch(0.78 0.14 235);border-radius:10px;padding:13px 16px;">
               <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:oklch(0.78 0.14 235);margin-bottom:5px;">different IDs → reorderable</div>
-              <div style="font-size:12.5px;line-height:1.55;color:oklch(0.66 0.008 258);">ID=2 was issued after ID=1 but returns first. Legal, because their IDs differ — the master matches responses by RID.</div>
+              <div style="font-size:12.5px;line-height:1.55;color:oklch(0.66 0.008 258);">ID=2 was issued after ID=1 but returns first. Legal, because their IDs differ — the manager matches responses by RID.</div>
             </div>
             <div style="flex:1 1 240px;background:oklch(0.17 0.013 258);border:1px solid oklch(0.27 0.012 258);border-left:2px solid oklch(0.72 0.17 305);border-radius:10px;padding:13px 16px;">
               <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:oklch(0.72 0.17 305);margin-bottom:5px;">same ID → in order</div>
               <div style="font-size:12.5px;line-height:1.55;color:oklch(0.66 0.008 258);">Two reads sharing an ID must return in issue order. Interleaving of read data beats across different IDs is also disallowed in AXI4.</div>
             </div>
           </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ EXCLUSIVE ACCESS ============ -->
+      <sc-if value="{{ isExclusive }}">
+        <div data-screen-label="Exclusive Access">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.58 0.01 258);text-transform:uppercase;">Sidebands / Exclusive Access</div>
+          <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">Exclusive access &amp; the lock signals</h1>
+          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:720px;margin:0 0 20px;">AXI implements atomic read-modify-write without bus locking. A manager does an <strong style="color:oklch(0.78 0.14 235);">exclusive read</strong> (<code style="font-family:'JetBrains Mono',monospace;">ARLOCK</code>) then an <strong style="color:oklch(0.80 0.15 35);">exclusive write</strong> (<code style="font-family:'JetBrains Mono',monospace;">AWLOCK</code>) to the same location. A monitor in the subordinate decides whether the write is allowed — signalled back as <code style="font-family:'JetBrains Mono',monospace;">EXOKAY</code> or <code style="font-family:'JetBrains Mono',monospace;">OKAY</code> on <code style="font-family:'JetBrains Mono',monospace;">BRESP</code>.</p>
+
+          <div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;">
+            <sc-for list="{{ exclScenarios }}" as="s" hint-placeholder-count="2">
+              <div onClick="{{ s.onClick }}" style="font-family:'JetBrains Mono',monospace;font-size:12.5px;padding:8px 14px;border-radius:8px;cursor:pointer;background:{{ s.bg }};color:{{ s.color }};border:1px solid {{ s.border }};">{{ s.label }}</div>
+            </sc-for>
+          </div>
+
+          <div style="background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-radius:13px;overflow:hidden;">
+            <div style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:oklch(0.118 0.01 258);border-bottom:1px solid oklch(0.26 0.011 258);font-family:'JetBrains Mono',monospace;font-size:11px;color:oklch(0.56 0.01 258);">
+              <span style="width:9px;height:9px;border-radius:50%;background:oklch(0.62 0.16 25);"></span>
+              <span style="width:9px;height:9px;border-radius:50%;background:oklch(0.82 0.13 85);"></span>
+              <span style="width:9px;height:9px;border-radius:50%;background:oklch(0.78 0.15 150);"></span>
+              <span style="margin-left:6px;">exclusive_access.vcd — read 0x40 → write 0x40</span>
+            </div>
+            <div style="padding:18px 18px 8px;background:oklch(0.115 0.01 258);overflow-x:auto;">{{ exclWave }}</div>
+            <div style="display:flex;align-items:stretch;border-top:1px solid oklch(0.24 0.011 258);">
+              <div style="display:flex;gap:6px;align-items:center;padding:0 16px;border-right:1px solid oklch(0.24 0.011 258);">
+                <div onClick="{{ exclPrev }}" style="font-family:'JetBrains Mono',monospace;font-size:15px;color:oklch(0.7 0.01 258);width:30px;height:30px;display:grid;place-items:center;border:1px solid oklch(0.32 0.012 258);border-radius:7px;cursor:pointer;" style-hover="background:oklch(0.22 0.013 258);">◀</div>
+                <div onClick="{{ exclNext }}" style="font-family:'JetBrains Mono',monospace;font-size:15px;color:oklch(0.93 0.005 258);width:30px;height:30px;display:grid;place-items:center;border:1px solid oklch(0.4 0.012 258);border-radius:7px;cursor:pointer;background:oklch(0.22 0.013 258);" style-hover="background:oklch(0.27 0.013 258);">▶</div>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:oklch(0.55 0.01 258);margin-left:4px;">{{ exclCounter }}</span>
+              </div>
+              <div style="flex:1;padding:14px 18px;">
+                <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:{{ exclAccent }};letter-spacing:0.05em;margin-bottom:3px;">{{ exclStepLabel }}</div>
+                <div style="font-size:13.5px;line-height:1.5;color:oklch(0.82 0.006 258);">{{ exclStepText }}</div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:12px;color:oklch(0.6 0.01 258);background:oklch(0.17 0.013 258);border:1px solid oklch(0.27 0.012 258);border-radius:9px;padding:11px 15px;max-width:560px;">
+            <span style="color:{{ inspColor }};font-weight:600;">{{ inspLabel }}</span> · <span style="color:oklch(0.7 0.008 258);">{{ inspText }}</span>
+          </div>
+          <div style="margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:oklch(0.5 0.01 258);line-height:1.6;max-width:720px;">Version note: <span style="color:oklch(0.78 0.14 235);">AXI3</span> AxLOCK is 2-bit — <span style="color:oklch(0.66 0.008 258);">Normal / Exclusive / Locked / —</span>. <span style="color:oklch(0.80 0.15 155);">AXI4</span> dropped Locked and narrowed AxLOCK to 1-bit (Exclusive only). Exclusive monitors have an implementation-defined limit on outstanding exclusive sequences and the addressable region.</div>
+        </div>
+      </sc-if>
+
+      <!-- ============ VERSIONS ============ -->
+      <sc-if value="{{ isVersions }}">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.58 0.01 258);text-transform:uppercase;">Reference / Versions</div>
+          <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">AXI3 → AXI4 → AXI5</h1>
+          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:720px;margin:0 0 22px;">The five channels and the VALID/READY handshake are unchanged since 2003 — what evolved is the <strong style="color:oklch(0.88 0.005 258);">sideband signals</strong>. AXI4 reshaped control and dropped interleaving; AXI5 layered on optional resilience and scalability. Select a version to spotlight its column.</p>
+
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px;max-width:920px;">
+            <sc-for list="{{ verTimeline }}" as="v" hint-placeholder-count="3">
+              <div onClick="{{ v.onClick }}" style="cursor:pointer;background:{{ v.bg }};border:1px solid {{ v.bd }};border-top:2px solid {{ v.color }};border-radius:12px;padding:15px 16px;opacity:{{ v.op }};transition:opacity .12s ease, border-color .12s ease, background .12s ease;">
+                <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:7px;">
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:{{ v.color }};">{{ v.name }}</span>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:oklch(0.55 0.01 258);">{{ v.year }}</span>
+                </div>
+                <div style="font-size:12.5px;line-height:1.5;color:oklch(0.66 0.008 258);">{{ v.tag }}</div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display:flex;flex-wrap:wrap;gap:16px;margin-bottom:14px;font-family:'JetBrains Mono',monospace;font-size:11.5px;">
+            <span style="color:oklch(0.80 0.15 155);">+ introduced</span>
+            <span style="color:oklch(0.82 0.15 70);">~ changed</span>
+            <span style="color:oklch(0.72 0.16 25);">✕ removed</span>
+            <span style="color:oklch(0.54 0.04 235);">✓ present</span>
+            <span style="color:oklch(0.5 0.01 258);">– not present</span>
+          </div>
+
+          <div style="background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-radius:13px;overflow:hidden;max-width:920px;">
+            <div style="display:grid;grid-template-columns:148px 74px 74px 74px minmax(0,1fr);gap:10px;align-items:center;padding:12px 18px;background:oklch(0.135 0.011 258);border-bottom:1px solid oklch(0.26 0.011 258);">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:oklch(0.5 0.01 258);text-transform:uppercase;">Signal</span>
+              <sc-for list="{{ verHeads }}" as="h" hint-placeholder-count="3">
+                <div onClick="{{ h.onClick }}" style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:{{ h.color }};cursor:pointer;padding:5px 0;border-radius:7px;background:{{ h.bg }};opacity:{{ h.op }};" style-hover="background:oklch(0.21 0.013 258);">{{ h.name }}</div>
+              </sc-for>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:oklch(0.5 0.01 258);text-transform:uppercase;">What changed</span>
+            </div>
+
+            <div style="padding:4px 18px 16px;">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:oklch(0.72 0.10 70);padding:15px 0 3px;">Carried from AXI3 — later changed</div>
+              <sc-for list="{{ verChanged }}" as="r" hint-placeholder-count="3">
+                <div style="display:grid;grid-template-columns:148px 74px 74px 74px minmax(0,1fr);gap:10px;align-items:center;padding:7px 0;border-top:1px solid oklch(0.21 0.01 258);">
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:12.5px;color:oklch(0.86 0.005 258);">{{ r.sig }}</span>
+                  <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="3">
+                    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:6px 0;border-radius:7px;background:{{ c.bg }};opacity:{{ c.op }};">
+                      <span style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:{{ c.color }};line-height:1;">{{ c.sym }}</span>
+                      <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:{{ c.color }};opacity:0.85;">{{ c.sub }}</span>
+                    </div>
+                  </sc-for>
+                  <span style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;line-height:1.45;color:oklch(0.64 0.008 258);"><span>{{ r.note }}</span><sc-if value="{{ r.hasLink }}" hint-placeholder-val="{{ false }}"><span onClick="{{ r.linkClick }}" style="flex:0 0 auto;display:inline-flex;align-items:center;gap:4px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:oklch(0.80 0.12 195);background:color-mix(in oklch, oklch(0.78 0.13 195) 13%, transparent);border:1px solid color-mix(in oklch, oklch(0.78 0.13 195) 42%, transparent);border-radius:6px;padding:2px 8px;white-space:nowrap;" style-hover="background:color-mix(in oklch, oklch(0.78 0.13 195) 26%, transparent);">↳ {{ r.linkLabel }}</span></sc-if></span>
+                </div>
+              </sc-for>
+
+              <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:oklch(0.72 0.12 155);padding:16px 0 3px;">Introduced in AXI4</div>
+              <sc-for list="{{ verAxi4 }}" as="r" hint-placeholder-count="3">
+                <div style="display:grid;grid-template-columns:148px 74px 74px 74px minmax(0,1fr);gap:10px;align-items:center;padding:7px 0;border-top:1px solid oklch(0.21 0.01 258);">
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:12.5px;color:oklch(0.86 0.005 258);">{{ r.sig }}</span>
+                  <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="3">
+                    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:6px 0;border-radius:7px;background:{{ c.bg }};opacity:{{ c.op }};">
+                      <span style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:{{ c.color }};line-height:1;">{{ c.sym }}</span>
+                      <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:{{ c.color }};opacity:0.85;">{{ c.sub }}</span>
+                    </div>
+                  </sc-for>
+                  <span style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;line-height:1.45;color:oklch(0.64 0.008 258);"><span>{{ r.note }}</span><sc-if value="{{ r.hasLink }}" hint-placeholder-val="{{ false }}"><span onClick="{{ r.linkClick }}" style="flex:0 0 auto;display:inline-flex;align-items:center;gap:4px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:oklch(0.80 0.12 195);background:color-mix(in oklch, oklch(0.78 0.13 195) 13%, transparent);border:1px solid color-mix(in oklch, oklch(0.78 0.13 195) 42%, transparent);border-radius:6px;padding:2px 8px;white-space:nowrap;" style-hover="background:color-mix(in oklch, oklch(0.78 0.13 195) 26%, transparent);">↳ {{ r.linkLabel }}</span></sc-if></span>
+                </div>
+              </sc-for>
+
+              <div style="display:flex;align-items:baseline;gap:10px;padding:16px 0 5px;flex-wrap:wrap;">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:oklch(0.74 0.11 70);">Introduced in AXI5 · tagged by issue</span>
+                <span style="font-size:11px;color:oklch(0.5 0.01 258);">— AXI5 began at IHI 0022 Issue F; each row shows the issue that added it</span>
+              </div>
+              <sc-for list="{{ verAxi5 }}" as="r" hint-placeholder-count="10">
+                <div style="display:grid;grid-template-columns:148px 74px 74px 74px minmax(0,1fr);gap:10px;align-items:center;padding:7px 0;border-top:1px solid oklch(0.21 0.01 258);">
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:12.5px;color:oklch(0.86 0.005 258);">{{ r.sig }}</span>
+                  <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="3">
+                    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:6px 0;border-radius:7px;background:{{ c.bg }};opacity:{{ c.op }};">
+                      <span style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:{{ c.color }};line-height:1;">{{ c.sym }}</span>
+                      <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:{{ c.color }};opacity:0.85;">{{ c.sub }}</span>
+                    </div>
+                  </sc-for>
+                  <span style="display:flex;align-items:center;gap:9px;font-size:12px;line-height:1.45;color:oklch(0.64 0.008 258);">
+                    <span style="flex:0 0 auto;display:inline-flex;align-items:center;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:{{ r.issC }};background:color-mix(in oklch, {{ r.issC }} 16%, transparent);border:1px solid color-mix(in oklch, {{ r.issC }} 45%, transparent);border-radius:6px;padding:2px 8px;letter-spacing:0.02em;">{{ r.iss }}</span>
+                    <span>{{ r.note }}</span>
+                    <sc-if value="{{ r.hasLink }}" hint-placeholder-val="{{ false }}"><span onClick="{{ r.linkClick }}" style="flex:0 0 auto;display:inline-flex;align-items:center;gap:4px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:oklch(0.80 0.12 195);background:color-mix(in oklch, oklch(0.78 0.13 195) 13%, transparent);border:1px solid color-mix(in oklch, oklch(0.78 0.13 195) 42%, transparent);border-radius:6px;padding:2px 8px;white-space:nowrap;" style-hover="background:color-mix(in oklch, oklch(0.78 0.13 195) 26%, transparent);">↳ {{ r.linkLabel }}</span></sc-if>
+                  </span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="margin-top:18px;max-width:920px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:oklch(0.5 0.01 258);text-transform:uppercase;margin-bottom:9px;">AXI5 issue timeline</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;">
+              <sc-for list="{{ issLegend }}" as="i" hint-placeholder-count="5">
+                <div style="display:flex;align-items:center;gap:8px;background:oklch(0.175 0.013 258);border:1px solid oklch(0.28 0.012 258);border-radius:9px;padding:7px 11px;">
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:{{ i.c }};">{{ i.iss }}</span>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:oklch(0.5 0.01 258);">{{ i.year }}</span>
+                  <span style="font-size:11.5px;color:oklch(0.64 0.008 258);">{{ i.label }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="margin-top:16px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:oklch(0.5 0.01 258);line-height:1.6;max-width:920px;">AXI5 features are optional and backward-compatible — an AXI4 interface interoperates by tying off the new sidebands. Issue letters skip <span style="color:oklch(0.66 0.008 258);">I</span> (H → J). Prefixes: <span style="color:oklch(0.66 0.008 258);">Ax</span> = AW &amp; AR, <span style="color:oklch(0.66 0.008 258);">x</span> = all relevant channels.</div>
         </div>
       </sc-if>
 
@@ -393,7 +538,7 @@
                       <span style="display:inline-flex;align-items:center;margin:0 1px;">{{ r.dir.arrowEl }}</span>
                       <span style="{{ r.dir.sStyle }}">S</span>
                     </span>
-                    <span style="font-size:12.5px;color:oklch(0.68 0.008 258);line-height:1.45;">{{ r.desc }}</span>
+                    <span style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12.5px;color:oklch(0.68 0.008 258);line-height:1.45;"><span>{{ r.desc }}</span><sc-if value="{{ r.hasLink }}" hint-placeholder-val="{{ false }}"><span onClick="{{ r.linkClick }}" style="flex:0 0 auto;display:inline-flex;align-items:center;gap:4px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:oklch(0.80 0.12 195);background:color-mix(in oklch, oklch(0.78 0.13 195) 13%, transparent);border:1px solid color-mix(in oklch, oklch(0.78 0.13 195) 42%, transparent);border-radius:6px;padding:2px 8px;white-space:nowrap;" style-hover="background:color-mix(in oklch, oklch(0.78 0.13 195) 26%, transparent);">↳ {{ r.linkLabel }}</span></sc-if></span>
                   </div>
                 </sc-for>
               </div>
@@ -419,6 +564,9 @@ class Component extends DCLogic {
     burstType: 'INCR',
     burstLen: 4,
     burstSize: 4,
+    verSel: null,
+    exclStep: 0,
+    exclScenario: 'ok',
   };
 
   C = {
@@ -431,6 +579,34 @@ class Component extends DCLogic {
     hs1: 'oklch(0.78 0.14 235)',
     hs2: 'oklch(0.80 0.15 155)',
   };
+
+  // who drives each signal: M→S = manager-driven, M←S = subordinate-driven
+  DRIVE = {
+    AWVALID: 'M→S', AWREADY: 'M←S', AWADDR: 'M→S',
+    WVALID: 'M→S', WREADY: 'M←S', WDATA: 'M→S', WLAST: 'M→S',
+    BVALID: 'M←S', BREADY: 'M→S',
+    ARVALID: 'M→S', ARREADY: 'M←S', ARADDR: 'M→S', ARID: 'M→S',
+    RVALID: 'M←S', RREADY: 'M→S', RDATA: 'M←S', RLAST: 'M←S', RID: 'M←S',
+  };
+
+  // compact per-signal driver tag: M and S anchors, arrow points driver → receiver
+  miniDrive(drive, color) {
+    const h = React.createElement;
+    const ms = drive === 'M→S';
+    const off = 'oklch(0.46 0.01 258)';
+    const aw = 13, ah = 9, cyy = 4.5, hd = 5;
+    const arrow = ms
+      ? h('svg', { width: aw, height: ah, viewBox: '0 0 ' + aw + ' ' + ah, style: { display: 'block' } }, [
+          h('line', { key: 'l', x1: 0.5, y1: cyy, x2: aw - hd, y2: cyy, stroke: color, strokeWidth: 1.3, strokeLinecap: 'round' }),
+          h('polygon', { key: 'p', points: (aw - 0.5) + ',' + cyy + ' ' + (aw - hd) + ',' + (cyy - 2.6) + ' ' + (aw - hd) + ',' + (cyy + 2.6), fill: color }),
+        ])
+      : h('svg', { width: aw, height: ah, viewBox: '0 0 ' + aw + ' ' + ah, style: { display: 'block' } }, [
+          h('line', { key: 'l', x1: hd, y1: cyy, x2: aw - 0.5, y2: cyy, stroke: color, strokeWidth: 1.3, strokeLinecap: 'round' }),
+          h('polygon', { key: 'p', points: '0.5,' + cyy + ' ' + hd + ',' + (cyy - 2.6) + ' ' + hd + ',' + (cyy + 2.6), fill: color }),
+        ]);
+    const lett = (t, on) => h('span', { key: t, style: { color: on ? color : off, fontWeight: on ? 700 : 500 } }, t);
+    return h('span', { key: 'drv', title: ms ? 'Manager drives' : 'Subordinate drives', style: { display: 'inline-flex', alignItems: 'center', gap: 1.5, fontFamily: "'JetBrains Mono', monospace", fontSize: 8.5, lineHeight: 1, flex: '0 0 auto' } }, [lett('M', ms), arrow, lett('S', !ms)]);
+  }
 
   go = (s) => this.setState({ section: s, hover: null });
   setHover = (info) => this.setState({ hover: info });
@@ -531,12 +707,15 @@ class Component extends DCLogic {
 
       const svg = h('svg', { key: 's', width: traceW, height: rowH, style: { display: 'block', overflow: 'visible' } }, kids);
       const isHov = hovered && s.name === hovered;
+      const drive = s.drive || (s.type === 'clk' ? null : this.DRIVE[s.name]);
+      const driveEl = drive ? this.miniDrive(drive, s.color) : null;
+      const nameSpan = h('span', { key: 'n', style: { fontFamily: mono, fontSize: 11, color: s.type === 'clk' ? 'oklch(0.6 0.01 258)' : s.color, letterSpacing: '0.02em', whiteSpace: 'nowrap' } }, s.name);
       const label = h('div', {
         key: 'l',
         onMouseEnter: s.desc ? () => this.setHover({ name: s.name, color: s.color, desc: s.desc, full: s.full }) : undefined,
         onMouseLeave: s.desc ? () => this.setHover(null) : undefined,
-        style: { width: labelW, flex: '0 0 auto', fontFamily: mono, fontSize: 11, color: s.type === 'clk' ? 'oklch(0.6 0.01 258)' : s.color, textAlign: 'right', paddingRight: 11, lineHeight: rowH + 'px', letterSpacing: '0.02em', whiteSpace: 'nowrap', cursor: s.desc ? 'help' : 'default' }
-      }, s.name);
+        style: { width: labelW, flex: '0 0 auto', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 6, paddingRight: 11, height: rowH, cursor: s.desc ? 'help' : 'default' }
+      }, [driveEl, nameSpan]);
       return h('div', { key: idx, style: { display: 'flex', alignItems: 'center', height: rowH, background: isHov ? 'oklch(0.2 0.013 258)' : 'transparent', borderRadius: 5 } }, [label, svg]);
     });
 
@@ -553,20 +732,20 @@ class Component extends DCLogic {
   writeSteps() {
     const C = this.C;
     return [
-      { cy: 1, ch: 'AW', label: 'T1 · AW ADDRESS', text: 'Master drives the write address on AWADDR and asserts AWVALID. It must hold both stable until the slave is ready.' },
-      { cy: 2, ch: 'AW', label: 'T2 · AW HANDSHAKE', text: 'Slave asserts AWREADY. On this rising edge AWVALID & AWREADY are both high → the address is accepted.' },
-      { cy: 3, ch: 'W', label: 'T3 · W BEAT 0', text: 'Master sends the first data beat: WVALID + WDATA. Slave WREADY is high → beat 0 transfers on the W channel.' },
+      { cy: 1, ch: 'AW', label: 'T1 · AW ADDRESS', text: 'Manager drives the write address on AWADDR and asserts AWVALID. It must hold both stable until the subordinate is ready.' },
+      { cy: 2, ch: 'AW', label: 'T2 · AW HANDSHAKE', text: 'Subordinate asserts AWREADY. On this rising edge AWVALID & AWREADY are both high → the address is accepted.' },
+      { cy: 3, ch: 'W', label: 'T3 · W BEAT 0', text: 'Manager sends the first data beat: WVALID + WDATA. Subordinate WREADY is high → beat 0 transfers on the W channel.' },
       { cy: 4, ch: 'W', label: 'T4 · W BEAT 1 (LAST)', text: 'Final beat. WLAST is asserted to mark the end of the burst. Beat 1 transfers and the data phase completes.' },
-      { cy: 6, ch: 'B', label: 'T6 · B RESPONSE', text: 'Slave returns a single write response: BVALID + BREADY high, BRESP = OKAY. The whole write is now acknowledged.' },
+      { cy: 6, ch: 'B', label: 'T6 · B RESPONSE', text: 'Subordinate returns a single write response: BVALID + BREADY high, BRESP = OKAY. The whole write is now acknowledged.' },
       { cy: 7, ch: null, label: 'T7 · COMPLETE', text: 'Done: one address phase, two data beats, one response — three independent channels, one transaction.' },
     ];
   }
   readSteps() {
     return [
-      { cy: 1, ch: 'AR', label: 'T1 · AR ADDRESS', text: 'Master drives the read address on ARADDR and asserts ARVALID, requesting a burst from the slave.' },
-      { cy: 2, ch: 'AR', label: 'T2 · AR HANDSHAKE', text: 'Slave asserts ARREADY. Both high on this edge → the address is accepted and the slave begins fetching.' },
-      { cy: 3, ch: null, label: 'T3 · LATENCY', text: 'Read latency: the slave fetches data internally. The master simply keeps RREADY available for when data arrives.' },
-      { cy: 4, ch: 'R', label: 'T4 · R BEAT 0', text: 'Slave returns the first beat: RVALID + RDATA, with RRESP riding alongside. RREADY is high → beat 0 transfers.' },
+      { cy: 1, ch: 'AR', label: 'T1 · AR ADDRESS', text: 'Manager drives the read address on ARADDR and asserts ARVALID, requesting a burst from the subordinate.' },
+      { cy: 2, ch: 'AR', label: 'T2 · AR HANDSHAKE', text: 'Subordinate asserts ARREADY. Both high on this edge → the address is accepted and the subordinate begins fetching.' },
+      { cy: 3, ch: null, label: 'T3 · LATENCY', text: 'Read latency: the subordinate fetches data internally. The manager simply keeps RREADY available for when data arrives.' },
+      { cy: 4, ch: 'R', label: 'T4 · R BEAT 0', text: 'Subordinate returns the first beat: RVALID + RDATA, with RRESP riding alongside. RREADY is high → beat 0 transfers.' },
       { cy: 5, ch: 'R', label: 'T5 · R BEAT 1 (LAST)', text: 'Final beat with RLAST asserted. Beat 1 transfers and the read burst completes. No separate response channel is needed.' },
     ];
   }
@@ -612,16 +791,50 @@ class Component extends DCLogic {
   }
   idSteps() {
     return [
-      { cy: 1, label: 'T1 · ISSUE ID=1', text: 'Master issues read A on AR with ARID=1. It is accepted by the slave.' },
-      { cy: 2, label: 'T2 · ISSUE ID=2', text: 'Master issues a second read B with ARID=2 before A has returned — two outstanding reads.' },
-      { cy: 4, label: 'T4 · RETURN ID=2', text: 'Slave returns data for ID=2 first (RID=2). Legal: different IDs carry no ordering guarantee.' },
-      { cy: 6, label: 'T6 · RETURN ID=1', text: 'Then data for ID=1 (RID=1). The master uses RID to match each beat to the right outstanding request.' },
+      { cy: 1, label: 'T1 · ISSUE ID=1', text: 'Manager issues read A on AR with ARID=1. It is accepted by the subordinate.' },
+      { cy: 2, label: 'T2 · ISSUE ID=2', text: 'Manager issues a second read B with ARID=2 before A has returned — two outstanding reads.' },
+      { cy: 4, label: 'T4 · RETURN ID=2', text: 'Subordinate returns data for ID=2 first (RID=2). Legal: different IDs carry no ordering guarantee.' },
+      { cy: 6, label: 'T6 · RETURN ID=1', text: 'Then data for ID=1 (RID=1). The manager uses RID to match each beat to the right outstanding request.' },
     ];
+  }
+  exclSteps() {
+    const C = this.C;
+    const ok = this.state.exclScenario === 'ok';
+    const GRN = 'oklch(0.80 0.15 155)';
+    const RED = 'oklch(0.66 0.17 28)';
+    const read = [
+      { cy: 1, accent: C.AR, label: '1 · EXCLUSIVE READ', text: 'The manager opens an exclusive sequence: it drives ARADDR = 0x40 with ARID = 3 and asserts ARLOCK (exclusive). ARVALID goes high — this is an ordinary read that also arms the monitor.' },
+      { cy: 2, accent: 'oklch(0.74 0.12 175)', label: '2 · MONITOR TAGS LOCATION', text: 'On the ARVALID + ARREADY handshake the subordinate\u2019s exclusive monitor records the address (0x40) and the ID (3), and starts watching that location for any write from another manager.' },
+      { cy: 4, accent: GRN, label: '3 · READ DATA · EXOKAY', text: 'The subordinate returns the current value (0x07) with RRESP = EXOKAY — confirming the location supports exclusive access and the monitor is now armed.' },
+    ];
+    if (ok) {
+      return read.concat([
+        { cy: 7, accent: C.AW, label: '4 · EXCLUSIVE WRITE', text: 'Later the manager issues the matching write to the same 0x40 / ID 3 with AWLOCK asserted, carrying the new data 0x08. (AWADDR/AWID mirror the read — omitted here for clarity.)' },
+        { cy: 8, accent: C.W, label: '5 · WRITE DATA', text: 'WDATA = 0x08 transfers on the W channel. Whether it actually commits to memory depends entirely on the exclusive monitor.' },
+        { cy: 10, accent: GRN, label: '6 · EXOKAY ✓ — STORE COMMITS', text: 'The monitor still holds the tag — nothing wrote 0x40 in between. The store succeeds and the subordinate returns BRESP = EXOKAY. Memory now holds 0x08; the read-modify-write was atomic.' },
+      ]);
+    }
+    return read.concat([
+      { cy: 6, accent: RED, label: '4 · INTERVENING WRITE', text: 'Before the manager\u2019s exclusive write lands, another manager writes to 0x40. The monitor clears its tag — the pending exclusive sequence is now doomed to fail.' },
+      { cy: 7, accent: C.AW, label: '5 · EXCLUSIVE WRITE', text: 'The manager issues its exclusive write (AWLOCK, 0x40, ID 3, data 0x08), unaware its tag was already cleared.' },
+      { cy: 8, accent: C.W, label: '6 · WRITE DATA', text: 'WDATA = 0x08 is presented on the W channel, but the monitor check will block the store from committing.' },
+      { cy: 10, accent: RED, label: '7 · OKAY ✗ — STORE BLOCKED', text: 'Because the tag was cleared, the store does not happen and the subordinate returns BRESP = OKAY (not EXOKAY). The manager detects the failure and must retry the whole read-then-write sequence.' },
+    ]);
   }
 
   renderVals() {
     const C = this.C;
     const st = this.state;
+
+    // signals that have a dedicated Sidebands walkthrough → deep-link from reference views
+    const SBLINK = { AxLOCK: 'exclusive', AWLOCK: 'exclusive', ARLOCK: 'exclusive' };
+    const SBLABEL = { exclusive: 'Exclusive Access' };
+    const linkOf = (sig) => {
+      const sec = SBLINK[sig];
+      return sec
+        ? { hasLink: true, linkLabel: SBLABEL[sec], linkClick: () => this.go(sec) }
+        : { hasLink: false, linkLabel: '', linkClick: null };
+    };
     const clk = { name: 'ACLK', type: 'clk', color: C.clk };
     const sec = st.section;
 
@@ -638,7 +851,8 @@ class Component extends DCLogic {
     const navGroups = [
       { title: 'Basics', items: [mk('overview', 'Overview', 'oklch(0.7 0.01 258)'), mk('handshake', 'Handshake', 'oklch(0.78 0.14 235)')] },
       { title: 'Transactions', items: [mk('write', 'Write', C.AW), mk('read', 'Read', C.AR), mk('bursts', 'Bursts', C.W), mk('ids', 'IDs & Ordering', C.R)] },
-      { title: 'Reference', items: [mk('compare', 'AXI / Lite / Stream', 'oklch(0.8 0.005 258)'), mk('cheat', 'Cheat Sheet', 'oklch(0.8 0.005 258)')] },
+      { title: 'Sidebands', items: [mk('exclusive', 'Exclusive Access', 'oklch(0.78 0.13 195)')] },
+      { title: 'Reference', items: [mk('versions', 'Versions · 3/4/5', 'oklch(0.8 0.005 258)'), mk('compare', 'AXI / Lite / Stream', 'oklch(0.8 0.005 258)'), mk('cheat', 'Cheat Sheet', 'oklch(0.8 0.005 258)')] },
     ];
 
     // ---- header hint + glow ----
@@ -656,7 +870,7 @@ class Component extends DCLogic {
       AW: { code: 'AW', color: C.AW, name: 'Write Address', dir: 'M→S', short: 'write address & control', desc: 'Carries the target address, burst length, size and type for a write. One handshake per transaction.' },
       W: { code: 'W', color: C.W, name: 'Write Data', dir: 'M→S', short: 'write data beats', desc: 'Carries the write data beats and byte strobes (WSTRB). WLAST flags the final beat of the burst.' },
       B: { code: 'B', color: C.B, name: 'Write Response', dir: 'S→M', short: 'write response', desc: 'A single response per write transaction: OKAY, EXOKAY, SLVERR or DECERR. Confirms completion.' },
-      AR: { code: 'AR', color: C.AR, name: 'Read Address', dir: 'M→S', short: 'read address & control', desc: 'Mirrors AW for reads — address, length, size, type. Requests a burst from the slave.' },
+      AR: { code: 'AR', color: C.AR, name: 'Read Address', dir: 'M→S', short: 'read address & control', desc: 'Mirrors AW for reads — address, length, size, type. Requests a burst from the subordinate.' },
       R: { code: 'R', color: C.R, name: 'Read Data', dir: 'S→M', short: 'read data + response', desc: 'Carries read data beats. The response (RRESP) rides with each beat; RLAST flags the last one.' },
     };
     const hov = (k) => () => this.setHover({ ...chMeta[k], code: chMeta[k].code });
@@ -684,18 +898,18 @@ class Component extends DCLogic {
     const wstep = wsteps[st.writeStep];
     const writeWave = this.buildWave({
       cycles: 10, w: 34, axis: true, playhead: wstep.cy,
-      theme: { glow: true, grid: true, rowH: 28, labelW: 86, cursorColor: 'oklch(0.88 0.005 258)' },
+      theme: { glow: true, grid: true, rowH: 28, labelW: 120, cursorColor: 'oklch(0.88 0.005 258)' },
       signals: [
         clk,
-        { name: 'AWVALID', color: C.AW, bits: [0, 1, 1, 0, 0, 0, 0, 0, 0, 0], desc: 'Master asserts when AWADDR/control are valid; holds until AWREADY.', full: 'Write Address Valid' },
-        { name: 'AWREADY', color: C.AW, bits: [0, 0, 1, 0, 0, 0, 0, 0, 0, 0], marks: [2], desc: 'Slave asserts when it can accept the write address.', full: 'Write Address Ready' },
+        { name: 'AWVALID', color: C.AW, bits: [0, 1, 1, 0, 0, 0, 0, 0, 0, 0], desc: 'Manager asserts when AWADDR/control are valid; holds until AWREADY.', full: 'Write Address Valid' },
+        { name: 'AWREADY', color: C.AW, bits: [0, 0, 1, 0, 0, 0, 0, 0, 0, 0], marks: [2], desc: 'Subordinate asserts when it can accept the write address.', full: 'Write Address Ready' },
         { name: 'AWADDR', type: 'bus', color: C.AW, segs: [{ from: 1, to: 3, value: '0x40' }], desc: 'Start byte address of the write burst.', full: 'Write Address' },
-        { name: 'WVALID', color: C.W, bits: [0, 0, 1, 1, 0, 0, 0, 0, 0, 0], desc: 'Master asserts when WDATA for this beat is valid.', full: 'Write Data Valid' },
-        { name: 'WREADY', color: C.W, bits: [0, 0, 1, 1, 0, 0, 0, 0, 0, 0], marks: [2, 3], desc: 'Slave asserts when it can accept a data beat.', full: 'Write Data Ready' },
+        { name: 'WVALID', color: C.W, bits: [0, 0, 1, 1, 0, 0, 0, 0, 0, 0], desc: 'Manager asserts when WDATA for this beat is valid.', full: 'Write Data Valid' },
+        { name: 'WREADY', color: C.W, bits: [0, 0, 1, 1, 0, 0, 0, 0, 0, 0], marks: [2, 3], desc: 'Subordinate asserts when it can accept a data beat.', full: 'Write Data Ready' },
         { name: 'WDATA', type: 'bus', color: C.W, segs: [{ from: 2, to: 3, value: 'D0' }, { from: 3, to: 4, value: 'D1' }], desc: 'Write data for the current beat (plus WSTRB byte lanes).', full: 'Write Data' },
         { name: 'WLAST', color: C.W, bits: [0, 0, 0, 1, 0, 0, 0, 0, 0, 0], desc: 'Asserted on the final beat of the write burst.', full: 'Write Last' },
-        { name: 'BVALID', color: C.B, bits: [0, 0, 0, 0, 0, 0, 1, 0, 0, 0], desc: 'Slave asserts when the write response is valid.', full: 'Write Response Valid' },
-        { name: 'BREADY', color: C.B, bits: [0, 0, 0, 0, 0, 1, 1, 0, 0, 0], marks: [6], desc: 'Master asserts when it can accept the response.', full: 'Write Response Ready' },
+        { name: 'BVALID', color: C.B, bits: [0, 0, 0, 0, 0, 0, 1, 0, 0, 0], desc: 'Subordinate asserts when the write response is valid.', full: 'Write Response Valid' },
+        { name: 'BREADY', color: C.B, bits: [0, 0, 0, 0, 0, 1, 1, 0, 0, 0], marks: [6], desc: 'Manager asserts when it can accept the response.', full: 'Write Response Ready' },
       ],
     });
 
@@ -704,14 +918,14 @@ class Component extends DCLogic {
     const rstep = rsteps[st.readStep];
     const readWave = this.buildWave({
       cycles: 10, w: 34, axis: true, playhead: rstep.cy,
-      theme: { glow: true, grid: true, rowH: 28, labelW: 86, cursorColor: 'oklch(0.88 0.005 258)' },
+      theme: { glow: true, grid: true, rowH: 28, labelW: 120, cursorColor: 'oklch(0.88 0.005 258)' },
       signals: [
         clk,
-        { name: 'ARVALID', color: C.AR, bits: [0, 1, 1, 0, 0, 0, 0, 0, 0, 0], desc: 'Master asserts when ARADDR/control are valid.', full: 'Read Address Valid' },
-        { name: 'ARREADY', color: C.AR, bits: [0, 0, 1, 0, 0, 0, 0, 0, 0, 0], marks: [2], desc: 'Slave asserts when it can accept the read address.', full: 'Read Address Ready' },
+        { name: 'ARVALID', color: C.AR, bits: [0, 1, 1, 0, 0, 0, 0, 0, 0, 0], desc: 'Manager asserts when ARADDR/control are valid.', full: 'Read Address Valid' },
+        { name: 'ARREADY', color: C.AR, bits: [0, 0, 1, 0, 0, 0, 0, 0, 0, 0], marks: [2], desc: 'Subordinate asserts when it can accept the read address.', full: 'Read Address Ready' },
         { name: 'ARADDR', type: 'bus', color: C.AR, segs: [{ from: 1, to: 3, value: '0x80' }], desc: 'Start byte address of the read burst.', full: 'Read Address' },
-        { name: 'RVALID', color: C.R, bits: [0, 0, 0, 0, 1, 1, 0, 0, 0, 0], desc: 'Slave asserts when RDATA for this beat is valid.', full: 'Read Data Valid' },
-        { name: 'RREADY', color: C.R, bits: [0, 0, 0, 1, 1, 1, 0, 0, 0, 0], marks: [4, 5], desc: 'Master asserts when it can accept a data beat.', full: 'Read Data Ready' },
+        { name: 'RVALID', color: C.R, bits: [0, 0, 0, 0, 1, 1, 0, 0, 0, 0], desc: 'Subordinate asserts when RDATA for this beat is valid.', full: 'Read Data Valid' },
+        { name: 'RREADY', color: C.R, bits: [0, 0, 0, 1, 1, 1, 0, 0, 0, 0], marks: [4, 5], desc: 'Manager asserts when it can accept a data beat.', full: 'Read Data Ready' },
         { name: 'RDATA', type: 'bus', color: C.R, segs: [{ from: 4, to: 5, value: 'D0' }, { from: 5, to: 6, value: 'D1' }], desc: 'Read data for the current beat. RRESP rides alongside.', full: 'Read Data' },
         { name: 'RLAST', color: C.R, bits: [0, 0, 0, 0, 0, 1, 0, 0, 0, 0], desc: 'Asserted on the final beat of the read burst.', full: 'Read Last' },
       ],
@@ -745,15 +959,53 @@ class Component extends DCLogic {
     const idStep = idsteps[idStepIdx];
     const idWave = this.buildWave({
       cycles: 9, w: 40, axis: true, playhead: idStep.cy,
-      theme: { glow: true, grid: true, rowH: 30, labelW: 84, cursorColor: 'oklch(0.88 0.005 258)' },
+      theme: { glow: true, grid: true, rowH: 30, labelW: 118, cursorColor: 'oklch(0.88 0.005 258)' },
       signals: [
         clk,
-        { name: 'ARVALID', color: C.AR, bits: [0, 1, 1, 0, 0, 0, 0, 0, 0], desc: 'Master issuing read requests.', full: 'Read Address Valid' },
+        { name: 'ARVALID', color: C.AR, bits: [0, 1, 1, 0, 0, 0, 0, 0, 0], desc: 'Manager issuing read requests.', full: 'Read Address Valid' },
         { name: 'ARID', type: 'bus', color: C.AR, segs: [{ from: 1, to: 2, value: '1' }, { from: 2, to: 3, value: '2' }], desc: 'ID tag of each issued read. Distinguishes outstanding transactions.', full: 'Read Address ID' },
-        { name: 'RVALID', color: C.R, bits: [0, 0, 0, 0, 1, 1, 1, 1, 0], desc: 'Slave returning read data beats.', full: 'Read Data Valid' },
+        { name: 'RVALID', color: C.R, bits: [0, 0, 0, 0, 1, 1, 1, 1, 0], desc: 'Subordinate returning read data beats.', full: 'Read Data Valid' },
         { name: 'RID', type: 'bus', color: C.R, segs: [{ from: 4, to: 6, value: '2' }, { from: 6, to: 8, value: '1' }], desc: 'ID of the returning data. Matches a response to its request — note 2 returns before 1.', full: 'Read Data ID' },
         { name: 'RLAST', color: C.R, bits: [0, 0, 0, 0, 0, 1, 0, 1, 0], desc: 'Marks the last beat of each ID\u2019s burst.', full: 'Read Last' },
       ],
+    });
+
+    // ---- EXCLUSIVE ACCESS ----
+    const exOk = st.exclScenario === 'ok';
+    const exGRN = 'oklch(0.80 0.15 155)', exRED = 'oklch(0.66 0.17 28)';
+    const esteps = this.exclSteps();
+    const eStepIdx = Math.min(st.exclStep, esteps.length - 1);
+    const eStep = esteps[eStepIdx];
+    const monColor = exOk ? 'oklch(0.74 0.12 175)' : 'oklch(0.72 0.15 45)';
+    const monSegs = exOk
+      ? [{ from: 0, to: 2, value: 'idle' }, { from: 2, to: 10, value: 'tag 0x40·ID3' }, { from: 10, to: 13, value: 'match ✓' }]
+      : [{ from: 0, to: 2, value: 'idle' }, { from: 2, to: 6, value: 'tag 0x40·ID3' }, { from: 6, to: 10, value: 'CLEARED ✗' }, { from: 10, to: 13, value: 'no store' }];
+    const exclWave = this.buildWave({
+      cycles: 13, w: 33, axis: true, playhead: eStep.cy,
+      theme: { glow: true, grid: true, rowH: 25, labelW: 124, cursorColor: 'oklch(0.88 0.005 258)' },
+      signals: [
+        clk,
+        { name: 'ARVALID', color: C.AR, drive: 'M→S', bits: [0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], marks: [2], desc: 'Manager requests the exclusive read address.', full: 'Read Address Valid' },
+        { name: 'ARLOCK', type: 'bus', color: C.AR, drive: 'M→S', segs: [{ from: 1, to: 3, value: 'Excl' }], desc: 'The exclusive qualifier. AXI4/5: 1-bit, 1 = Exclusive. AXI3: 2-bit ARLOCK[1:0] where 01 = Exclusive, 10 = Locked (Locked removed in AXI4).', full: 'Read Lock — exclusive' },
+        { name: 'ARADDR', type: 'bus', color: C.AR, drive: 'M→S', segs: [{ from: 1, to: 3, value: '0x40' }], desc: 'Address of the exclusive location. The same address must be used for the matching exclusive write.', full: 'Read Address' },
+        { name: 'RVALID', color: C.R, drive: 'M←S', bits: [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0], marks: [4], desc: 'Subordinate returns the exclusive read data.', full: 'Read Data Valid' },
+        { name: 'RDATA', type: 'bus', color: C.R, drive: 'M←S', segs: [{ from: 4, to: 5, value: '0x07' }], desc: 'Current value at 0x40 — the value the manager will modify.', full: 'Read Data' },
+        { name: 'RRESP', type: 'bus', color: exGRN, drive: 'M←S', segs: [{ from: 4, to: 5, value: 'EXOKAY' }], desc: 'EXOKAY on a read confirms the subordinate supports exclusive access for this location.', full: 'Read Response' },
+        { name: 'AWVALID', color: C.AW, drive: 'M→S', bits: [0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0], marks: [8], desc: 'Manager issues the matching exclusive write.', full: 'Write Address Valid' },
+        { name: 'AWLOCK', type: 'bus', color: C.AW, drive: 'M→S', segs: [{ from: 7, to: 9, value: 'Excl' }], desc: 'AWLOCK asserted = exclusive write. Must target the same address & ID as the exclusive read.', full: 'Write Lock — exclusive' },
+        { name: 'WDATA', type: 'bus', color: C.W, drive: 'M→S', segs: [{ from: 8, to: 9, value: '0x08' }], desc: 'The modified value the manager wants to store atomically.', full: 'Write Data' },
+        { name: 'BVALID', color: C.B, drive: 'M←S', bits: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0], marks: [10], desc: 'Subordinate returns the write response carrying the exclusive result.', full: 'Write Response Valid' },
+        { name: 'BRESP', type: 'bus', color: exOk ? exGRN : exRED, drive: 'M←S', segs: [{ from: 10, to: 11, value: exOk ? 'EXOKAY' : 'OKAY' }], desc: exOk ? 'EXOKAY = the exclusive store succeeded; no other manager touched the location.' : 'OKAY (not EXOKAY) = the exclusive store FAILED; the location was modified in between. Manager must retry.', full: 'Write Response' },
+        { name: 'monitor', type: 'bus', color: monColor, drive: null, segs: monSegs, desc: 'The subordinate\u2019s exclusive monitor — internal state, not a wire. It tags the address/ID on the exclusive read and clears the tag if any other write hits the location before the exclusive write.', full: 'Exclusive monitor (subordinate state)' },
+      ],
+    });
+    const exclScenarios = [
+      { key: 'ok', label: 'Exclusive OK · EXOKAY' },
+      { key: 'fail', label: 'Intervening write · OKAY' },
+    ].map((s) => {
+      const a = st.exclScenario === s.key;
+      const ac = s.key === 'ok' ? exGRN : exRED;
+      return { label: s.label, onClick: () => this.setState({ exclScenario: s.key, exclStep: 0 }), bg: a ? 'color-mix(in oklch, ' + ac + ' 16%, oklch(0.165 0.013 258))' : 'oklch(0.165 0.013 258)', color: a ? 'oklch(0.96 0.005 258)' : 'oklch(0.62 0.008 258)', border: a ? ac : 'oklch(0.28 0.012 258)' };
     });
 
     // ---- BURSTS ----
@@ -815,6 +1067,7 @@ class Component extends DCLogic {
         { sig: 'AWSIZE', dir: 'M→S', desc: 'Bytes per beat = 2^AWSIZE.' },
         { sig: 'AWBURST', dir: 'M→S', desc: 'FIXED / INCR / WRAP.' },
         { sig: 'AWID', dir: 'M→S', desc: 'Transaction ID tag.' },
+        { sig: 'AWLOCK', dir: 'M→S', desc: 'Exclusive write qualifier. AXI4/5 1-bit; AXI3 2-bit (incl. Locked).' },
       ] },
       { code: 'W', color: C.W, name: 'Write Data', rows: [
         { sig: 'WVALID/READY', dir: 'M→S', desc: 'Handshake pair for each data beat.' },
@@ -832,6 +1085,7 @@ class Component extends DCLogic {
         { sig: 'ARADDR', dir: 'M→S', desc: 'Start byte address of the read burst.' },
         { sig: 'ARLEN/SIZE/BURST', dir: 'M→S', desc: 'Burst geometry, same encoding as write.' },
         { sig: 'ARID', dir: 'M→S', desc: 'Transaction ID tag.' },
+        { sig: 'ARLOCK', dir: 'M→S', desc: 'Exclusive read qualifier — arms the subordinate\u2019s exclusive monitor.' },
       ] },
       { code: 'R', color: C.R, name: 'Read Data', rows: [
         { sig: 'RVALID/READY', dir: 'S→M', desc: 'Handshake pair for each data beat.' },
@@ -842,12 +1096,99 @@ class Component extends DCLogic {
       ] },
     ];
 
-    cheat.forEach((ch) => { ch.rows = ch.rows.map((r) => ({ ...r, dir: this.dirBadge(r.dir, ch.color) })); });
+    cheat.forEach((ch) => { ch.rows = ch.rows.map((r) => ({ ...r, dir: this.dirBadge(r.dir, ch.color), ...linkOf(r.sig) })); });
+
+    // ---- VERSIONS ----
+    const VA = ['oklch(0.78 0.14 235)', 'oklch(0.80 0.15 155)', 'oklch(0.82 0.15 70)'];
+    const verMeta = [
+      { key: 0, name: 'AXI3', year: '2003 · AMBA3', color: VA[0], tag: 'The original. Bursts up to 16 beats, locked transfers, and write-data interleaving carried on WID.' },
+      { key: 1, name: 'AXI4', year: '2010 · AMBA4', color: VA[1], tag: 'Bursts to 256 beats, QoS & Region control, USER sidebands. Drops WID and locked access.' },
+      { key: 2, name: 'AXI5', year: '2017· AMBA5 · F→L', color: VA[2], tag: 'Optional resilience & scale, added issue-by-issue (5F→5L): atomics, parity, MPAM, MTE, RME, MEC. Aligns with CHI.' },
+    ];
+    const vsel = st.verSel;
+    const verTimeline = verMeta.map((v) => {
+      const active = vsel === v.key;
+      const dim = vsel !== null && !active;
+      return {
+        name: v.name, year: v.year, tag: v.tag, color: v.color,
+        onClick: () => this.setState({ verSel: active ? null : v.key }),
+        bd: active ? v.color : 'oklch(0.28 0.012 258)',
+        bg: active ? 'color-mix(in oklch, ' + v.color + ' 13%, oklch(0.175 0.013 258))' : 'oklch(0.175 0.013 258)',
+        op: dim ? 0.5 : 1,
+      };
+    });
+    const verHeads = verMeta.map((v) => ({
+      name: v.name, color: v.color,
+      onClick: () => this.setState({ verSel: vsel === v.key ? null : v.key }),
+      op: vsel !== null && vsel !== v.key ? 0.4 : 1,
+      bg: vsel === v.key ? 'color-mix(in oklch, ' + v.color + ' 18%, transparent)' : 'transparent',
+    }));
+    const STAT = {
+      add: { sym: '+', c: 'oklch(0.80 0.15 155)' },
+      chg: { sym: '~', c: 'oklch(0.82 0.15 70)' },
+      rm: { sym: '✕', c: 'oklch(0.72 0.16 25)' },
+      yes: { sym: '✓', c: 'oklch(0.54 0.04 235)' },
+      no: { sym: '–', c: 'oklch(0.4 0.01 258)' },
+    };
+    const vcell = (status, sub, col) => {
+      const s = STAT[status];
+      const dim = vsel !== null && vsel !== col;
+      const strong = status === 'add' || status === 'chg' || status === 'rm';
+      return { sym: s.sym, sub: sub || '', color: s.c, op: dim ? 0.3 : 1, bg: strong ? 'color-mix(in oklch, ' + s.c + ' ' + (dim ? 5 : 14) + '%, transparent)' : 'transparent' };
+    };
+    const mkRows = (arr) => arr.map((r) => ({ sig: r[0], note: r[4], cells: [vcell(r[1][0], r[1][1], 0), vcell(r[2][0], r[2][1], 1), vcell(r[3][0], r[3][1], 2)], ...linkOf(r[0]) }));
+    const verChanged = mkRows([
+      ['AxLEN', ['yes', '[3:0]'], ['chg', '[7:0]'], ['yes', '[7:0]'], 'Burst length widened from 4-bit (≤16 beats) to 8-bit (≤256 beats, INCR).'],
+      ['AxLOCK', ['yes', '[1:0]'], ['chg', '1-bit'], ['yes', '1-bit'], '2-bit lock (incl. Locked) cut to 1-bit — locked transfers removed in AXI4.'],
+      ['WID', ['yes', ''], ['rm', ''], ['no', ''], 'Write-data ID for interleaving — removed when AXI4 dropped write interleaving.'],
+    ]);
+    const verAxi4 = mkRows([
+      ['AxQOS', ['no', ''], ['add', ''], ['yes', ''], '4-bit Quality-of-Service priority on the AW/AR channels.'],
+      ['AxREGION', ['no', ''], ['add', ''], ['yes', ''], '4-bit region id — one subordinate port serving up to 16 decode regions.'],
+      ['xUSER', ['no', ''], ['add', ''], ['yes', ''], 'Optional user-defined sidebands on every channel (AW/AR/W/R/B).'],
+    ]);
+    // AXI5 evolves by IHI 0022 issue letter (F→). Each row tagged with the issue that added it.
+    const issColor = {
+      F: 'oklch(0.74 0.12 235)', G: 'oklch(0.74 0.12 175)', H: 'oklch(0.82 0.13 80)',
+      J: 'oklch(0.74 0.15 35)', K: 'oklch(0.72 0.15 305)',
+    };
+    const mkV5 = (rows) => rows.map((r) => ({
+      sig: r[0],
+      iss: '5' + r[1],
+      issC: issColor[r[1]],
+      year: r[2],
+      note: r[3],
+      cells: [vcell('no', '', 0), vcell('no', '', 1), vcell('add', '', 2)],
+      ...linkOf(r[0]),
+    }));
+    const verAxi5 = mkV5([
+      ['AWATOP', 'F', '’17', 'Atomic operations — AtomicStore / Load / Swap / Compare.'],
+      ['xPOISON', 'F', '’17', 'Flags data bytes as corrupt for end-to-end error propagation.'],
+      ['AWAKEUP', 'F', '’17', 'Low-power wake-up signaling for clock and power management.'],
+      ['AxMMU*', 'F', '’17', 'Untranslated transactions carrying SMMU translation hints.'],
+      ['AxIDUNQ', 'G', '’19', 'Unique-ID indicator — lets the interconnect drop ID-ordering tracking.'],
+      ['xCHK', 'G', '’19', 'Interface parity (check) signals — resilience / functional-safety protection.'],
+      ['AxMPAM', 'G', '’19', 'Memory System Resource Partitioning & Monitoring partition id.'],
+      ['AWTAGOP', 'H', '’20', 'Memory Tagging Extension (MTE) — tag ops carried with the transaction.'],
+      ['AxNSAID', 'J', '’23', 'Realm Management Extension (RME) — Non-secure Access ID for Realm memory.'],
+      ['AWMECID', 'K', '’23', 'Memory Encryption Contexts (MEC) — encryption context identifier.'],
+    ]);
+    const issLegend = [
+      { iss: '5F', year: '2017', c: issColor.F, label: 'AMBA5 — AXI5 defined' },
+      { iss: '5G', year: '2019', c: issColor.G, label: 'unique-ID, parity, MPAM' },
+      { iss: '5H', year: '2020', c: issColor.H, label: 'memory tagging (MTE)' },
+      { iss: '5J', year: '2023', c: issColor.J, label: 'RME, PBHA, subsystem id' },
+      { iss: '5K', year: '2023', c: issColor.K, label: 'memory encryption (MEC)' },
+    ];
 
     return {
       navGroups,
       isOverview: sec === 'overview', isHandshake: sec === 'handshake', isWrite: sec === 'write',
-      isRead: sec === 'read', isBurst: sec === 'bursts', isIds: sec === 'ids', isCompare: sec === 'compare', isCheat: sec === 'cheat',
+      isRead: sec === 'read', isBurst: sec === 'bursts', isIds: sec === 'ids', isExclusive: sec === 'exclusive', isVersions: sec === 'versions', isCompare: sec === 'compare', isCheat: sec === 'cheat',
+      exclWave, exclStepLabel: eStep.label, exclStepText: eStep.text, exclAccent: eStep.accent,
+      exclCounter: (eStepIdx + 1) + '/' + esteps.length, exclScenarios,
+      exclPrev: () => this.step('exclStep', -1, esteps.length - 1), exclNext: () => this.step('exclStep', 1, esteps.length - 1),
+      verTimeline, verHeads, verChanged, verAxi4, verAxi5, issLegend,
       goWrite: () => this.go('write'), goRead: () => this.go('read'), goHandshake: () => this.go('handshake'),
       hoverAW: hov('AW'), hoverW: hov('W'), hoverB: hov('B'), hoverAR: hov('AR'), hoverR: hov('R'), clearHover: () => this.setHover(null),
       glowAW: glow('AW'), glowW: glow('W'), glowB: glow('B'), glowAR: glow('AR'), glowR: glow('R'),
