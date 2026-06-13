@@ -100,7 +100,7 @@
               <div onClick="{{ goHandshake }}" style="background:oklch(0.175 0.013 258);border:1px solid oklch(0.28 0.012 258);border-top:2px solid {{ c.color }};border-radius:11px;padding:16px 17px;cursor:pointer;transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;" style-hover="{{ c.hoverStyle }}">
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;gap:8px;">
                   <span style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:{{ c.color }};">{{ c.name }}</span>
-                  <span style="display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:oklch(0.6 0.01 258);background:oklch(0.13 0.01 258);border:1px solid oklch(0.27 0.012 258);border-radius:6px;padding:3px 7px;">{{ c.dirText }}</span>
+                  {{ c.dirBadge }}
                 </div>
                 <div style="font-size:12.5px;line-height:1.5;color:oklch(0.66 0.008 258);">{{ c.desc }}</div>
                 <div style="margin-top:11px;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:{{ c.color }};opacity:0.85;">{{ c.polarity }}</div>
@@ -219,13 +219,13 @@
           <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:720px;margin:0 0 24px;">Four wires, six states. <span style="color:oklch(0.56 0.01 258);">CTL→CMP</span> = driven by the controller, <span style="color:oklch(0.56 0.01 258);">CMP→CTL</span> = driven by the component.</p>
 
           <div style="background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-radius:12px;overflow:hidden;max-width:880px;margin-bottom:26px;">
-            <div style="display:grid;grid-template-columns:120px 96px 110px 1fr;gap:14px;padding:11px 18px;background:oklch(0.135 0.011 258);border-bottom:1px solid oklch(0.26 0.011 258);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:oklch(0.5 0.01 258);text-transform:uppercase;">
+            <div style="display:grid;grid-template-columns:120px 116px 110px 1fr;gap:14px;padding:11px 18px;background:oklch(0.135 0.011 258);border-bottom:1px solid oklch(0.26 0.011 258);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:oklch(0.5 0.01 258);text-transform:uppercase;">
               <span>Signal</span><span>Driver</span><span>Asserted</span><span>Meaning</span>
             </div>
             <sc-for list="{{ cheatSignals }}" as="r" hint-placeholder-count="4">
-              <div style="display:grid;grid-template-columns:120px 96px 110px 1fr;gap:14px;align-items:center;padding:10px 18px;border-top:1px solid oklch(0.21 0.01 258);" style-hover="background:oklch(0.19 0.013 258);">
+              <div style="display:grid;grid-template-columns:120px 116px 110px 1fr;gap:14px;align-items:center;padding:10px 18px;border-top:1px solid oklch(0.21 0.01 258);" style-hover="background:oklch(0.19 0.013 258);">
                 <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:{{ r.color }};">{{ r.sig }}</span>
-                <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:oklch(0.62 0.01 258);">{{ r.driver }}</span>
+                {{ r.dirBadge }}
                 <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:{{ r.color }};">{{ r.assert }}</span>
                 <span style="font-size:12.5px;color:oklch(0.68 0.008 258);line-height:1.45;">{{ r.meaning }}</span>
               </div>
@@ -276,7 +276,7 @@
               <div onClick="{{ goPTransition }}" style="background:oklch(0.175 0.013 258);border:1px solid oklch(0.28 0.012 258);border-top:2px solid {{ c.color }};border-radius:11px;padding:16px 17px;cursor:pointer;transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;" style-hover="{{ c.hoverStyle }}">
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;gap:8px;">
                   <span style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:{{ c.color }};">{{ c.name }}</span>
-                  <span style="display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:oklch(0.6 0.01 258);background:oklch(0.13 0.01 258);border:1px solid oklch(0.27 0.012 258);border-radius:6px;padding:3px 7px;">{{ c.dirText }}</span>
+                  {{ c.dirBadge }}
                 </div>
                 <div style="font-size:12.5px;line-height:1.5;color:oklch(0.66 0.008 258);">{{ c.desc }}</div>
                 <div style="margin-top:11px;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:{{ c.color }};opacity:0.85;">{{ c.polarity }}</div>
@@ -395,13 +395,13 @@
           <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:720px;margin:0 0 24px;">Five wires, six states. <span style="color:oklch(0.56 0.01 258);">CTL→CMP</span> = driven by the controller, <span style="color:oklch(0.56 0.01 258);">CMP→CTL</span> = driven by the component.</p>
 
           <div style="background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-radius:12px;overflow:hidden;max-width:880px;margin-bottom:26px;">
-            <div style="display:grid;grid-template-columns:120px 96px 110px 1fr;gap:14px;padding:11px 18px;background:oklch(0.135 0.011 258);border-bottom:1px solid oklch(0.26 0.011 258);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:oklch(0.5 0.01 258);text-transform:uppercase;">
+            <div style="display:grid;grid-template-columns:120px 116px 110px 1fr;gap:14px;padding:11px 18px;background:oklch(0.135 0.011 258);border-bottom:1px solid oklch(0.26 0.011 258);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:oklch(0.5 0.01 258);text-transform:uppercase;">
               <span>Signal</span><span>Driver</span><span>Asserted</span><span>Meaning</span>
             </div>
             <sc-for list="{{ pCheatSignals }}" as="r" hint-placeholder-count="5">
-              <div style="display:grid;grid-template-columns:120px 96px 110px 1fr;gap:14px;align-items:center;padding:10px 18px;border-top:1px solid oklch(0.21 0.01 258);" style-hover="background:oklch(0.19 0.013 258);">
+              <div style="display:grid;grid-template-columns:120px 116px 110px 1fr;gap:14px;align-items:center;padding:10px 18px;border-top:1px solid oklch(0.21 0.01 258);" style-hover="background:oklch(0.19 0.013 258);">
                 <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:{{ r.color }};">{{ r.sig }}</span>
-                <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:oklch(0.62 0.01 258);">{{ r.driver }}</span>
+                {{ r.dirBadge }}
                 <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:{{ r.color }};">{{ r.assert }}</span>
                 <span style="font-size:12.5px;color:oklch(0.68 0.008 258);line-height:1.45;">{{ r.meaning }}</span>
               </div>
@@ -590,6 +590,33 @@ class Component extends DCLogic {
     const tag = (t) => h('span', { key: 't', style: { color: color, fontWeight: 600 } }, t);
     const kids = ctl ? [tag('CTL'), arrowR] : [arrowL, tag('CMP')];
     return h('span', { key: 'src', title: ctl ? 'Controller drives' : 'Component drives', style: { display: 'inline-flex', alignItems: 'center', gap: 3, fontFamily: "'JetBrains Mono', monospace", fontSize: 8.5, lineHeight: 1, flex: '0 0 auto' } }, kids);
+  }
+
+  // unified drive-direction badge (matches AXI): role chips + drawn arrow, driver highlighted
+  dirBadge(driver, A, B, color) {
+    const h = React.createElement;
+    const wrap = (kids) => h('span', { key: 'w', style: { display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 7px', borderRadius: 6, background: 'oklch(0.13 0.01 258)', border: '1px solid oklch(0.27 0.012 258)' } }, kids);
+    if (!driver || driver.indexOf('\u2192') < 0) {
+      return wrap([h('span', { key: 'd', style: { fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: 'oklch(0.5 0.01 258)', padding: '0 3px' } }, driver || '\u2014')]);
+    }
+    const fwd = driver.indexOf(A) === 0;
+    const onChip = { fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, fontWeight: 700, color: color, background: 'color-mix(in oklch, ' + color + ' 22%, transparent)', border: '1px solid color-mix(in oklch, ' + color + ' 52%, transparent)', borderRadius: 5, padding: '1px 4.5px', height: 18, display: 'inline-flex', alignItems: 'center' };
+    const offChip = { fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, fontWeight: 600, color: 'oklch(0.5 0.01 258)', background: 'oklch(0.2 0.011 258)', border: '1px solid oklch(0.3 0.012 258)', borderRadius: 5, padding: '1px 4.5px', height: 18, display: 'inline-flex', alignItems: 'center' };
+    const aw = 22, ah = 14, cy = 7, hw = 8;
+    const arrowEl = fwd
+      ? h('svg', { key: 's', width: aw, height: ah, viewBox: '0 0 ' + aw + ' ' + ah, style: { display: 'block' } }, [
+          h('line', { key: 'l', x1: 1, y1: cy, x2: aw - hw + 1, y2: cy, stroke: color, strokeWidth: 2.2, strokeLinecap: 'round' }),
+          h('polygon', { key: 'p', points: (aw - 1) + ',' + cy + ' ' + (aw - hw) + ',' + (cy - 4.5) + ' ' + (aw - hw) + ',' + (cy + 4.5), fill: color }),
+        ])
+      : h('svg', { key: 's', width: aw, height: ah, viewBox: '0 0 ' + aw + ' ' + ah, style: { display: 'block' } }, [
+          h('line', { key: 'l', x1: hw - 1, y1: cy, x2: aw - 1, y2: cy, stroke: color, strokeWidth: 2.2, strokeLinecap: 'round' }),
+          h('polygon', { key: 'p', points: '1,' + cy + ' ' + hw + ',' + (cy - 4.5) + ' ' + hw + ',' + (cy + 4.5), fill: color }),
+        ]);
+    return wrap([
+      h('span', { key: 'a', style: fwd ? onChip : offChip }, A),
+      h('span', { key: 'arw', style: { display: 'inline-flex', alignItems: 'center', margin: '0 1px' } }, arrowEl),
+      h('span', { key: 'b', style: fwd ? offChip : onChip }, B),
+    ]);
   }
 
   // ---------- waveform builder ----------
@@ -896,7 +923,7 @@ class Component extends DCLogic {
       { name: 'QREQn', color: C.req, dirText: 'CTL→CMP', polarity: 'active LOW', desc: 'The controller\u2019s quiescence request. Driven LOW to ask the component to stop; HIGH to keep it running or wake it.' },
       { name: 'QACCEPTn', color: C.accept, dirText: 'CMP→CTL', polarity: 'active LOW', desc: 'The component accepts a request by driving QACCEPTn LOW, entering the quiescent state.' },
       { name: 'QDENY', color: C.deny, dirText: 'CMP→CTL', polarity: 'active HIGH', desc: 'The component refuses a request by driving QDENY HIGH, staying operational.' },
-    ].map((c) => ({ ...c, hoverStyle: 'transform:translateY(-3px);border-color:color-mix(in oklch, ' + c.color + ' 55%, oklch(0.28 0.012 258));box-shadow:0 0 0 1px color-mix(in oklch, ' + c.color + ' 36%, transparent), 0 12px 28px -12px ' + c.color + ';' }));
+    ].map((c) => ({ ...c, dirBadge: this.dirBadge(c.dirText, 'CTL', 'CMP', c.color), hoverStyle: 'transform:translateY(-3px);border-color:color-mix(in oklch, ' + c.color + ' 55%, oklch(0.28 0.012 258));box-shadow:0 0 0 1px color-mix(in oklch, ' + c.color + ' 36%, transparent), 0 12px 28px -12px ' + c.color + ';' }));
 
     const order = ['Q_RUN', 'Q_REQUEST', 'Q_STOPPED', 'Q_EXIT', 'Q_DENIED', 'Q_CONTINUE'];
     const shortDesc = {
@@ -914,7 +941,7 @@ class Component extends DCLogic {
       { sig: 'QREQn', color: C.req, driver: 'CTL→CMP', assert: 'LOW', meaning: 'Controller requests the component to become quiescent.' },
       { sig: 'QACCEPTn', color: C.accept, driver: 'CMP→CTL', assert: 'LOW', meaning: 'Component accepts the quiescence request and stops.' },
       { sig: 'QDENY', color: C.deny, driver: 'CMP→CTL', assert: 'HIGH', meaning: 'Component denies the request and stays operational.' },
-    ];
+    ].map((r) => ({ ...r, dirBadge: this.dirBadge(r.driver, 'CTL', 'CMP', r.color) }));
     const bit = (v, c) => ({ t: v ? '1' : '0', c: v ? c : 'oklch(0.5 0.01 258)' });
     const cheatStates = order.map((id) => {
       const s = this.qStates[id];
@@ -963,7 +990,7 @@ class Component extends DCLogic {
       { name: 'PREQ', color: PC.req, dirText: 'CTL→CMP', polarity: 'active HIGH', desc: 'Transition request. Asserted to ask the component to move to PSTATE; deasserted once it has responded.' },
       { name: 'PACCEPT', color: PC.accept, dirText: 'CMP→CTL', polarity: 'active HIGH', desc: 'The component accepts the requested transition and switches to the new power state.' },
       { name: 'PDENY', color: PC.deny, dirText: 'CMP→CTL', polarity: 'active HIGH', desc: 'The component refuses the transition and stays in its current state.' },
-    ].map((c) => ({ ...c, hoverStyle: 'transform:translateY(-3px);border-color:color-mix(in oklch, ' + c.color + ' 55%, oklch(0.28 0.012 258));box-shadow:0 0 0 1px color-mix(in oklch, ' + c.color + ' 36%, transparent), 0 12px 28px -12px ' + c.color + ';' }));
+    ].map((c) => ({ ...c, dirBadge: this.dirBadge(c.dirText, 'CTL', 'CMP', c.color), hoverStyle: 'transform:translateY(-3px);border-color:color-mix(in oklch, ' + c.color + ' 55%, oklch(0.28 0.012 258));box-shadow:0 0 0 1px color-mix(in oklch, ' + c.color + ' 36%, transparent), 0 12px 28px -12px ' + c.color + ';' }));
     const pPowerStates = [
       { name: 'ON', sub: 'P0 · full power', color: PST.P_STABLE, desc: 'Fully powered and clocked. Normal operation.' },
       { name: 'RET', sub: 'P1 · clock stopped', color: PC.req, desc: 'Clock removed; state retained at full voltage.' },
@@ -985,7 +1012,7 @@ class Component extends DCLogic {
       { sig: 'PREQ', color: PC.req, driver: 'CTL→CMP', assert: 'HIGH', meaning: 'Controller requests the PSTATE transition.' },
       { sig: 'PACCEPT', color: PC.accept, driver: 'CMP→CTL', assert: 'HIGH', meaning: 'Component accepts and enters the new power state.' },
       { sig: 'PDENY', color: PC.deny, driver: 'CMP→CTL', assert: 'HIGH', meaning: 'Component denies and stays in its current state.' },
-    ];
+    ].map((r) => ({ ...r, dirBadge: this.dirBadge(r.driver, 'CTL', 'CMP', r.color) }));
     const pCheatStates = pOrder.map((id) => {
       const s = this.pStates[id];
       const r = bit(s.req, PC.req), a = bit(s.acc, PC.accept), d = bit(s.den, PC.deny);

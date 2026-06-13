@@ -387,6 +387,124 @@
         </div>
       </sc-if>
 
+      <!-- ============ QUALIFIERS ============ -->
+      <sc-if value="{{ isQualifiers }}">
+        <div data-screen-label="Qualifiers">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.58 0.01 258);text-transform:uppercase;">Sidebands / Qualifiers</div>
+          <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">Transaction qualifiers</h1>
+          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:740px;margin:0 0 20px;">Beyond address and data, every request carries <strong style="color:oklch(0.9 0.005 258);">attribute sidebands</strong> that describe <em>how</em> it should be treated — its permissions, cacheability, priority and routing. They ride the <strong style="color:oklch(0.80 0.15 35);">AW</strong> / <strong style="color:oklch(0.78 0.14 235);">AR</strong> address channels under the existing VALID/READY handshake — no handshake of their own — and stay constant for the whole transaction.</p>
+
+          <div style="display:flex;flex-direction:column;gap:16px;max-width:880px;">
+
+            <!-- AxPROT -->
+            <div style="background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-top:2px solid oklch(0.78 0.14 235);border-radius:13px;padding:18px 20px;">
+              <div style="display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-bottom:8px;">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;color:oklch(0.78 0.14 235);">AxPROT</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:oklch(0.62 0.01 258);background:oklch(0.13 0.01 258);border:1px solid oklch(0.27 0.012 258);border-radius:5px;padding:2px 7px;">[2:0]</span>
+                <span style="display:inline-flex;align-items:center;gap:5px;padding:3px 7px;border-radius:6px;background:oklch(0.13 0.01 258);border:1px solid oklch(0.27 0.012 258);">
+                  <span style="{{ protDir.mStyle }}">M</span>
+                  <span style="display:inline-flex;align-items:center;margin:0 1px;">{{ protDir.arrowEl }}</span>
+                  <span style="{{ protDir.sStyle }}">S</span>
+                </span>
+                <span style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:oklch(0.52 0.01 258);text-transform:uppercase;">since AXI3</span>
+              </div>
+              <div style="font-size:13.5px;line-height:1.55;color:oklch(0.68 0.008 258);max-width:660px;">Three independent access attributes. The subordinate or interconnect uses them for permission checks — they never alter the data path.</div>
+              <sc-for list="{{ protBits }}" as="b" hint-placeholder-count="3">
+                <div style="display:flex;align-items:center;gap:14px;padding:11px 0 1px;border-top:1px solid oklch(0.22 0.01 258);flex-wrap:wrap;margin-top:11px;">
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:oklch(0.78 0.14 235);width:24px;height:24px;border-radius:6px;border:1px solid color-mix(in oklch, oklch(0.78 0.14 235) 45%, transparent);background:color-mix(in oklch, oklch(0.78 0.14 235) 14%, transparent);display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;">{{ b.bit }}</span>
+                  <div style="flex:0 0 132px;">
+                    <div style="font-size:13px;font-weight:600;color:oklch(0.9 0.005 258);">{{ b.name }}</div>
+                    <div style="font-size:11px;color:oklch(0.56 0.01 258);margin-top:1px;">{{ b.note }}</div>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:11.5px;flex-wrap:wrap;">
+                    <span style="color:oklch(0.6 0.01 258);background:oklch(0.2 0.011 258);border:1px solid oklch(0.3 0.012 258);border-radius:5px;padding:3px 9px;">0 · {{ b.lo }}</span>
+                    <span style="color:oklch(0.78 0.14 235);background:color-mix(in oklch, oklch(0.78 0.14 235) 16%, transparent);border:1px solid color-mix(in oklch, oklch(0.78 0.14 235) 45%, transparent);border-radius:5px;padding:3px 9px;">1 · {{ b.hi }}</span>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+
+            <!-- AxCACHE -->
+            <div style="background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-top:2px solid oklch(0.80 0.15 35);border-radius:13px;padding:18px 20px;">
+              <div style="display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-bottom:8px;">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;color:oklch(0.80 0.15 35);">AxCACHE</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:oklch(0.62 0.01 258);background:oklch(0.13 0.01 258);border:1px solid oklch(0.27 0.012 258);border-radius:5px;padding:2px 7px;">[3:0]</span>
+                <span style="display:inline-flex;align-items:center;gap:5px;padding:3px 7px;border-radius:6px;background:oklch(0.13 0.01 258);border:1px solid oklch(0.27 0.012 258);">
+                  <span style="{{ cacheDir.mStyle }}">M</span>
+                  <span style="display:inline-flex;align-items:center;margin:0 1px;">{{ cacheDir.arrowEl }}</span>
+                  <span style="{{ cacheDir.sStyle }}">S</span>
+                </span>
+                <span style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:oklch(0.52 0.01 258);text-transform:uppercase;">since AXI3</span>
+              </div>
+              <div style="font-size:13.5px;line-height:1.55;color:oklch(0.68 0.008 258);max-width:660px;margin-bottom:13px;">Four bits that classify the target memory and how the system may optimise the access.</div>
+              <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-bottom:16px;">
+                <sc-for list="{{ cacheBits }}" as="b" hint-placeholder-count="4">
+                  <div style="display:flex;gap:10px;align-items:flex-start;background:oklch(0.145 0.011 258);border:1px solid oklch(0.24 0.011 258);border-radius:9px;padding:10px 12px;">
+                    <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:oklch(0.80 0.15 35);background:color-mix(in oklch, oklch(0.80 0.15 35) 15%, transparent);border:1px solid color-mix(in oklch, oklch(0.80 0.15 35) 45%, transparent);border-radius:5px;padding:2px 6px;flex:0 0 auto;">{{ b.code }}</span>
+                    <div>
+                      <div style="font-size:12.5px;font-weight:600;color:oklch(0.9 0.005 258);">bit {{ b.bit }} · {{ b.name }}</div>
+                      <div style="font-size:11px;line-height:1.45;color:oklch(0.6 0.008 258);margin-top:2px;">{{ b.desc }}</div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:oklch(0.5 0.01 258);text-transform:uppercase;margin-bottom:9px;">Common ARCACHE encodings</div>
+              <div style="border:1px solid oklch(0.24 0.011 258);border-radius:9px;overflow:hidden;">
+                <sc-for list="{{ cacheTypes }}" as="t" hint-placeholder-count="8">
+                  <div style="display:grid;grid-template-columns:74px 1fr;gap:14px;align-items:center;padding:8px 14px;border-bottom:1px solid oklch(0.2 0.01 258);">
+                    <span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.1em;color:{{ t.tone }};">{{ t.code }}</span>
+                    <span style="font-size:12.5px;color:oklch(0.72 0.008 258);">{{ t.name }}</span>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:oklch(0.5 0.01 258);line-height:1.55;margin-top:11px;max-width:680px;">AWCACHE uses the same four bits, but the allocate pair [3:2] swaps role — bit 3 is Write-Allocate and bit 2 is the read-side hint. Codes <code style="font-family:'JetBrains Mono',monospace;color:oklch(0.66 0.008 258);">0000–0011</code> are identical on read and write.</div>
+            </div>
+
+            <!-- AxQOS + AxREGION -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+              <div style="background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-top:2px solid oklch(0.72 0.17 305);border-radius:13px;padding:18px 20px;">
+                <div style="display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-bottom:9px;">
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:oklch(0.72 0.17 305);">AxQOS</span>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:oklch(0.62 0.01 258);background:oklch(0.13 0.01 258);border:1px solid oklch(0.27 0.012 258);border-radius:5px;padding:2px 7px;">[3:0]</span>
+                  <span style="display:inline-flex;align-items:center;gap:5px;padding:3px 7px;border-radius:6px;background:oklch(0.13 0.01 258);border:1px solid oklch(0.27 0.012 258);">
+                    <span style="{{ qosDir.mStyle }}">M</span>
+                    <span style="display:inline-flex;align-items:center;margin:0 1px;">{{ qosDir.arrowEl }}</span>
+                    <span style="{{ qosDir.sStyle }}">S</span>
+                  </span>
+                  <span style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:oklch(0.52 0.01 258);text-transform:uppercase;">AXI4+</span>
+                </div>
+                <div style="font-size:13px;line-height:1.6;color:oklch(0.68 0.008 258);">A 4-bit priority hint. <code style="font-family:'JetBrains Mono',monospace;color:oklch(0.82 0.006 258);">0b0000</code> is the default (no QoS); higher values request higher priority. It is purely an arbitration hint to the interconnect — it <strong style="color:oklch(0.86 0.005 258);">never</strong> affects ordering or correctness. AW and AR carry independent values.</div>
+              </div>
+              <div style="background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-top:2px solid oklch(0.80 0.15 155);border-radius:13px;padding:18px 20px;">
+                <div style="display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-bottom:9px;">
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:oklch(0.80 0.15 155);">AxREGION</span>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:oklch(0.62 0.01 258);background:oklch(0.13 0.01 258);border:1px solid oklch(0.27 0.012 258);border-radius:5px;padding:2px 7px;">[3:0]</span>
+                  <span style="display:inline-flex;align-items:center;gap:5px;padding:3px 7px;border-radius:6px;background:oklch(0.13 0.01 258);border:1px solid oklch(0.27 0.012 258);">
+                    <span style="{{ regionDir.mStyle }}">M</span>
+                    <span style="display:inline-flex;align-items:center;margin:0 1px;">{{ regionDir.arrowEl }}</span>
+                    <span style="{{ regionDir.sStyle }}">S</span>
+                  </span>
+                  <span style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:oklch(0.52 0.01 258);text-transform:uppercase;">AXI4+</span>
+                </div>
+                <div style="font-size:13px;line-height:1.6;color:oklch(0.68 0.008 258);">A 4-bit region identifier. It lets one physical subordinate port present up to <strong style="color:oklch(0.86 0.005 258);">16</strong> separate address regions, so the interconnect needn't re-decode inside the slave. Driven from the address map during decode; constant for the transaction.</div>
+              </div>
+            </div>
+
+            <!-- AxUSER -->
+            <div style="background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-top:2px solid oklch(0.78 0.13 195);border-radius:13px;padding:18px 20px;">
+              <div style="display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-bottom:9px;">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;color:oklch(0.78 0.13 195);">xUSER</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:oklch(0.62 0.01 258);background:oklch(0.13 0.01 258);border:1px solid oklch(0.27 0.012 258);border-radius:5px;padding:2px 7px;">impl-defined width</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:oklch(0.58 0.01 258);">AWUSER · WUSER · BUSER · ARUSER · RUSER</span>
+                <span style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:oklch(0.52 0.01 258);text-transform:uppercase;">AXI4+</span>
+              </div>
+              <div style="font-size:13.5px;line-height:1.6;color:oklch(0.68 0.008 258);max-width:720px;">Optional user-defined sidebands on <em>every</em> channel — direction follows the channel (M→S on AW/AR/W, S→M on R/B). The protocol never interprets them; they must be carried end-to-end unchanged. Because their meaning is agreed privately between two components, <strong style="color:oklch(0.86 0.005 258);">xUSER is an interoperability hazard</strong> — mixing IP that disagrees on its definition silently breaks.</div>
+            </div>
+
+          </div>
+        </div>
+      </sc-if>
+
       <!-- ============ VERSIONS ============ -->
       <sc-if value="{{ isVersions }}">
         <div>
@@ -827,8 +945,8 @@ class Component extends DCLogic {
     const st = this.state;
 
     // signals that have a dedicated Sidebands walkthrough → deep-link from reference views
-    const SBLINK = { AxLOCK: 'exclusive', AWLOCK: 'exclusive', ARLOCK: 'exclusive' };
-    const SBLABEL = { exclusive: 'Exclusive Access' };
+    const SBLINK = { AxLOCK: 'exclusive', AWLOCK: 'exclusive', ARLOCK: 'exclusive', AWPROT: 'qualifiers', ARPROT: 'qualifiers', AWCACHE: 'qualifiers', ARCACHE: 'qualifiers', AWQOS: 'qualifiers', ARQOS: 'qualifiers', AWREGION: 'qualifiers', ARREGION: 'qualifiers' };
+    const SBLABEL = { exclusive: 'Exclusive Access', qualifiers: 'Qualifiers' };
     const linkOf = (sig) => {
       const sec = SBLINK[sig];
       return sec
@@ -851,7 +969,7 @@ class Component extends DCLogic {
     const navGroups = [
       { title: 'Basics', items: [mk('overview', 'Overview', 'oklch(0.7 0.01 258)'), mk('handshake', 'Handshake', 'oklch(0.78 0.14 235)')] },
       { title: 'Transactions', items: [mk('write', 'Write', C.AW), mk('read', 'Read', C.AR), mk('bursts', 'Bursts', C.W), mk('ids', 'IDs & Ordering', C.R)] },
-      { title: 'Sidebands', items: [mk('exclusive', 'Exclusive Access', 'oklch(0.78 0.13 195)')] },
+      { title: 'Sidebands', items: [mk('qualifiers', 'Qualifiers', 'oklch(0.80 0.15 90)'), mk('exclusive', 'Exclusive Access', 'oklch(0.78 0.13 195)')] },
       { title: 'Reference', items: [mk('versions', 'Versions · 3/4/5', 'oklch(0.8 0.005 258)'), mk('compare', 'AXI / Lite / Stream', 'oklch(0.8 0.005 258)'), mk('cheat', 'Cheat Sheet', 'oklch(0.8 0.005 258)')] },
     ];
 
@@ -1068,6 +1186,10 @@ class Component extends DCLogic {
         { sig: 'AWBURST', dir: 'M→S', desc: 'FIXED / INCR / WRAP.' },
         { sig: 'AWID', dir: 'M→S', desc: 'Transaction ID tag.' },
         { sig: 'AWLOCK', dir: 'M→S', desc: 'Exclusive write qualifier. AXI4/5 1-bit; AXI3 2-bit (incl. Locked).' },
+        { sig: 'AWPROT', dir: 'M→S', desc: 'Privileged / secure / instruction access attributes.' },
+        { sig: 'AWCACHE', dir: 'M→S', desc: 'Memory type — bufferable, modifiable and allocate hints.' },
+        { sig: 'AWQOS', dir: 'M→S', desc: '4-bit Quality-of-Service priority hint (AXI4+).' },
+        { sig: 'AWREGION', dir: 'M→S', desc: '4-bit region id — up to 16 regions per port (AXI4+).' },
       ] },
       { code: 'W', color: C.W, name: 'Write Data', rows: [
         { sig: 'WVALID/READY', dir: 'M→S', desc: 'Handshake pair for each data beat.' },
@@ -1086,6 +1208,10 @@ class Component extends DCLogic {
         { sig: 'ARLEN/SIZE/BURST', dir: 'M→S', desc: 'Burst geometry, same encoding as write.' },
         { sig: 'ARID', dir: 'M→S', desc: 'Transaction ID tag.' },
         { sig: 'ARLOCK', dir: 'M→S', desc: 'Exclusive read qualifier — arms the subordinate\u2019s exclusive monitor.' },
+        { sig: 'ARPROT', dir: 'M→S', desc: 'Privileged / secure / instruction access attributes.' },
+        { sig: 'ARCACHE', dir: 'M→S', desc: 'Memory type — bufferable, modifiable and allocate hints.' },
+        { sig: 'ARQOS', dir: 'M→S', desc: '4-bit Quality-of-Service priority hint (AXI4+).' },
+        { sig: 'ARREGION', dir: 'M→S', desc: '4-bit region id — up to 16 regions per port (AXI4+).' },
       ] },
       { code: 'R', color: C.R, name: 'Read Data', rows: [
         { sig: 'RVALID/READY', dir: 'S→M', desc: 'Handshake pair for each data beat.' },
@@ -1097,6 +1223,33 @@ class Component extends DCLogic {
     ];
 
     cheat.forEach((ch) => { ch.rows = ch.rows.map((r) => ({ ...r, dir: this.dirBadge(r.dir, ch.color), ...linkOf(r.sig) })); });
+
+    // ---- SIDEBAND QUALIFIERS ----
+    const protBits = [
+      { bit: '0', name: 'Privileged', lo: 'Unprivileged', hi: 'Privileged', note: 'Privilege level of the access.' },
+      { bit: '1', name: 'Non-secure', lo: 'Secure', hi: 'Non-secure', note: 'Arm TrustZone security state.' },
+      { bit: '2', name: 'Instruction', lo: 'Data', hi: 'Instruction', note: 'A hint: data access vs instruction fetch.' },
+    ];
+    const cacheBits = [
+      { bit: '0', code: 'B', name: 'Bufferable', desc: 'A buffer may acknowledge the write early, before it reaches its final destination.' },
+      { bit: '1', code: 'M', name: 'Modifiable', desc: 'The transaction may be merged, split or resized (called “Cacheable” in AXI3).' },
+      { bit: '2', code: 'RA', name: 'Read-Allocate', desc: 'On a cache miss, a line may be allocated for a read.' },
+      { bit: '3', code: 'WA', name: 'Write-Allocate', desc: 'On a cache miss, a line may be allocated for a write.' },
+    ];
+    const cacheTypes = [
+      { code: '0000', name: 'Device Non-bufferable', tone: 'oklch(0.68 0.13 25)' },
+      { code: '0001', name: 'Device Bufferable', tone: 'oklch(0.68 0.13 25)' },
+      { code: '0010', name: 'Normal Non-cacheable Non-bufferable', tone: 'oklch(0.72 0.1 250)' },
+      { code: '0011', name: 'Normal Non-cacheable Bufferable', tone: 'oklch(0.72 0.1 250)' },
+      { code: '1010', name: 'Write-Through No-Allocate', tone: 'oklch(0.74 0.13 150)' },
+      { code: '1110', name: 'Write-Through Read & Write-Allocate', tone: 'oklch(0.74 0.13 150)' },
+      { code: '1011', name: 'Write-Back No-Allocate', tone: 'oklch(0.74 0.13 150)' },
+      { code: '1111', name: 'Write-Back Read & Write-Allocate', tone: 'oklch(0.74 0.13 150)' },
+    ];
+    const protDir = this.dirBadge('M→S', C.AR);
+    const cacheDir = this.dirBadge('M→S', C.AW);
+    const qosDir = this.dirBadge('M→S', C.R);
+    const regionDir = this.dirBadge('M→S', C.B);
 
     // ---- VERSIONS ----
     const VA = ['oklch(0.78 0.14 235)', 'oklch(0.80 0.15 155)', 'oklch(0.82 0.15 70)'];
@@ -1183,8 +1336,9 @@ class Component extends DCLogic {
 
     return {
       navGroups,
+      protBits, cacheBits, cacheTypes, protDir, cacheDir, qosDir, regionDir,
       isOverview: sec === 'overview', isHandshake: sec === 'handshake', isWrite: sec === 'write',
-      isRead: sec === 'read', isBurst: sec === 'bursts', isIds: sec === 'ids', isExclusive: sec === 'exclusive', isVersions: sec === 'versions', isCompare: sec === 'compare', isCheat: sec === 'cheat',
+      isRead: sec === 'read', isBurst: sec === 'bursts', isIds: sec === 'ids', isExclusive: sec === 'exclusive', isQualifiers: sec === 'qualifiers', isVersions: sec === 'versions', isCompare: sec === 'compare', isCheat: sec === 'cheat',
       exclWave, exclStepLabel: eStep.label, exclStepText: eStep.text, exclAccent: eStep.accent,
       exclCounter: (eStepIdx + 1) + '/' + esteps.length, exclScenarios,
       exclPrev: () => this.step('exclStep', -1, esteps.length - 1), exclNext: () => this.step('exclStep', 1, esteps.length - 1),
