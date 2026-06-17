@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;padding:0;}
+  *{box-sizing:border-box;}
+  ::selection{background:oklch(0.78 0.13 195 / 0.35);}
+  ::-webkit-scrollbar{height:10px;width:10px;}
+  ::-webkit-scrollbar-thumb{background:oklch(0.34 0.01 258);border-radius:6px;}
+  ::-webkit-scrollbar-thumb:hover{background:oklch(0.42 0.01 258);}
+  ::-webkit-scrollbar-track{background:transparent;}
+  @keyframes flowR{0%{left:-6%;opacity:0;}12%{opacity:1;}88%{opacity:1;}100%{left:102%;opacity:0;}}
+  @keyframes flowL{0%{left:102%;opacity:0;}12%{opacity:1;}88%{opacity:1;}100%{left:-6%;opacity:0;}}
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:oklch(0.145 0.012 258);color:oklch(0.93 0.005 258);font-family:'IBM Plex Sans',system-ui,sans-serif;">
+
+  <!-- ===================== TOPOLOGY HEADER ===================== -->
+  <header data-screen-label="ACE Header" style="position:sticky;top:0;z-index:30;background:oklch(0.13 0.011 258);border-bottom:1px solid oklch(0.27 0.011 258);padding:13px 26px;backdrop-filter:blur(6px);">
+    <div style="display:flex;align-items:center;gap:24px;max-width:1540px;margin:0 auto;">
+      <div style="flex:0 0 auto;">
+        <a href="index.html" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.26em;color:oklch(0.58 0.01 258);text-transform:uppercase;transition:color .12s ease;" style-hover="color:oklch(0.82 0.005 258);"><span style="font-size:13px;letter-spacing:0;">←</span> AMBA</a>
+        <div style="font-size:18px;font-weight:600;letter-spacing:-0.01em;margin-top:1px;">ACE · Coherency Explorer</div>
+      </div>
+
+      <!-- master ↔ interconnect topology -->
+      <div style="flex:1;display:flex;align-items:stretch;gap:0;min-width:0;">
+        <div style="flex:0 0 96px;display:flex;flex-direction:column;justify-content:center;text-align:center;padding:9px 6px;border:1.5px solid oklch(0.42 0.012 258);border-radius:9px;background:oklch(0.20 0.013 258);font-family:'JetBrains Mono',monospace;">
+          <div style="font-size:12px;color:oklch(0.92 0.005 258);font-weight:600;">CPU</div>
+          <div style="font-size:9px;color:oklch(0.55 0.01 258);margin-top:2px;">Cached master</div>
+        </div>
+
+        <div style="flex:1;display:flex;flex-direction:column;gap:5px;padding:2px 8px;min-width:0;justify-content:center;">
+          <sc-for list="{{ rails }}" as="r" hint-placeholder-count="8">
+            <div onMouseEnter="{{ r.onHover }}" onMouseLeave="{{ clearHover }}" onClick="{{ r.onClick }}" style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:{{ r.color }};width:30px;flex:0 0 auto;text-align:{{ r.labelAlign }};white-space:nowrap;">{{ r.code }}</span>
+              <span style="flex:1;height:2.5px;border-radius:2px;background:{{ r.color }};position:relative;opacity:{{ r.opacity }};box-shadow:{{ r.glow }};">
+                <span style="position:absolute;top:-2.75px;width:7px;height:7px;border-radius:50%;background:{{ r.color }};box-shadow:0 0 6px {{ r.color }};animation:{{ r.anim }};"></span>
+                {{ r.arrowEl }}
+              </span>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="flex:0 0 96px;display:flex;flex-direction:column;justify-content:center;text-align:center;padding:9px 6px;border:1.5px solid oklch(0.42 0.012 258);border-radius:9px;background:oklch(0.20 0.013 258);font-family:'JetBrains Mono',monospace;">
+          <div style="font-size:12px;color:oklch(0.92 0.005 258);font-weight:600;">ICN</div>
+          <div style="font-size:9px;color:oklch(0.55 0.01 258);margin-top:2px;">Interconnect</div>
+        </div>
+      </div>
+
+      <div style="flex:0 0 178px;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.5;color:oklch(0.6 0.01 258);border-left:1px solid oklch(0.27 0.011 258);padding-left:18px;min-height:40px;display:flex;flex-direction:column;justify-content:center;">
+        <span style="color:{{ hintColor }};font-weight:600;">{{ hintLabel }}</span>
+        <span style="color:oklch(0.6 0.01 258);">{{ hintText }}</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================== BODY: NAV + MAIN ===================== -->
+  <div style="display:grid;grid-template-columns:240px 1fr;max-width:1540px;margin:0 auto;align-items:start;">
+
+    <!-- NAV -->
+    <nav style="position:sticky;top:128px;align-self:start;padding:22px 14px 40px;border-right:1px solid oklch(0.24 0.011 258);font-family:'JetBrains Mono',monospace;">
+      <sc-for list="{{ navGroups }}" as="grp" hint-placeholder-count="4">
+        <div style="margin-bottom:18px;">
+          <div style="font-size:10px;letter-spacing:0.18em;color:oklch(0.48 0.01 258);text-transform:uppercase;padding:0 10px 7px;">{{ grp.title }}</div>
+          <sc-for list="{{ grp.items }}" as="it" hint-placeholder-count="3">
+            <div onClick="{{ it.onClick }}" style="display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:7px;cursor:pointer;font-size:13px;margin-bottom:2px;background:{{ it.bg }};color:{{ it.color }};border-left:2px solid {{ it.bar }};" style-hover="background:oklch(0.21 0.012 258);">
+              <span style="width:7px;height:7px;border-radius:2px;background:{{ it.dot }};flex:0 0 auto;"></span>
+              {{ it.label }}
+            </div>
+          </sc-for>
+        </div>
+      </sc-for>
+    </nav>
+
+    <!-- MAIN -->
+    <main style="padding:30px 38px 80px;min-width:0;">
+
+      <!-- ============ OVERVIEW ============ -->
+      <sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+        <div data-screen-label="Overview">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.58 0.01 258);text-transform:uppercase;">Basics / Overview</div>
+          <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">AXI, plus hardware coherency</h1>
+          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:720px;margin:0 0 22px;">ACE — the <strong style="color:oklch(0.88 0.005 258);">AXI Coherency Extensions</strong> — keeps every one of AXI's five channels and adds the machinery to let multiple caching masters share memory without software flushes. It bolts on <strong style="color:oklch(0.78 0.13 195);font-weight:600;">three new snoop channels</strong>, a set of <strong style="color:oklch(0.78 0.14 235);">coherency qualifiers</strong> on AR/AW, and a five-state <strong>MOESI</strong> line model.</p>
+
+          <!-- inherited AXI strip -->
+          <div style="background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-radius:11px;padding:15px 18px;margin-bottom:22px;max-width:760px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;color:oklch(0.52 0.01 258);text-transform:uppercase;">Inherited from AXI · 5 channels</div>
+              <a href="AXI-Explorer.dc.html" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:oklch(0.78 0.14 235);text-decoration:none;border-bottom:1px dashed oklch(0.78 0.14 235);">open AXI explorer →</a>
+            </div>
+            <div style="display:flex;gap:7px;margin-top:12px;flex-wrap:wrap;">
+              <sc-for list="{{ axiChips }}" as="c" hint-placeholder-count="5">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:{{ c.color }};background:color-mix(in oklch, {{ c.color }} 14%, transparent);border:1px solid color-mix(in oklch, {{ c.color }} 38%, transparent);border-radius:7px;padding:5px 11px;">{{ c.code }}</span>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;color:oklch(0.52 0.01 258);text-transform:uppercase;margin-bottom:11px;">New in ACE · 3 snoop channels</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:14px;margin-bottom:26px;max-width:760px;">
+            <sc-for list="{{ snoopCards }}" as="c" hint-placeholder-count="3">
+              <div onMouseEnter="{{ c.onHover }}" onMouseLeave="{{ clearHover }}" onClick="{{ c.onOpen }}" style="background:oklch(0.175 0.013 258);border:1px solid oklch(0.28 0.012 258);border-top:2px solid {{ c.color }};border-radius:11px;padding:16px 17px;cursor:pointer;transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease, background .12s ease;" style-hover="{{ c.hoverStyle }}">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;">
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;color:{{ c.color }};">{{ c.code }}</span>
+                  <span style="display:inline-flex;align-items:center;gap:5px;padding:3px 7px;border-radius:6px;background:oklch(0.13 0.01 258);border:1px solid oklch(0.27 0.012 258);">
+                    <span style="{{ c.dir.mStyle }}">M</span>
+                    <span style="display:inline-flex;align-items:center;margin:0 1px;">{{ c.dir.arrowEl }}</span>
+                    <span style="{{ c.dir.sStyle }}">I</span>
+                  </span>
+                </div>
+                <div style="font-size:14px;font-weight:600;margin-bottom:5px;">{{ c.name }}</div>
+                <div style="font-size:12.5px;line-height:1.5;color:oklch(0.64 0.008 258);margin-bottom:12px;">{{ c.desc }}</div>
+                <div style="display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:11px;color:{{ c.color }};opacity:0.85;">{{ c.cta }} <span style="font-size:13px;">→</span></div>
+              </div>
+            </sc-for>
+          </div>
+
+          <!-- AR/AW extension note -->
+          <div style="background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-radius:11px;padding:18px 20px;display:flex;gap:18px;align-items:flex-start;max-width:760px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:22px;color:oklch(0.78 0.13 195);line-height:1;">§</div>
+            <div>
+              <div style="font-size:14px;font-weight:600;margin-bottom:6px;">The address channels grow coherency qualifiers</div>
+              <div style="font-size:13.5px;line-height:1.6;color:oklch(0.66 0.008 258);margin-bottom:10px;">No new channels for these — they extend the existing <strong style="color:oklch(0.78 0.14 235);">AR</strong> and <strong style="color:oklch(0.80 0.15 35);">AW</strong>, so they share their colours:</div>
+              <div style="display:flex;gap:7px;flex-wrap:wrap;">
+                <sc-for list="{{ extChips }}" as="c" hint-placeholder-count="6">
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:{{ c.color }};background:color-mix(in oklch, {{ c.color }} 13%, transparent);border:1px solid color-mix(in oklch, {{ c.color }} 34%, transparent);border-radius:6px;padding:4px 9px;">{{ c.code }}</span>
+                </sc-for>
+              </div>
+              <div style="font-size:12.5px;line-height:1.55;color:oklch(0.6 0.008 258);margin-top:11px;"><strong style="color:oklch(0.82 0.005 258);">SNOOP</strong> picks the transaction's coherency intent · <strong style="color:oklch(0.82 0.005 258);">DOMAIN</strong> sets how far it propagates · <strong style="color:oklch(0.82 0.005 258);">BAR</strong> marks a memory barrier. Walk them in <span onClick="{{ goDomains }}" style="color:oklch(0.78 0.13 195);cursor:pointer;border-bottom:1px dashed oklch(0.78 0.13 195);">Domains &amp; types →</span></div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ MOESI STATES ============ -->
+      <sc-if value="{{ isStates }}">
+        <div data-screen-label="MOESI States">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.58 0.01 258);text-transform:uppercase;">Basics / Cache Line States</div>
+          <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">MOESI — five states per cache line</h1>
+          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:720px;margin:0 0 22px;">Every coherent cache line sits in one of five states, defined by two questions: is this copy <strong style="color:oklch(0.88 0.005 258);">unique</strong> (no other cache has it) or <strong style="color:oklch(0.88 0.005 258);">shared</strong>, and is it <strong style="color:oklch(0.88 0.005 258);">clean</strong> (matches memory) or <strong style="color:oklch(0.88 0.005 258);">dirty</strong>? Click a cell to inspect it.</p>
+
+          <div style="display:flex;gap:26px;flex-wrap:wrap;align-items:flex-start;">
+            <!-- matrix -->
+            <div style="flex:0 0 auto;">
+              <div style="display:grid;grid-template-columns:64px 132px 132px;grid-template-rows:30px 92px 92px;gap:8px;">
+                <div></div>
+                <div style="display:grid;place-items:center;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.12em;color:oklch(0.6 0.01 258);text-transform:uppercase;">Unique</div>
+                <div style="display:grid;place-items:center;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.12em;color:oklch(0.6 0.01 258);text-transform:uppercase;">Shared</div>
+                <div style="display:grid;place-items:center;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.12em;color:oklch(0.6 0.01 258);text-transform:uppercase;writing-mode:vertical-rl;transform:rotate(180deg);">Clean</div>
+                <sc-for list="{{ stateRowClean }}" as="s" hint-placeholder-count="2">
+                  <div onClick="{{ s.onClick }}" style="border-radius:11px;padding:13px 14px;cursor:pointer;background:{{ s.bg }};border:1.5px solid {{ s.border }};transition:transform .1s ease;" style-hover="transform:translateY(-2px);">
+                    <div style="display:flex;align-items:center;gap:8px;"><span style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:{{ s.color }};">{{ s.letter }}</span><span style="font-size:13px;font-weight:600;color:{{ s.nameColor }};">{{ s.name }}</span></div>
+                    <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:oklch(0.6 0.008 258);margin-top:8px;line-height:1.45;">{{ s.tag }}</div>
+                  </div>
+                </sc-for>
+                <div style="display:grid;place-items:center;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.12em;color:oklch(0.6 0.01 258);text-transform:uppercase;writing-mode:vertical-rl;transform:rotate(180deg);">Dirty</div>
+                <sc-for list="{{ stateRowDirty }}" as="s" hint-placeholder-count="2">
+                  <div onClick="{{ s.onClick }}" style="border-radius:11px;padding:13px 14px;cursor:pointer;background:{{ s.bg }};border:1.5px solid {{ s.border }};transition:transform .1s ease;" style-hover="transform:translateY(-2px);">
+                    <div style="display:flex;align-items:center;gap:8px;"><span style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:{{ s.color }};">{{ s.letter }}</span><span style="font-size:13px;font-weight:600;color:{{ s.nameColor }};">{{ s.name }}</span></div>
+                    <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:oklch(0.6 0.008 258);margin-top:8px;line-height:1.45;">{{ s.tag }}</div>
+                  </div>
+                </sc-for>
+              </div>
+              <!-- invalid tile -->
+              <div onClick="{{ invalidTile.onClick }}" style="margin-top:8px;width:336px;border-radius:11px;padding:13px 15px;cursor:pointer;background:{{ invalidTile.bg }};border:1.5px solid {{ invalidTile.border }};display:flex;align-items:center;gap:11px;transition:transform .1s ease;" style-hover="transform:translateY(-2px);">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:{{ invalidTile.color }};">{{ invalidTile.letter }}</span>
+                <span style="font-size:13px;font-weight:600;color:{{ invalidTile.nameColor }};">{{ invalidTile.name }}</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:oklch(0.6 0.008 258);margin-left:auto;">{{ invalidTile.tag }}</span>
+              </div>
+            </div>
+
+            <!-- detail -->
+            <div style="flex:1 1 320px;min-width:300px;background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-top:2px solid {{ stateDetail.color }};border-radius:13px;padding:22px 24px;">
+              <div style="display:flex;align-items:baseline;gap:11px;margin-bottom:6px;">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:700;color:{{ stateDetail.color }};line-height:1;">{{ stateDetail.letter }}</span>
+                <span style="font-size:20px;font-weight:600;">{{ stateDetail.name }}</span>
+              </div>
+              <div style="display:flex;gap:7px;margin-bottom:16px;">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:{{ stateDetail.uColor }};background:color-mix(in oklch, {{ stateDetail.uColor }} 14%, transparent);border:1px solid color-mix(in oklch, {{ stateDetail.uColor }} 36%, transparent);border-radius:20px;padding:3px 11px;">{{ stateDetail.uTag }}</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:{{ stateDetail.cColor }};background:color-mix(in oklch, {{ stateDetail.cColor }} 14%, transparent);border:1px solid color-mix(in oklch, {{ stateDetail.cColor }} 36%, transparent);border-radius:20px;padding:3px 11px;">{{ stateDetail.cTag }}</span>
+              </div>
+              <div style="font-size:14.5px;line-height:1.65;color:oklch(0.74 0.008 258);margin-bottom:18px;">{{ stateDetail.desc }}</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:0.14em;color:oklch(0.5 0.01 258);text-transform:uppercase;margin-bottom:8px;">On a snoop</div>
+              <div style="font-size:13px;line-height:1.55;color:oklch(0.66 0.008 258);">{{ stateDetail.snoop }}</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ SNOOP CHANNELS ============ -->
+      <sc-if value="{{ isSnoop }}">
+        <div data-screen-label="Snoop Channels">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.58 0.01 258);text-transform:uppercase;">Channels / Snoop</div>
+          <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">The three snoop channels</h1>
+          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:720px;margin:0 0 20px;">When a coherent access needs to know what other caches hold, the interconnect <em>snoops</em> them. A snoop is one transaction over three channels: address in on <strong style="color:oklch(0.78 0.13 195);">AC</strong>, a mandatory response out on <strong style="color:oklch(0.72 0.17 330);">CR</strong>, and — only if data is owed — a line out on <strong style="color:oklch(0.68 0.13 275);">CD</strong>. Step the clock.</p>
+
+          <div style="background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-radius:13px;overflow:hidden;">
+            <div style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:oklch(0.118 0.01 258);border-bottom:1px solid oklch(0.26 0.011 258);font-family:'JetBrains Mono',monospace;font-size:11px;color:oklch(0.56 0.01 258);">
+              <span style="width:9px;height:9px;border-radius:50%;background:oklch(0.78 0.13 195);"></span>
+              <span style="width:9px;height:9px;border-radius:50%;background:oklch(0.72 0.17 330);"></span>
+              <span style="width:9px;height:9px;border-radius:50%;background:oklch(0.68 0.13 275);"></span>
+              <span style="margin-left:6px;">snoop.vcd — interconnect snoops the master</span>
+            </div>
+            <div style="padding:18px 18px 8px;background:oklch(0.115 0.01 258);overflow-x:auto;">{{ snoopWave }}</div>
+            <div style="display:flex;align-items:stretch;border-top:1px solid oklch(0.24 0.011 258);">
+              <div style="display:flex;gap:6px;align-items:center;padding:0 16px;border-right:1px solid oklch(0.24 0.011 258);">
+                <div onClick="{{ snoopPrev }}" style="font-family:'JetBrains Mono',monospace;font-size:15px;color:oklch(0.7 0.01 258);width:30px;height:30px;display:grid;place-items:center;border:1px solid oklch(0.32 0.012 258);border-radius:7px;cursor:pointer;" style-hover="background:oklch(0.22 0.013 258);">◀</div>
+                <div onClick="{{ snoopNext }}" style="font-family:'JetBrains Mono',monospace;font-size:15px;color:oklch(0.93 0.005 258);width:30px;height:30px;display:grid;place-items:center;border:1px solid oklch(0.4 0.012 258);border-radius:7px;cursor:pointer;background:oklch(0.22 0.013 258);" style-hover="background:oklch(0.27 0.013 258);">▶</div>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:oklch(0.55 0.01 258);margin-left:4px;">{{ snoopCounter }}</span>
+              </div>
+              <div style="flex:1;padding:14px 18px;">
+                <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:{{ snoopAccent }};letter-spacing:0.05em;margin-bottom:3px;">{{ snoopStepLabel }}</div>
+                <div style="font-size:13.5px;line-height:1.5;color:oklch(0.82 0.006 258);">{{ snoopStepText }}</div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:12px;color:oklch(0.6 0.01 258);background:oklch(0.17 0.013 258);border:1px solid oklch(0.27 0.012 258);border-radius:9px;padding:11px 15px;max-width:560px;">
+            <span style="color:{{ inspColor }};font-weight:600;">{{ inspLabel }}</span> · <span style="color:oklch(0.7 0.008 258);">{{ inspText }}</span>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ COHERENT READ ============ -->
+      <sc-if value="{{ isCoherent }}">
+        <div data-screen-label="Coherent Read">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.58 0.01 258);text-transform:uppercase;">Transactions / Coherent Read</div>
+          <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">ReadShared — a snoop that hits dirty data</h1>
+          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:740px;margin:0 0 16px;"><strong style="color:oklch(0.78 0.14 235);">CPU&nbsp;0</strong> issues a <code style="font-family:'JetBrains Mono',monospace;">ReadShared</code> for a line that <strong style="color:oklch(0.72 0.17 330);">CPU&nbsp;1</strong> holds <strong>Modified</strong>. Watch the dirty line move cache-to-cache — main memory is never touched. Step the clock; signals below the divider belong to the snooped CPU&nbsp;1.</p>
+
+          <div style="display:flex;gap:12px;align-items:center;margin-bottom:16px;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;font-size:11.5px;">
+            <span style="color:oklch(0.6 0.01 258);">line 0x40 state:</span>
+            <span style="display:inline-flex;align-items:center;gap:7px;"><span style="color:oklch(0.78 0.14 235);font-weight:600;">CPU 0</span><span style="color:oklch(0.5 0.01 258);">{{ cohCpu0 }}</span></span>
+            <span style="color:oklch(0.4 0.01 258);">·</span>
+            <span style="display:inline-flex;align-items:center;gap:7px;"><span style="color:oklch(0.72 0.17 330);font-weight:600;">CPU 1</span><span style="color:oklch(0.5 0.01 258);">{{ cohCpu1 }}</span></span>
+          </div>
+
+          <div style="background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-radius:13px;overflow:hidden;">
+            <div style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:oklch(0.118 0.01 258);border-bottom:1px solid oklch(0.26 0.011 258);font-family:'JetBrains Mono',monospace;font-size:11px;color:oklch(0.56 0.01 258);">
+              <span style="width:9px;height:9px;border-radius:50%;background:oklch(0.62 0.16 25);"></span>
+              <span style="width:9px;height:9px;border-radius:50%;background:oklch(0.82 0.13 85);"></span>
+              <span style="width:9px;height:9px;border-radius:50%;background:oklch(0.78 0.15 150);"></span>
+              <span style="margin-left:6px;">readshared.vcd — cache-to-cache transfer</span>
+            </div>
+            <div style="padding:18px 18px 8px;background:oklch(0.115 0.01 258);overflow-x:auto;">{{ cohWave }}</div>
+            <div style="display:flex;align-items:stretch;border-top:1px solid oklch(0.24 0.011 258);">
+              <div style="display:flex;gap:6px;align-items:center;padding:0 16px;border-right:1px solid oklch(0.24 0.011 258);">
+                <div onClick="{{ cohPrev }}" style="font-family:'JetBrains Mono',monospace;font-size:15px;color:oklch(0.7 0.01 258);width:30px;height:30px;display:grid;place-items:center;border:1px solid oklch(0.32 0.012 258);border-radius:7px;cursor:pointer;" style-hover="background:oklch(0.22 0.013 258);">◀</div>
+                <div onClick="{{ cohNext }}" style="font-family:'JetBrains Mono',monospace;font-size:15px;color:oklch(0.93 0.005 258);width:30px;height:30px;display:grid;place-items:center;border:1px solid oklch(0.4 0.012 258);border-radius:7px;cursor:pointer;background:oklch(0.22 0.013 258);" style-hover="background:oklch(0.27 0.013 258);">▶</div>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:oklch(0.55 0.01 258);margin-left:4px;">{{ cohCounter }}</span>
+              </div>
+              <div style="flex:1;padding:14px 18px;">
+                <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:{{ cohAccent }};letter-spacing:0.05em;margin-bottom:3px;">{{ cohStepLabel }}</div>
+                <div style="font-size:13.5px;line-height:1.5;color:oklch(0.82 0.006 258);">{{ cohStepText }}</div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:12px;color:oklch(0.6 0.01 258);background:oklch(0.17 0.013 258);border:1px solid oklch(0.27 0.012 258);border-radius:9px;padding:11px 15px;max-width:560px;">
+            <span style="color:{{ inspColor }};font-weight:600;">{{ inspLabel }}</span> · <span style="color:oklch(0.7 0.008 258);">{{ inspText }}</span>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ DOMAINS & TYPES ============ -->
+      <sc-if value="{{ isDomains }}">
+        <div data-screen-label="Domains and Types">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.58 0.01 258);text-transform:uppercase;">Reference / Domains &amp; Types</div>
+          <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">Shareability domains &amp; snoop types</h1>
+          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:720px;margin:0 0 24px;">Two qualifiers on every coherent address-channel beat decide its behaviour: <strong style="color:oklch(0.78 0.13 195);">DOMAIN</strong> bounds <em>how far</em> the access is kept coherent, and <strong style="color:oklch(0.78 0.14 235);">SNOOP</strong> picks <em>which</em> coherent transaction it is.</p>
+
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;color:oklch(0.52 0.01 258);text-transform:uppercase;margin-bottom:12px;">AxDOMAIN · shareability</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:30px;max-width:840px;">
+            <sc-for list="{{ domainCards }}" as="d" hint-placeholder-count="4">
+              <div style="flex:1 1 180px;background:oklch(0.17 0.013 258);border:1px solid oklch(0.27 0.012 258);border-left:2px solid oklch(0.78 0.13 195);border-radius:10px;padding:14px 16px;">
+                <div style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:oklch(0.82 0.07 195);margin-bottom:6px;">{{ d.name }}</div>
+                <div style="font-size:12.5px;line-height:1.5;color:oklch(0.66 0.008 258);">{{ d.desc }}</div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start;">
+            <div style="flex:1 1 360px;min-width:320px;">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;color:oklch(0.52 0.01 258);text-transform:uppercase;margin-bottom:12px;"><span style="color:oklch(0.78 0.14 235);">ARSNOOP</span> · read transactions</div>
+              <sc-for list="{{ readTypes }}" as="t" hint-placeholder-count="5">
+                <div style="display:flex;gap:12px;padding:9px 12px;border-radius:8px;background:oklch(0.165 0.013 258);border:1px solid oklch(0.27 0.012 258);margin-bottom:6px;">
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:oklch(0.78 0.14 235);flex:0 0 132px;">{{ t.name }}</span>
+                  <span style="font-size:12.5px;line-height:1.5;color:oklch(0.66 0.008 258);">{{ t.desc }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="flex:1 1 360px;min-width:320px;">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;color:oklch(0.52 0.01 258);text-transform:uppercase;margin-bottom:12px;"><span style="color:oklch(0.80 0.15 35);">AWSNOOP</span> · write transactions</div>
+              <sc-for list="{{ writeTypes }}" as="t" hint-placeholder-count="5">
+                <div style="display:flex;gap:12px;padding:9px 12px;border-radius:8px;background:oklch(0.165 0.013 258);border:1px solid oklch(0.27 0.012 258);margin-bottom:6px;">
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:oklch(0.80 0.15 35);flex:0 0 138px;">{{ t.name }}</span>
+                  <span style="font-size:12.5px;line-height:1.5;color:oklch(0.66 0.008 258);">{{ t.desc }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ VERSIONS ============ -->
+      <sc-if value="{{ isVersions }}">
+        <div data-screen-label="Versions">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.58 0.01 258);text-transform:uppercase;">Reference / Versions</div>
+          <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">ACE across AMBA generations</h1>
+          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:720px;margin:0 0 24px;">ACE arrived with AMBA 4 on top of AXI4, then grew in AMBA 5. The <strong>Lite</strong> variants trade full two-way coherency for a much smaller, one-way footprint.</p>
+          <div style="display:flex;gap:16px;flex-wrap:wrap;max-width:900px;">
+            <sc-for list="{{ versions }}" as="v" hint-placeholder-count="3">
+              <div style="flex:1 1 250px;background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-top:2px solid {{ v.color }};border-radius:13px;padding:18px 20px;">
+                <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:4px;">
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;color:{{ v.color }};">{{ v.name }}</span>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:oklch(0.56 0.01 258);">{{ v.amba }}</span>
+                </div>
+                <div style="font-size:13px;line-height:1.55;color:oklch(0.68 0.008 258);margin-bottom:14px;">{{ v.tag }}</div>
+                <sc-for list="{{ v.rows }}" as="r" hint-placeholder-count="4">
+                  <div style="display:flex;justify-content:space-between;gap:10px;font-family:'JetBrains Mono',monospace;font-size:11.5px;padding:5px 0;border-top:1px solid oklch(0.23 0.011 258);">
+                    <span style="color:oklch(0.55 0.01 258);">{{ r.k }}</span>
+                    <span style="color:oklch(0.8 0.006 258);text-align:right;">{{ r.v }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ CHEAT SHEET ============ -->
+      <sc-if value="{{ isCheat }}">
+        <div data-screen-label="Cheat Sheet">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.58 0.01 258);text-transform:uppercase;">Reference / Cheat Sheet</div>
+          <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">ACE signal cheat sheet</h1>
+          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:720px;margin:0 0 22px;">Only the coherency additions are listed — the five AXI channels and their VALID/READY pairs carry over unchanged. <strong style="color:oklch(0.78 0.14 235);">M</strong>=cached master, <strong style="color:oklch(0.78 0.13 195);">I</strong>=interconnect.</p>
+          <div style="display:flex;flex-direction:column;gap:20px;max-width:880px;">
+            <sc-for list="{{ cheat }}" as="g" hint-placeholder-count="4">
+              <div>
+                <div style="display:flex;align-items:center;gap:9px;margin-bottom:10px;">
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:{{ g.color }};">{{ g.code }}</span>
+                  <span style="font-size:13.5px;font-weight:600;color:oklch(0.82 0.005 258);">{{ g.name }}</span>
+                  <span style="flex:1;height:1px;background:oklch(0.24 0.011 258);"></span>
+                </div>
+                <sc-for list="{{ g.rows }}" as="r" hint-placeholder-count="3">
+                  <div style="display:flex;align-items:flex-start;gap:12px;padding:7px 12px;border-radius:7px;background:oklch(0.165 0.013 258);border:1px solid oklch(0.26 0.011 258);margin-bottom:5px;">
+                    <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:{{ g.color }};flex:0 0 132px;">{{ r.sig }}</span>
+                    <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:oklch(0.56 0.01 258);flex:0 0 42px;padding-top:1px;">{{ r.dir }}</span>
+                    <span style="font-size:12.5px;line-height:1.5;color:oklch(0.68 0.008 258);">{{ r.desc }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900},&quot;startSection&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;overview&quot;,&quot;states&quot;,&quot;snoop&quot;,&quot;coherent&quot;,&quot;domains&quot;,&quot;versions&quot;,&quot;cheat&quot;],&quot;default&quot;:&quot;overview&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = {
+    section: null,
+    hover: null,
+    snoopStep: 0,
+    cohStep: 0,
+    moesi: 'M',
+  };
+
+  C = {
+    // inherited AXI channels
+    AW: 'oklch(0.80 0.15 35)',
+    W: 'oklch(0.85 0.15 90)',
+    B: 'oklch(0.80 0.15 155)',
+    AR: 'oklch(0.78 0.14 235)',
+    R: 'oklch(0.72 0.17 305)',
+    // new ACE snoop channels
+    AC: 'oklch(0.78 0.13 195)',
+    CR: 'oklch(0.72 0.17 330)',
+    CD: 'oklch(0.68 0.13 275)',
+    clk: 'oklch(0.72 0.01 258)',
+    gray: 'oklch(0.55 0.01 258)',
+  };
+
+  // M = cached master, S = interconnect (subordinate of the master's own AXI traffic)
+  DRIVE = {
+    AWVALID: 'M→S', AWREADY: 'M←S', ARVALID: 'M→S', ARREADY: 'M←S',
+    WVALID: 'M→S', WREADY: 'M←S', BVALID: 'M←S', BREADY: 'M→S',
+    RVALID: 'M←S', RREADY: 'M→S',
+    ACVALID: 'M←S', ACREADY: 'M→S', ACADDR: 'M←S', ACSNOOP: 'M←S',
+    CRVALID: 'M→S', CRREADY: 'M←S', CRRESP: 'M→S',
+    CDVALID: 'M→S', CDREADY: 'M←S', CDDATA: 'M→S', CDLAST: 'M→S',
+  };
+
+  go = (s) => this.setState({ section: s, hover: null });
+  setHover = (info) => this.setState({ hover: info });
+
+  miniDrive(drive, color) {
+    const h = React.createElement;
+    const ms = drive === 'M→S';
+    const off = 'oklch(0.46 0.01 258)';
+    const aw = 13, ah = 9, cyy = 4.5, hd = 5;
+    const arrow = ms
+      ? h('svg', { width: aw, height: ah, viewBox: '0 0 ' + aw + ' ' + ah, style: { display: 'block' } }, [
+          h('line', { key: 'l', x1: 0.5, y1: cyy, x2: aw - hd, y2: cyy, stroke: color, strokeWidth: 1.3, strokeLinecap: 'round' }),
+          h('polygon', { key: 'p', points: (aw - 0.5) + ',' + cyy + ' ' + (aw - hd) + ',' + (cyy - 2.6) + ' ' + (aw - hd) + ',' + (cyy + 2.6), fill: color }),
+        ])
+      : h('svg', { width: aw, height: ah, viewBox: '0 0 ' + aw + ' ' + ah, style: { display: 'block' } }, [
+          h('line', { key: 'l', x1: hd, y1: cyy, x2: aw - 0.5, y2: cyy, stroke: color, strokeWidth: 1.3, strokeLinecap: 'round' }),
+          h('polygon', { key: 'p', points: '0.5,' + cyy + ' ' + hd + ',' + (cyy - 2.6) + ' ' + hd + ',' + (cyy + 2.6), fill: color }),
+        ]);
+    const lett = (t, on) => h('span', { key: t, style: { color: on ? color : off, fontWeight: on ? 700 : 500 } }, t);
+    return h('span', { key: 'drv', style: { display: 'inline-flex', alignItems: 'center', gap: 1.5, fontFamily: "'JetBrains Mono', monospace", fontSize: 8.5, lineHeight: 1, flex: '0 0 auto' } }, [lett('M', ms), arrow, lett('S', !ms)]);
+  }
+
+  dirBadge(dir, color) {
+    const isMS = dir === 'M→S';
+    const on = `font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:${color};background:color-mix(in oklch, ${color} 22%, transparent);border:1px solid color-mix(in oklch, ${color} 52%, transparent);border-radius:5px;width:19px;height:19px;display:inline-flex;align-items:center;justify-content:center;`;
+    const off = `font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:600;color:oklch(0.5 0.01 258);background:oklch(0.2 0.011 258);border:1px solid oklch(0.3 0.012 258);border-radius:5px;width:19px;height:19px;display:inline-flex;align-items:center;justify-content:center;`;
+    const h = React.createElement;
+    const aw = 24, ah = 14, cy = 7, hw = 8;
+    const arrowEl = isMS
+      ? h('svg', { width: aw, height: ah, viewBox: `0 0 ${aw} ${ah}`, style: { display: 'block' } }, [
+          h('line', { key: 's', x1: 1, y1: cy, x2: aw - hw + 1, y2: cy, stroke: color, strokeWidth: 2.2, strokeLinecap: 'round' }),
+          h('polygon', { key: 'p', points: `${aw - 1},${cy} ${aw - hw},${cy - 4.5} ${aw - hw},${cy + 4.5}`, fill: color }),
+        ])
+      : h('svg', { width: aw, height: ah, viewBox: `0 0 ${aw} ${ah}`, style: { display: 'block' } }, [
+          h('line', { key: 's', x1: hw - 1, y1: cy, x2: aw - 1, y2: cy, stroke: color, strokeWidth: 2.2, strokeLinecap: 'round' }),
+          h('polygon', { key: 'p', points: `1,${cy} ${hw},${cy - 4.5} ${hw},${cy + 4.5}`, fill: color }),
+        ]);
+    return { mStyle: isMS ? on : off, sStyle: isMS ? off : on, arrowEl };
+  }
+
+  step(key, dir, max) {
+    this.setState((st) => {
+      let v = st[key] + dir;
+      if (v < 0) v = 0;
+      if (v > max) v = max;
+      return { [key]: v };
+    });
+  }
+
+  buildWave(opts) {
+    const h = React.createElement;
+    const cycles = opts.cycles || 10;
+    const w = opts.w || 34;
+    const t = opts.theme || {};
+    const rowH = t.rowH || 30;
+    const hi = 7, lo = rowH - 8, mid = (hi + lo) / 2;
+    const traceW = cycles * w;
+    const labelW = t.labelW || 86;
+    const mono = "'JetBrains Mono', monospace";
+    const hovered = this.state.hover && this.state.hover.name;
+
+    function stepPath(bits, ww) {
+      let x = 0;
+      let d = `M0,${bits[0] ? hi : lo}`;
+      for (let i = 0; i < bits.length; i++) {
+        const y = bits[i] ? hi : lo;
+        d += ` L${x},${y}`;
+        x += ww;
+        d += ` L${x},${y}`;
+      }
+      return d;
+    }
+
+    const headerRow = opts.axis ? (() => {
+      const cells = [];
+      for (let c = 0; c < cycles; c++) {
+        cells.push(h('div', { key: c, style: { width: w, flex: '0 0 auto', textAlign: 'center', fontFamily: mono, fontSize: 9.5, color: 'oklch(0.46 0.01 258)' } }, 'T' + c));
+      }
+      return h('div', { key: 'ax', style: { display: 'flex', height: 16, marginLeft: labelW } }, cells);
+    })() : null;
+
+    const rows = opts.signals.map((s, idx) => {
+      if (s.type === 'divider') {
+        return h('div', { key: idx, style: { display: 'flex', alignItems: 'center', gap: 8, height: 16 } }, [
+          h('div', { key: 'l', style: { width: labelW, flex: '0 0 auto', textAlign: 'right', paddingRight: 11, fontFamily: mono, fontSize: 8.5, letterSpacing: '0.12em', color: s.color || 'oklch(0.5 0.01 258)', textTransform: 'uppercase' } }, s.name),
+          h('div', { key: 'r', style: { flex: 1, height: 0, borderTop: '1px dashed ' + (s.color || 'oklch(0.3 0.01 258)'), opacity: 0.5 } }),
+        ]);
+      }
+      const kids = [];
+      if (t.grid) {
+        for (let c = 0; c <= cycles; c++) {
+          kids.push(h('line', { key: 'g' + c, x1: c * w, y1: 0, x2: c * w, y2: rowH, stroke: t.gridColor || 'oklch(0.26 0.008 258)', strokeWidth: 1 }));
+        }
+      }
+      if (s.type === 'clk') {
+        const bits = [];
+        for (let c = 0; c < cycles; c++) { bits.push(1); bits.push(0); }
+        kids.push(h('path', { key: 'p', d: stepPath(bits, w / 2), fill: 'none', stroke: s.color, strokeWidth: 1.4 }));
+      } else if (s.type === 'bus') {
+        (s.segs || []).forEach((sg, i) => {
+          const x0 = sg.from * w, x1 = sg.to * w;
+          const pts = `${x0},${mid} ${x0 + 6},${hi} ${x1 - 6},${hi} ${x1},${mid} ${x1 - 6},${lo} ${x0 + 6},${lo}`;
+          kids.push(h('polygon', { key: 'b' + i, points: pts, fill: `color-mix(in oklch, ${s.color} 16%, transparent)`, stroke: s.color, strokeWidth: 1.4 }));
+          if (sg.value) kids.push(h('text', { key: 'v' + i, x: (x0 + x1) / 2, y: mid + 4, fill: s.color, fontSize: 10, fontFamily: mono, textAnchor: 'middle' }, sg.value));
+        });
+        kids.unshift(h('line', { key: 'idle', x1: 0, y1: mid, x2: traceW, y2: mid, stroke: t.gridColor || 'oklch(0.32 0.01 258)', strokeWidth: 1, strokeDasharray: '3 3' }));
+      } else {
+        kids.push(h('path', { key: 'p', d: stepPath(s.bits, w), fill: 'none', stroke: s.color, strokeWidth: 1.9, strokeLinejoin: 'round', style: t.glow ? { filter: `drop-shadow(0 0 5px ${s.color})` } : undefined }));
+      }
+      (s.marks || []).forEach((mc, i) => {
+        kids.push(h('circle', { key: 'm' + i, cx: mc * w + w / 2, cy: mid, r: 3.4, fill: s.color, stroke: 'oklch(0.12 0.01 258)', strokeWidth: 1.2 }));
+      });
+
+      const svg = h('svg', { key: 's', width: traceW, height: rowH, style: { display: 'block', overflow: 'visible' } }, kids);
+      const isHov = hovered && s.name === hovered;
+      const drive = s.drive || (s.type === 'clk' ? null : this.DRIVE[s.name]);
+      const driveEl = drive ? this.miniDrive(drive, s.color) : null;
+      const nameSpan = h('span', { key: 'n', style: { fontFamily: mono, fontSize: 11, color: s.type === 'clk' ? 'oklch(0.6 0.01 258)' : s.color, letterSpacing: '0.02em', whiteSpace: 'nowrap' } }, s.name);
+      const label = h('div', {
+        key: 'l',
+        onMouseEnter: s.desc ? () => this.setHover({ name: s.name, color: s.color, desc: s.desc, full: s.full }) : undefined,
+        onMouseLeave: s.desc ? () => this.setHover(null) : undefined,
+        style: { width: labelW, flex: '0 0 auto', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 6, paddingRight: 11, height: rowH, cursor: s.desc ? 'help' : 'default' }
+      }, [driveEl, nameSpan]);
+      return h('div', { key: idx, style: { display: 'flex', alignItems: 'center', height: rowH, background: isHov ? 'oklch(0.2 0.013 258)' : 'transparent', borderRadius: 5 } }, [label, svg]);
+    });
+
+    let overlay = null;
+    if (opts.playhead != null) {
+      const left = labelW + opts.playhead * w + w / 2;
+      overlay = h('div', { key: 'cur', style: { position: 'absolute', top: opts.axis ? 16 : 0, bottom: 2, left: left, width: 0, borderLeft: `1.5px dashed ${t.cursorColor || 'oklch(0.88 0.005 258)'}`, pointerEvents: 'none', zIndex: 5 } },
+        h('span', { style: { position: 'absolute', top: -1, left: -5, width: 9, height: 9, borderRadius: '50%', background: t.cursorColor || 'oklch(0.88 0.005 258)' } }));
+    }
+    return h('div', { style: { position: 'relative', display: 'inline-block', minWidth: '100%' } }, [headerRow, ...rows, overlay]);
+  }
+
+  // ---------- step scripts ----------
+  snoopSteps() {
+    const C = this.C;
+    return [
+      { cy: 1, accent: C.AC, ch: 'AC', label: 'T1 · AC — SNOOP REQUEST', text: 'The interconnect drives a snoop onto the master: ACADDR names the cache line, ACSNOOP names the snoop kind. ACVALID asserts.' },
+      { cy: 2, accent: C.AC, ch: 'AC', label: 'T2 · AC HANDSHAKE', text: 'The master raises ACREADY. Both high on this edge → the snoop request is accepted and the master looks up the line.' },
+      { cy: 3, accent: C.CR, ch: 'CR', label: 'T3 · CR — SNOOP RESPONSE', text: 'Mandatory response: CRRESP (5 bits) reports whether the master had the line, whether data follows, its error status, and the state it keeps. Sent on every snoop — even a miss.' },
+      { cy: 4, accent: C.CD, ch: 'CD', label: 'T4 · CD — SNOOP DATA', text: 'Because CRRESP promised data, the master streams the line on CDDATA. CDLAST marks the final beat. On a miss this channel stays idle.' },
+      { cy: 6, accent: null, ch: null, label: 'T6 · SNOOP COMPLETE', text: 'The interconnect now has the response (and any data) and can satisfy the original coherent access. One snoop = AC in, CR out, optional CD out.' },
+    ];
+  }
+  cohSteps() {
+    const C = this.C;
+    return [
+      { cy: 1, accent: C.AR, label: 'T1 · CPU 0 — ReadShared', text: 'CPU 0 wants a shareable copy of 0x40. It drives ARADDR=0x40 with ARSNOOP=ReadShared and ARDOMAIN=Inner, asserting ARVALID to the interconnect.', c0: 'Invalid → request', c1: 'Modified' },
+      { cy: 2, accent: C.AC, label: 'T2 · ICN snoops CPU 1', text: 'The interconnect checks its snoop filter, sees CPU 1 may hold 0x40, and issues a snoop on CPU 1\u2019s AC channel: ACADDR=0x40, ACSNOOP=ReadShared.', c0: 'waiting', c1: 'Modified' },
+      { cy: 3, accent: C.CR, label: 'T3 · CPU 1 snoop response', text: 'CPU 1 has the line dirty. Its CRRESP says "data is coming, line was dirty, keep it Shared" — it will pass the dirty data and move Modified → Owned.', c0: 'waiting', c1: 'Modified → Owned' },
+      { cy: 4, accent: C.CD, label: 'T4 · Dirty data forwarded', text: 'CPU 1 streams the dirty line on CDDATA (CDLAST on the last beat). The interconnect captures it directly — no detour through main memory.', c0: 'waiting', c1: 'Owned' },
+      { cy: 6, accent: C.R, label: 'T6 · Data returned to CPU 0', text: 'The interconnect returns the line to CPU 0 on R (RDATA), RRESP carrying the coherency result (IsShared). CPU 0 installs the line Shared.', c0: 'Invalid → Shared', c1: 'Owned' },
+      { cy: 7, accent: null, label: 'T7 · States settled', text: 'CPU 1: Modified → Owned (still owns the dirty data, now shared). CPU 0: Invalid → Shared. Memory was never written — the dirty line moved cache-to-cache.', c0: 'Shared', c1: 'Owned' },
+    ];
+  }
+
+  componentWillMount() {
+    if (!this.state.section) {
+      const allowed = ['overview', 'states', 'snoop', 'coherent', 'domains', 'versions', 'cheat'];
+      const start = this.props.startSection;
+      this.setState({ section: allowed.indexOf(start) >= 0 ? start : 'overview' });
+    }
+  }
+
+  renderVals() {
+    const C = this.C;
+    const st = this.state;
+    const sec = st.section || 'overview';
+    const clk = { name: 'ACLK', type: 'clk', color: C.clk };
+
+    // ---- nav ----
+    const mk = (key, label, dot) => {
+      const active = sec === key;
+      return {
+        label, dot, onClick: () => this.go(key),
+        bg: active ? 'oklch(0.21 0.014 258)' : 'transparent',
+        color: active ? 'oklch(0.95 0.005 258)' : 'oklch(0.66 0.008 258)',
+        bar: active ? dot : 'transparent',
+      };
+    };
+    const navGroups = [
+      { title: 'Basics', items: [mk('overview', 'Overview', 'oklch(0.7 0.01 258)'), mk('states', 'Cache States · MOESI', C.AC)] },
+      { title: 'Channels', items: [mk('snoop', 'Snoop · AC / CR / CD', C.CR)] },
+      { title: 'Transactions', items: [mk('coherent', 'Coherent Read', C.AR)] },
+      { title: 'Reference', items: [mk('domains', 'Domains & Types', C.AC), mk('versions', 'Versions · 4 / 5', 'oklch(0.8 0.005 258)'), mk('cheat', 'Cheat Sheet', 'oklch(0.8 0.005 258)')] },
+    ];
+
+    // ---- topology rails ----
+    const railMeta = [
+      { code: 'AW', color: C.AW, dir: 'M→S', sec: 'coherent', short: 'write address + coherency' },
+      { code: 'AR', color: C.AR, dir: 'M→S', sec: 'coherent', short: 'read address + coherency' },
+      { code: 'R', color: C.R, dir: 'M←S', sec: 'coherent', short: 'read data return' },
+      { code: 'AC', color: C.AC, dir: 'M←S', sec: 'snoop', short: 'snoop address in' },
+      { code: 'CR', color: C.CR, dir: 'M→S', sec: 'snoop', short: 'snoop response out' },
+      { code: 'CD', color: C.CD, dir: 'M→S', sec: 'snoop', short: 'snoop data out' },
+    ];
+    const h = React.createElement;
+    let activeCode = (st.hover && st.hover.code) || null;
+    const rails = railMeta.map((r, i) => {
+      const ms = r.dir === 'M→S';
+      const arrowEl = ms
+        ? h('span', { key: 'a', style: { position: 'absolute', right: '-1px', top: '-3px', borderLeft: '7px solid ' + r.color, borderTop: '4.5px solid transparent', borderBottom: '4.5px solid transparent' } })
+        : h('span', { key: 'a', style: { position: 'absolute', left: '-1px', top: '-3px', borderRight: '7px solid ' + r.color, borderTop: '4.5px solid transparent', borderBottom: '4.5px solid transparent' } });
+      const dim = activeCode && activeCode !== r.code;
+      return {
+        code: r.code, color: r.color,
+        labelAlign: ms ? 'left' : 'right',
+        opacity: dim ? 0.28 : 1,
+        glow: activeCode === r.code ? '0 0 11px ' + r.color : 'none',
+        anim: (ms ? 'flowR' : 'flowL') + ' 2.8s linear infinite ' + (i * 0.22) + 's',
+        arrowEl,
+        onHover: () => this.setHover({ code: r.code, color: r.color, short: r.short }),
+        onClick: () => this.go(r.sec),
+      };
+    });
+
+    // ---- header hint ----
+    let hint = { label: 'IDLE', color: 'oklch(0.6 0.01 258)', text: 'hover a channel' };
+    if (st.hover && st.hover.code) hint = { label: st.hover.code, color: st.hover.color, text: st.hover.short };
+    else if (sec === 'snoop') { const s = this.snoopSteps()[Math.min(st.snoopStep, this.snoopSteps().length - 1)]; if (s.ch) { hint = { label: s.ch + ' active', color: s.accent, text: 'snoop transaction' }; activeCode = s.ch; } else hint = { label: 'snoop', color: 'oklch(0.7 0.01 258)', text: 'snoop complete' }; }
+
+    // ---- overview cards ----
+    const axiChips = [
+      { code: 'AW', color: C.AW }, { code: 'W', color: C.W }, { code: 'B', color: C.B }, { code: 'AR', color: C.AR }, { code: 'R', color: C.R },
+    ];
+    const snoopMeta = {
+      AC: { code: 'AC', color: C.AC, name: 'Snoop Address', dir: 'M←S', short: 'snoop request into the master', desc: 'The interconnect drives a snoop onto a coherent master: which line (ACADDR) and what kind of snoop (ACSNOOP).' },
+      CR: { code: 'CR', color: C.CR, name: 'Snoop Response', dir: 'M→S', short: 'snoop response out', desc: 'A mandatory 5-bit reply to every snoop: did the master hold the line, will data follow, and what state does it keep.' },
+      CD: { code: 'CD', color: C.CD, name: 'Snoop Data', dir: 'M→S', short: 'snoop data out', desc: 'Optional — only when CR promised data. The master streams the (often dirty) line back so it moves cache-to-cache.' },
+    };
+    const snoopCards = ['AC', 'CR', 'CD'].map((k) => {
+      const m = snoopMeta[k];
+      return {
+        ...m,
+        onHover: () => this.setHover({ ...m }),
+        onOpen: () => this.go('snoop'),
+        cta: 'Open snoop walkthrough',
+        dir: this.dirBadge(m.dir, m.color),
+        hoverStyle: `background:oklch(0.2 0.014 258);border-color:color-mix(in oklch, ${m.color} 55%, oklch(0.28 0.012 258));box-shadow:0 0 0 1px color-mix(in oklch, ${m.color} 38%, transparent), 0 10px 26px -10px ${m.color};transform:translateY(-2px);`,
+      };
+    });
+    const extChips = [
+      { code: 'ARSNOOP', color: C.AR }, { code: 'ARDOMAIN', color: C.AR }, { code: 'ARBAR', color: C.AR },
+      { code: 'AWSNOOP', color: C.AW }, { code: 'AWDOMAIN', color: C.AW }, { code: 'AWBAR', color: C.AW },
+    ];
+
+    // ---- MOESI states ----
+    const moesi = {
+      M: { letter: 'M', name: 'Modified', color: C.AW, unique: true, clean: false, tag: 'only copy · dirty',
+           desc: 'This cache holds the one and only copy and it is dirty — it differs from main memory. The cache must supply the data on a snoop and write it back before the line can be evicted.',
+           snoop: 'Supplies the dirty data on CD and, depending on the snoop type, moves to Owned, Shared or Invalid.' },
+      O: { letter: 'O', name: 'Owned', color: C.W, unique: false, clean: false, tag: 'shared · dirty owner',
+           desc: 'Dirty data that is also held (clean) by other caches. This cache is the owner: it is responsible for supplying the data to snoops and for the eventual writeback. Only one cache can be in Owned.',
+           snoop: 'Supplies data on CD to satisfy other readers; keeps Owned for a shared read, drops to Invalid if another master needs it unique.' },
+      E: { letter: 'E', name: 'Exclusive', color: C.B, unique: true, clean: true, tag: 'only copy · clean',
+           desc: 'The only cached copy, and clean — it matches memory. The master may write it silently, with no bus transaction, transitioning straight to Modified. The starting point for a CPU about to write a private line.',
+           snoop: 'Has no dirty data to pass; on a sharing snoop it downgrades to Shared, on a unique snoop to Invalid.' },
+      S: { letter: 'S', name: 'Shared', color: C.AR, unique: false, clean: true, tag: 'one of several · clean-ish',
+           desc: 'One of possibly several copies. Reads hit locally with no bus traffic. A write must first invalidate every other copy (CleanUnique / MakeUnique) before the line can become writable.',
+           snoop: 'Usually holds clean data, so it need not supply data; a unique snoop invalidates it.' },
+      I: { letter: 'I', name: 'Invalid', color: C.gray, unique: false, clean: true, tag: 'no valid data',
+           desc: 'The line holds no valid data. Any access misses and must fetch the line from another cache or from memory, possibly triggering snoops to find the freshest copy.',
+           snoop: 'Nothing to do — responds that it does not hold the line and supplies no data.' },
+    };
+    const tileOf = (k) => {
+      const m = moesi[k];
+      const active = st.moesi === k;
+      return {
+        letter: m.letter, name: m.name, color: m.color, tag: m.tag,
+        nameColor: active ? 'oklch(0.95 0.005 258)' : 'oklch(0.78 0.006 258)',
+        bg: active ? `color-mix(in oklch, ${m.color} 16%, oklch(0.165 0.013 258))` : 'oklch(0.165 0.013 258)',
+        border: active ? m.color : 'oklch(0.28 0.012 258)',
+        onClick: () => this.setState({ moesi: k }),
+      };
+    };
+    const stateRowClean = [tileOf('E'), tileOf('S')];
+    const stateRowDirty = [tileOf('M'), tileOf('O')];
+    const invalidTile = tileOf('I');
+    const md = moesi[st.moesi];
+    const stateDetail = {
+      letter: md.letter, name: md.name, color: md.color, desc: md.desc, snoop: md.snoop,
+      uTag: md.unique ? 'Unique' : 'Shared', uColor: md.unique ? C.B : C.AR,
+      cTag: md.clean ? 'Clean' : 'Dirty', cColor: md.clean ? C.AC : C.AW,
+    };
+
+    // ---- snoop wave ----
+    const ssteps = this.snoopSteps();
+    const sStepIdx = Math.min(st.snoopStep, ssteps.length - 1);
+    const sStep = ssteps[sStepIdx];
+    const snoopWave = this.buildWave({
+      cycles: 8, w: 40, axis: true, playhead: sStep.cy,
+      theme: { glow: true, grid: true, rowH: 28, labelW: 116, cursorColor: 'oklch(0.88 0.005 258)' },
+      signals: [
+        clk,
+        { name: 'ACVALID', color: C.AC, bits: [0, 1, 1, 0, 0, 0, 0, 0], desc: 'Interconnect asserts when a snoop address/control is valid.', full: 'Snoop Address Valid' },
+        { name: 'ACREADY', color: C.AC, bits: [0, 0, 1, 0, 0, 0, 0, 0], marks: [2], desc: 'Master asserts when it can accept the snoop request.', full: 'Snoop Address Ready' },
+        { name: 'ACADDR', type: 'bus', color: C.AC, segs: [{ from: 1, to: 3, value: '0x40' }], desc: 'Cache-line address being snooped.', full: 'Snoop Address' },
+        { name: 'ACSNOOP', type: 'bus', color: C.AC, segs: [{ from: 1, to: 3, value: 'ReadShared' }], desc: 'The snoop transaction type — what the interconnect wants this cache to do.', full: 'Snoop Type' },
+        { name: 'CRVALID', color: C.CR, bits: [0, 0, 0, 1, 0, 0, 0, 0], marks: [3], desc: 'Master asserts when its snoop response is valid. Always sent.', full: 'Snoop Response Valid' },
+        { name: 'CRRESP', type: 'bus', color: C.CR, segs: [{ from: 3, to: 5, value: 'Data·Dirty' }], desc: '5-bit response: WasUnique, IsShared, PassDirty, Error, DataTransfer. Tells the interconnect what happened and whether CD data follows.', full: 'Snoop Response' },
+        { name: 'CDVALID', color: C.CD, bits: [0, 0, 0, 0, 1, 1, 0, 0], desc: 'Master asserts when a snoop data beat is valid (only when CRRESP set DataTransfer).', full: 'Snoop Data Valid' },
+        { name: 'CDDATA', type: 'bus', color: C.CD, segs: [{ from: 4, to: 5, value: 'D0' }, { from: 5, to: 6, value: 'D1' }], desc: 'The cache line passed back to the interconnect.', full: 'Snoop Data' },
+        { name: 'CDLAST', color: C.CD, bits: [0, 0, 0, 0, 0, 1, 0, 0], desc: 'Marks the final beat of the snoop data burst.', full: 'Snoop Data Last' },
+      ],
+    });
+
+    // ---- coherent read wave ----
+    const csteps = this.cohSteps();
+    const cStepIdx = Math.min(st.cohStep, csteps.length - 1);
+    const cStep = csteps[cStepIdx];
+    const cohWave = this.buildWave({
+      cycles: 9, w: 38, axis: true, playhead: cStep.cy,
+      theme: { glow: true, grid: true, rowH: 25, labelW: 120, cursorColor: 'oklch(0.88 0.005 258)' },
+      signals: [
+        clk,
+        { name: 'CPU0 · AXI', type: 'divider', color: C.AR },
+        { name: 'ARVALID', color: C.AR, drive: 'M→S', bits: [0, 1, 1, 0, 0, 0, 0, 0, 0], marks: [2], desc: 'CPU 0 requests the coherent read.', full: 'Read Address Valid' },
+        { name: 'ARSNOOP', type: 'bus', color: C.AR, drive: 'M→S', segs: [{ from: 1, to: 3, value: 'ReadShared' }], desc: 'The coherent read type: fetch a shareable copy, leaving other copies valid.', full: 'Read Snoop Type' },
+        { name: 'ARADDR', type: 'bus', color: C.AR, drive: 'M→S', segs: [{ from: 1, to: 3, value: '0x40' }], desc: 'The cache line CPU 0 wants.', full: 'Read Address' },
+        { name: 'RVALID', color: C.R, drive: 'M←S', bits: [0, 0, 0, 0, 0, 0, 1, 1, 0], marks: [6], desc: 'Interconnect returns the line to CPU 0.', full: 'Read Data Valid' },
+        { name: 'RDATA', type: 'bus', color: C.R, drive: 'M←S', segs: [{ from: 6, to: 8, value: 'line' }], desc: 'The data fetched cache-to-cache from CPU 1.', full: 'Read Data' },
+        { name: 'RRESP', type: 'bus', color: C.B, drive: 'M←S', segs: [{ from: 6, to: 8, value: 'OK·Shared' }], desc: 'Read response with coherency bits — IsShared set, so CPU 0 installs the line Shared.', full: 'Read Response' },
+        { name: 'CPU1 · snoop', type: 'divider', color: C.CR },
+        { name: 'ACVALID', color: C.AC, drive: 'M←S', bits: [0, 0, 1, 1, 0, 0, 0, 0, 0], marks: [2], desc: 'Interconnect snoops CPU 1.', full: 'Snoop Address Valid' },
+        { name: 'ACSNOOP', type: 'bus', color: C.AC, drive: 'M←S', segs: [{ from: 2, to: 4, value: 'ReadShared' }], desc: 'Snoop type forwarded to CPU 1.', full: 'Snoop Type' },
+        { name: 'CRVALID', color: C.CR, drive: 'M→S', bits: [0, 0, 0, 1, 0, 0, 0, 0, 0], marks: [3], desc: 'CPU 1 answers the snoop.', full: 'Snoop Response Valid' },
+        { name: 'CRRESP', type: 'bus', color: C.CR, drive: 'M→S', segs: [{ from: 3, to: 5, value: 'Data·Dirty' }], desc: 'CPU 1 had it dirty: it will pass the data and move Modified → Owned.', full: 'Snoop Response' },
+        { name: 'CDVALID', color: C.CD, drive: 'M→S', bits: [0, 0, 0, 0, 1, 1, 0, 0, 0], desc: 'CPU 1 supplies the dirty line.', full: 'Snoop Data Valid' },
+        { name: 'CDDATA', type: 'bus', color: C.CD, drive: 'M→S', segs: [{ from: 4, to: 6, value: 'dirty' }], desc: 'The dirty cache line, forwarded straight to the interconnect.', full: 'Snoop Data' },
+      ],
+    });
+
+    // ---- inspector ----
+    let insp;
+    if (st.hover && st.hover.desc) insp = { label: st.hover.full || st.hover.name, color: st.hover.color, text: st.hover.desc };
+    else insp = { label: 'hint', color: 'oklch(0.6 0.01 258)', text: 'hover any signal label to inspect it' };
+
+    // ---- domains & types ----
+    const domainCards = [
+      { name: 'Non-shareable', desc: 'Private memory. No snoops generated — the access behaves like plain AXI.' },
+      { name: 'Inner Shareable', desc: 'Coherent within a tight cluster (e.g. CPUs sharing an L2). Snoops stay inside the inner domain.' },
+      { name: 'Outer Shareable', desc: 'A wider domain that contains one or more inner domains — e.g. multiple clusters plus a GPU.' },
+      { name: 'System', desc: 'Coherency across the whole system, including agents outside the cache hierarchy.' },
+    ];
+    const readTypes = [
+      { name: 'ReadOnce', desc: 'Take a snapshot without keeping a coherent copy — read-and-forget.' },
+      { name: 'ReadClean', desc: 'Fetch a copy to hold Shared/Clean; never accept dirty data.' },
+      { name: 'ReadShared', desc: 'Fetch a copy, other copies may remain — ends Shared (or Unique if no one else has it).' },
+      { name: 'ReadNotSharedDirty', desc: 'Like ReadShared but the master will not accept the Owned (dirty-shared) responsibility.' },
+      { name: 'ReadUnique', desc: 'Fetch the only copy, invalidating all others — the precursor to a write.' },
+      { name: 'CleanUnique', desc: 'Already have the line; make it unique & clean by invalidating other copies before writing.' },
+      { name: 'MakeUnique', desc: 'Get write permission without fetching data — the whole line will be overwritten.' },
+    ];
+    const writeTypes = [
+      { name: 'WriteUnique', desc: 'Write part of a line you do not hold coherently; interconnect handles invalidation.' },
+      { name: 'WriteLineUnique', desc: 'Write a full line you do not hold — others are invalidated first.' },
+      { name: 'WriteBack', desc: 'Evict a dirty (Modified/Owned) line back to memory and drop it from the cache.' },
+      { name: 'WriteClean', desc: 'Push dirty data to memory but keep the line cached (now clean).' },
+      { name: 'Evict', desc: 'Drop a clean line and tell the interconnect, so snoop filters stay accurate. No data moves.' },
+    ];
+
+    // ---- versions ----
+    const versions = [
+      { name: 'ACE', amba: 'AMBA 4', color: C.AR, tag: 'The original full-coherency profile, layered on AXI4. Two-way snooping with the AC/CR/CD channels and MOESI.',
+        rows: [{ k: 'snoop ch.', v: 'AC CR CD' }, { k: 'snooped?', v: 'yes (two-way)' }, { k: 'states', v: 'MOESI (5)' }, { k: 'DVM', v: 'v7 / v8' }] },
+      { name: 'ACE5', amba: 'AMBA 5', color: C.AC, tag: 'Adds cache stashing, atomic transactions, persistent cache-maintenance ops and DVMv8.1 — aligned with the AXI5 / CHI feature set.',
+        rows: [{ k: 'snoop ch.', v: 'AC CR CD' }, { k: 'snooped?', v: 'yes (two-way)' }, { k: 'adds', v: 'stash, atomics' }, { k: 'DVM', v: 'v8.1' }] },
+      { name: 'ACE5-Lite', amba: 'AMBA 5', color: C.B, tag: 'One-way / IO coherency: the master can snoop fully-coherent masters but is not snooped itself — so it needs no AC/CR/CD. Ideal for accelerators & IO.',
+        rows: [{ k: 'snoop ch.', v: 'none' }, { k: 'snooped?', v: 'no (one-way)' }, { k: 'use', v: 'IO / accel' }, { k: 'DVM', v: 'optional' }] },
+    ];
+
+    // ---- cheat ----
+    const cheat = [
+      { code: 'AC', color: C.AC, name: 'Snoop Address (ICN → master)', rows: [
+        { sig: 'ACVALID/READY', dir: 'I→M', desc: 'Handshake for the snoop request phase.' },
+        { sig: 'ACADDR', dir: 'I→M', desc: 'Cache-line address being snooped.' },
+        { sig: 'ACSNOOP', dir: 'I→M', desc: 'Snoop transaction type (ReadShared, ReadUnique, CleanInvalid, MakeInvalid, …).' },
+        { sig: 'ACPROT', dir: 'I→M', desc: 'Protection attributes of the snoop, mirroring AxPROT.' },
+      ] },
+      { code: 'CR', color: C.CR, name: 'Snoop Response (master → ICN)', rows: [
+        { sig: 'CRVALID/READY', dir: 'M→I', desc: 'Handshake for the mandatory response — one per snoop.' },
+        { sig: 'CRRESP', dir: 'M→I', desc: '5-bit field: WasUnique, IsShared, PassDirty, Error, DataTransfer.' },
+      ] },
+      { code: 'CD', color: C.CD, name: 'Snoop Data (master → ICN)', rows: [
+        { sig: 'CDVALID/READY', dir: 'M→I', desc: 'Handshake for snoop data beats — present only when CRRESP set DataTransfer.' },
+        { sig: 'CDDATA', dir: 'M→I', desc: 'The cache line returned to the interconnect for cache-to-cache transfer.' },
+        { sig: 'CDLAST', dir: 'M→I', desc: 'Marks the final beat of the snoop-data burst.' },
+      ] },
+      { code: 'AR/AW', color: C.AR, name: 'Coherency qualifiers (extend AXI)', rows: [
+        { sig: 'ARSNOOP/AWSNOOP', dir: 'M→I', desc: 'Coherent transaction type on the read / write address channel.' },
+        { sig: 'ARDOMAIN/AWDOMAIN', dir: 'M→I', desc: 'Shareability domain: Non-shareable, Inner, Outer, System.' },
+        { sig: 'ARBAR/AWBAR', dir: 'M→I', desc: 'Barrier qualifier for ordering memory accesses.' },
+        { sig: 'RRESP / CRRESP', dir: 'M←I', desc: 'Read response widens with coherency status (e.g. IsShared, PassDirty).' },
+      ] },
+    ];
+
+    return {
+      isOverview: sec === 'overview', isStates: sec === 'states', isSnoop: sec === 'snoop',
+      isCoherent: sec === 'coherent', isDomains: sec === 'domains', isVersions: sec === 'versions', isCheat: sec === 'cheat',
+      navGroups, rails, clearHover: () => this.setHover(null),
+      hintLabel: hint.label, hintColor: hint.color, hintText: hint.text,
+      axiChips, snoopCards, extChips, goDomains: () => this.go('domains'),
+      stateRowClean, stateRowDirty, invalidTile, stateDetail,
+      snoopWave, snoopPrev: () => this.step('snoopStep', -1, ssteps.length - 1), snoopNext: () => this.step('snoopStep', 1, ssteps.length - 1),
+      snoopAccent: sStep.accent || 'oklch(0.7 0.01 258)', snoopStepLabel: sStep.label, snoopStepText: sStep.text,
+      snoopCounter: (sStepIdx + 1) + ' / ' + ssteps.length,
+      cohWave, cohPrev: () => this.step('cohStep', -1, csteps.length - 1), cohNext: () => this.step('cohStep', 1, csteps.length - 1),
+      cohAccent: cStep.accent || 'oklch(0.7 0.01 258)', cohStepLabel: cStep.label, cohStepText: cStep.text,
+      cohCounter: (cStepIdx + 1) + ' / ' + csteps.length, cohCpu0: cStep.c0, cohCpu1: cStep.c1,
+      inspLabel: insp.label, inspColor: insp.color, inspText: insp.text,
+      domainCards, readTypes, writeTypes, versions, cheat,
+    };
+  }
+}
+</script>
+</body>
+</html>
