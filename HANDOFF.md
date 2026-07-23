@@ -18,6 +18,7 @@ other with plain relative `<a href>`s.
 |------|------|
 | `index.html` | Landing page — AMBA family overview, cards linking to each explorer |
 | `AXI-Explorer.dc.html` | AXI4 signal-level interactive walkthrough |
+| `AXI-IssueL-Explorer.dc.html` | AXI Issue L (2025) — credit-based transport, credit-flow stepper, multi-RP interleave |
 | `ACE-Explorer.dc.html` | AXI Coherency Extensions — snoop channels, MOESI, coherent read |
 | `LPI-Explorer.dc.html` | LPI interactive walkthrough |
 | `APB-Explorer.dc.html` | APB interactive walkthrough |
@@ -34,11 +35,83 @@ other with plain relative `<a href>`s.
 - Project meta (`CLAUDE.md`, `HANDOFF.md`, `README.md`, `screenshots/`) stays at root,
   never ships in `public/`.
 - Inline styles only; all references relative.
-- Download zips are labelled with a semantic version (current: **v1.1.0**).
+- Download zips are labelled with a semantic version (current: **v1.2.1**).
 
 ---
 
 ## Backlog / planned features
+
+### AXI Issue L · Credit-Based Transport  _(DONE · v1.2.0)_
+
+Shipped `public/AXI-IssueL-Explorer.dc.html` (teal #165 accent) + landing-page card +
+a credit-flow teaser in the AXI explorer's Versions section linking to the deep-dive.
+Standalone page (not a new section of AXI-Explorer, per user). Reuses the AXI engine
+pattern (buildWave / step / nav / sticky topology header). Sections: Overview (K→L, no new
+signals, AXI_Transport + wakeup caveat), Transport (VALID/READY vs credit comparison table),
+Credit flow (grant→spend→stall→return stepper with live credit ledger + waveform),
+Resource Planes (full multi-RP interleave waveform: RP0/RP1/RP2 beats on one W channel +
+per-RP credit pools + AW/W-same-RP, B/R-single-RP, credit-limit rules), Versions (J/K/L),
+Cheat sheet. Landing hero count 4→5; RP hues blue/orange/violet, credit=green, shared=amber.
+
+<details><summary>original plan</summary>
+
+**Context.** AXI Issue L (IHI 0022L, 2025) adds no new signals to the AXI signal list — the
+K→L delta is a new *transport mechanism* and its flow-control model, gated by a new AXI5
+property `AXI_Transport`. Default stays VALID/READY; when set, channels use credit-based
+transport. So this is documented as **behaviour + property**, not as new channel chips.
+
+**What must be covered (content):**
+- **Two transport modes.** VALID/READY (reactive, per-transaction handshake) vs
+  credit-based (proactive, pre-issued credits). Side-by-side comparison: throughput,
+  latency, flow control, determinism, complexity, use-case fit.
+- **The `AXI_Transport` property** — AXI5 only; default = VALID/READY; not in AXI3/4.
+  Note the constraint: with credit-based transport enabled, `wakeup_signal` is **not**
+  supported.
+- **Credit model / flow-control rules.** Min 1 credit per Resource Plane (RP); max 15 per
+  RP plus 15 shared credits. Receiver allocates; sender spends.
+- **Resource Planes (RP).** Enable write interleaving (not allowed in AXI3). Constraints:
+  AW and W of a write must share the same RP; B and R are each restricted to a single RP.
+- **Shared credits.** Across multiple RPs for dynamic buffer utilisation under bursty /
+  uneven traffic; AXI-L supports shared-credit compatibility.
+
+**Recommended placement — new section group in `public/AXI-Explorer.dc.html`** (not a new
+top-level protocol page — Issue L is a revision of AXI, not a sibling protocol like ACE/LPI/
+APB, and the explorer already owns the AXI channels + Versions section this builds on):
+- New nav group **"Issue L"** with 2 items:
+  1. `transport` — **Credit vs Handshake**: the mode comparison table + `AXI_Transport`
+     property callout + wakeup caveat. Reuse the existing card/table styling.
+  2. `credits` — **Credits & Resource Planes**: an interactive credit-flow stepper
+     (receiver grants N credits → sender issues transactions until credits exhausted →
+     credits returned) built with the existing `buildWave`/`step` engine, plus an RP diagram
+     showing AW+W sharing an RP and the shared-credit pool. Reuse `dirBadge`/inspector.
+- Extend the **Versions** section with an Issue L entry (K→L summary) so the timeline is
+  complete even for users who don't open the new group.
+- Accent: introduce one new hue for credit-based transport chips (propose amber-teal
+  ~oklch(0.78 0.13 195) is taken by Exclusive; pick **oklch(0.80 0.14 165)** teal-green, or
+  confirm). Keep VALID/READY examples in the existing handshake blue.
+
+**Data-model.** None — extends the one explorer file. New section keys `transport`,
+`credits`; new state `creditStep` (+ maybe `rpSel`). Reuse buildWave / step / inspector /
+nav engine. Credit stepper as a `creditSteps()` array; RP diagram via a `buildRP()`
+createElement helper (same pattern as buildWave).
+
+**Build order.**
+1. [ ] Confirm scope with user: extend AXI-Explorer (recommended) vs standalone
+       `AXI-IssueL-Explorer.dc.html` page + landing card; confirm accent hue.
+2. [ ] Logic: `creditSteps()`, `buildRP()`, transport-comparison rows; add `transport` +
+       `credits` to allowed sections; add `creditStep` state; nav "Issue L" group; wire
+       into renderVals + return.
+3. [ ] Template: comparison table + property callout (transport section); credit stepper +
+       RP diagram + shared-credit panel (credits section); Issue L row in Versions.
+4. [ ] Verify all sections render; bump version (minor — new feature) + changelog.
+
+**Open questions for user.**
+- Extend the AXI explorer, or a dedicated Issue-L page in the family grid?
+- How deep on the credit stepper — a simple grant/spend/return animation, or a full
+  multi-RP interleaving waveform?
+- New accent hue OK, or keep it monochrome within the existing AXI blue?
+
+</details>
 
 ### MOESI FSM diagram + ACE5 atomics/stash  _(planned)_
 
@@ -130,6 +203,12 @@ others (inline styles, `./support.js`, relative back-link to `index.html`).
 ---
 
 ## Changelog
+- **v1.2.1** — Removed the standalone Issue L landing-page card (hero count back to 4);
+  Issue L deep-dive now reached from within the AXI spec — a callout after the Handshake
+  section plus the existing Versions-section link.
+- **v1.2.0** — Added AXI Issue L explorer (credit-based transport, credit-flow stepper,
+  full multi-RP interleave) + landing-page card + Versions-section teaser; hero interface
+  count updated to 5.
 - **v1.1.0** — Added ACE (AXI Coherency Extensions) explorer + landing-page card;
   hero/footer interface counts updated to 4.
 - **v1.0.0** — Site reorganised into `public/`; stale root copies removed; missing

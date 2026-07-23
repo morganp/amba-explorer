@@ -21,6 +21,7 @@
   ::-webkit-scrollbar-track{background:transparent;}
   @keyframes flowR{0%{left:-6%;opacity:0;}12%{opacity:1;}88%{opacity:1;}100%{left:102%;opacity:0;}}
   @keyframes flowL{0%{left:102%;opacity:0;}12%{opacity:1;}88%{opacity:1;}100%{left:-6%;opacity:0;}}
+  @keyframes crBlink{0%,100%{opacity:0.28;transform:scale(0.82);}50%{opacity:1;transform:scale(1);}}
 </style>
 </helmet>
 
@@ -185,6 +186,13 @@
               <div style="font-size:12.5px;line-height:1.55;color:oklch(0.66 0.008 258);">A destination may assert READY before VALID, or wait — and can drop READY between transfers to apply backpressure.</div>
             </div>
           </div>
+
+          <a href="AXI-IssueL-Explorer.dc.html" style="display:flex;align-items:center;gap:14px;text-decoration:none;color:inherit;margin-top:20px;max-width:760px;background:oklch(0.165 0.013 258);border:1px solid color-mix(in oklch, oklch(0.80 0.14 165) 30%, oklch(0.28 0.012 258));border-left:2px solid oklch(0.80 0.14 165);border-radius:11px;padding:15px 18px;transition:border-color .14s ease, background .14s ease;" style-hover="background:oklch(0.185 0.013 258);border-color:color-mix(in oklch, oklch(0.80 0.14 165) 55%, oklch(0.28 0.012 258));">
+            <div style="flex:1;">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:oklch(0.80 0.14 165);margin-bottom:5px;">AXI Issue L · 2025</div>
+              <div style="font-size:13.5px;line-height:1.55;color:oklch(0.72 0.008 258);">Issue L adds an <strong style="color:oklch(0.88 0.005 258);">optional credit-based transport</strong> that replaces this per-beat VALID/READY handshake — the source spends pre-granted credits instead of waiting on READY. <span style="color:oklch(0.80 0.14 165);">See the deep dive →</span></div>
+            </div>
+          </a>
         </div>
       </sc-if>
 
@@ -511,6 +519,28 @@
           <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.58 0.01 258);text-transform:uppercase;">Reference / Versions</div>
           <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">AXI3 → AXI4 → AXI5</h1>
           <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:720px;margin:0 0 22px;">The five channels and the VALID/READY handshake are unchanged since 2003 — what evolved is the <strong style="color:oklch(0.88 0.005 258);">sideband signals</strong>. AXI4 reshaped control and dropped interleaving; AXI5 layered on optional resilience and scalability. Select a version to spotlight its column.</p>
+
+          <a href="AXI-IssueL-Explorer.dc.html" style="display:flex;align-items:center;gap:16px;text-decoration:none;color:inherit;background:oklch(0.165 0.013 258);border:1px solid color-mix(in oklch, oklch(0.80 0.14 165) 34%, oklch(0.28 0.012 258));border-left:2px solid oklch(0.80 0.14 165);border-radius:12px;padding:14px 18px;margin:0 0 24px;max-width:920px;transition:border-color .14s ease, background .14s ease;" style-hover="background:oklch(0.185 0.014 258);border-color:oklch(0.80 0.14 165);">
+            <div style="flex:0 0 132px;">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:oklch(0.55 0.01 258);margin-bottom:6px;">credit flow</div>
+              <div style="display:flex;align-items:center;gap:5px;">
+                <span style="flex:0 0 auto;font-family:'JetBrains Mono',monospace;font-size:9px;color:oklch(0.6 0.01 258);">S</span>
+                <span style="flex:1;height:3px;border-radius:2px;background:oklch(0.30 0.012 258);position:relative;overflow:hidden;">
+                  <span style="position:absolute;top:-2px;width:7px;height:7px;border-radius:50%;background:oklch(0.80 0.14 165);box-shadow:0 0 6px oklch(0.80 0.14 165);animation:flowR 2.2s linear infinite;"></span>
+                </span>
+                <span style="flex:0 0 auto;font-family:'JetBrains Mono',monospace;font-size:9px;color:oklch(0.6 0.01 258);">R</span>
+              </div>
+              <div style="display:flex;gap:5px;margin-top:8px;justify-content:center;">
+                <span style="width:11px;height:11px;border-radius:50%;background:oklch(0.80 0.15 155);box-shadow:0 0 6px oklch(0.80 0.15 155);animation:crBlink 2.4s ease-in-out infinite;"></span>
+                <span style="width:11px;height:11px;border-radius:50%;background:oklch(0.80 0.15 155);box-shadow:0 0 6px oklch(0.80 0.15 155);animation:crBlink 2.4s ease-in-out infinite .5s;"></span>
+                <span style="width:11px;height:11px;border-radius:50%;background:oklch(0.80 0.15 155);box-shadow:0 0 6px oklch(0.80 0.15 155);animation:crBlink 2.4s ease-in-out infinite 1s;"></span>
+              </div>
+            </div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:14px;font-weight:600;margin-bottom:3px;">New in Issue&nbsp;L · credit-based transport <span style="color:oklch(0.80 0.14 165);">→</span></div>
+              <div style="font-size:12.5px;line-height:1.5;color:oklch(0.68 0.008 258);">The 2025 revision adds no signals — it swaps per-beat VALID/READY for pre-granted credits and Resource Planes. Open the dedicated deep-dive.</div>
+            </div>
+          </a>
 
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px;max-width:920px;">
             <sc-for list="{{ verTimeline }}" as="v" hint-placeholder-count="3">
