@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;padding:0;}
+  *{box-sizing:border-box;}
+  a{color:oklch(0.80 0.13 165);text-decoration:none;}
+  a:hover{color:oklch(0.88 0.11 165);}
+  ::selection{background:oklch(0.80 0.14 165 / 0.35);}
+  ::-webkit-scrollbar{height:10px;width:10px;}
+  ::-webkit-scrollbar-thumb{background:oklch(0.34 0.01 258);border-radius:6px;}
+  ::-webkit-scrollbar-thumb:hover{background:oklch(0.42 0.01 258);}
+  ::-webkit-scrollbar-track{background:transparent;}
+  @keyframes crFlowR{0%{left:-8%;opacity:0;}14%{opacity:1;}86%{opacity:1;}100%{left:104%;opacity:0;}}
+  @keyframes crFlowL{0%{left:104%;opacity:0;}14%{opacity:1;}86%{opacity:1;}100%{left:-8%;opacity:0;}}
+  @keyframes crPulse{0%,100%{transform:scale(1);opacity:.55;}50%{transform:scale(1.18);opacity:1;}}
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:oklch(0.145 0.012 258);color:oklch(0.93 0.005 258);font-family:'IBM Plex Sans',system-ui,sans-serif;">
+
+  <!-- ===================== HEADER ===================== -->
+  <header style="position:sticky;top:0;z-index:30;background:oklch(0.13 0.011 258);border-bottom:1px solid oklch(0.27 0.011 258);padding:14px 26px;backdrop-filter:blur(6px);">
+    <div style="display:flex;align-items:center;gap:24px;max-width:1500px;margin:0 auto;">
+      <div style="flex:0 0 auto;">
+        <a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.26em;color:oklch(0.58 0.01 258);text-transform:uppercase;"><span style="font-size:13px;letter-spacing:0;">←</span> AMBA</a>
+        <div style="font-size:18px;font-weight:600;letter-spacing:-0.01em;margin-top:1px;">AXI Issue&nbsp;L · Credit Transport</div>
+      </div>
+
+      <!-- credit-flow topology -->
+      <div style="flex:1;display:flex;align-items:center;gap:14px;min-width:0;">
+        <div style="flex:0 0 96px;text-align:center;padding:11px 6px;border:1.5px solid oklch(0.42 0.012 258);border-radius:9px;background:oklch(0.20 0.013 258);font-family:'JetBrains Mono',monospace;">
+          <div style="font-size:12px;color:oklch(0.92 0.005 258);font-weight:600;">Sender</div>
+          <div style="font-size:9.5px;color:oklch(0.55 0.01 258);margin-top:2px;">spends credits</div>
+        </div>
+
+        <div style="flex:1;display:grid;grid-template-columns:1fr;gap:7px;padding:0 4px;min-width:0;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:oklch(0.80 0.14 165);width:52px;flex:0 0 auto;">request</span>
+            <span style="flex:1;height:3px;border-radius:2px;background:oklch(0.80 0.14 165);position:relative;">
+              <span style="position:absolute;top:-2.5px;width:8px;height:8px;border-radius:50%;background:oklch(0.80 0.14 165);box-shadow:0 0 7px oklch(0.80 0.14 165);animation:crFlowR 2.4s linear infinite;"></span>
+              <span style="position:absolute;right:-1px;top:-3px;border-left:7px solid oklch(0.80 0.14 165);border-top:4.5px solid transparent;border-bottom:4.5px solid transparent;"></span>
+            </span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:oklch(0.80 0.15 155);width:52px;flex:0 0 auto;text-align:right;">credit</span>
+            <span style="flex:1;height:3px;border-radius:2px;background:oklch(0.80 0.15 155);position:relative;">
+              <span style="position:absolute;top:-2.5px;width:8px;height:8px;border-radius:50%;background:oklch(0.80 0.15 155);box-shadow:0 0 7px oklch(0.80 0.15 155);animation:crFlowL 2.4s linear infinite .4s;"></span>
+              <span style="position:absolute;left:-1px;top:-3px;border-right:7px solid oklch(0.80 0.15 155);border-top:4.5px solid transparent;border-bottom:4.5px solid transparent;"></span>
+            </span>
+          </div>
+        </div>
+
+        <div style="flex:0 0 96px;text-align:center;padding:11px 6px;border:1.5px solid oklch(0.42 0.012 258);border-radius:9px;background:oklch(0.20 0.013 258);font-family:'JetBrains Mono',monospace;">
+          <div style="font-size:12px;color:oklch(0.92 0.005 258);font-weight:600;">Receiver</div>
+          <div style="font-size:9.5px;color:oklch(0.55 0.01 258);margin-top:2px;">grants credits</div>
+        </div>
+      </div>
+
+      <div style="flex:0 0 170px;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.5;color:oklch(0.6 0.01 258);border-left:1px solid oklch(0.27 0.011 258);padding-left:18px;">
+        <span style="color:oklch(0.80 0.14 165);font-weight:600;">IHI 0022L · 2025</span><br>
+        <span>no new signals — new transport</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================== BODY ===================== -->
+  <div style="display:grid;grid-template-columns:236px 1fr;max-width:1500px;margin:0 auto;align-items:start;">
+
+    <!-- NAV -->
+    <nav style="position:sticky;top:115px;align-self:start;padding:22px 14px 40px;border-right:1px solid oklch(0.24 0.011 258);font-family:'JetBrains Mono',monospace;">
+      <sc-for list="{{ navGroups }}" as="grp" hint-placeholder-count="3">
+        <div style="margin-bottom:18px;">
+          <div style="font-size:10px;letter-spacing:0.18em;color:oklch(0.48 0.01 258);text-transform:uppercase;padding:0 10px 7px;">{{ grp.title }}</div>
+          <sc-for list="{{ grp.items }}" as="it" hint-placeholder-count="3">
+            <div onClick="{{ it.onClick }}" style="display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:7px;cursor:pointer;font-size:13px;margin-bottom:2px;background:{{ it.bg }};color:{{ it.color }};border-left:2px solid {{ it.bar }};" style-hover="background:oklch(0.21 0.012 258);">
+              <span style="width:7px;height:7px;border-radius:2px;background:{{ it.dot }};flex:0 0 auto;"></span>
+              {{ it.label }}
+            </div>
+          </sc-for>
+        </div>
+      </sc-for>
+      <a href="AXI-Explorer.dc.html" style="display:flex;align-items:center;gap:8px;margin:14px 10px 0;padding:9px 11px;border-radius:8px;font-size:12px;color:oklch(0.66 0.008 258);background:oklch(0.175 0.013 258);border:1px solid oklch(0.28 0.012 258);">↩ AXI4 base explorer</a>
+    </nav>
+
+    <!-- MAIN -->
+    <main style="padding:30px 38px 80px;min-width:0;">
+
+      <!-- ============ OVERVIEW ============ -->
+      <sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.58 0.01 258);text-transform:uppercase;">Overview / K → L</div>
+          <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">Issue L adds no signals — it adds a transport</h1>
+          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:720px;margin:0 0 22px;">Every AXI issue up to K carried every beat with the same <em>VALID/READY</em> handshake. Issue&nbsp;L keeps the five channels and their signal lists unchanged, and instead introduces an alternative <strong style="color:oklch(0.80 0.14 165);font-weight:600;">credit-based transport</strong>, selected by a new AXI5 property. Flow control moves from <em>reactive</em> (wait for READY) to <em>proactive</em> (spend a pre-granted credit).</p>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:14px;margin-bottom:26px;">
+            <sc-for list="{{ overviewCards }}" as="c" hint-placeholder-count="4">
+              <div onClick="{{ c.onOpen }}" style="background:oklch(0.175 0.013 258);border:1px solid oklch(0.28 0.012 258);border-top:2px solid {{ c.color }};border-radius:11px;padding:15px 16px;cursor:pointer;transition:transform .12s ease,border-color .12s ease;" style-hover="transform:translateY(-2px);border-color:{{ c.color }};">
+                <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:{{ c.color }};letter-spacing:0.04em;margin-bottom:7px;">{{ c.tag }}</div>
+                <div style="font-size:15px;font-weight:600;margin-bottom:6px;">{{ c.title }}</div>
+                <div style="font-size:12.5px;line-height:1.5;color:oklch(0.66 0.008 258);">{{ c.body }}</div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display:flex;gap:10px;flex-wrap:wrap;max-width:840px;">
+            <div style="flex:1 1 340px;background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-left:2px solid oklch(0.80 0.15 90);border-radius:10px;padding:14px 16px;">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:oklch(0.80 0.15 90);margin-bottom:5px;">AXI_Transport · property</div>
+              <div style="font-size:13px;line-height:1.55;color:oklch(0.68 0.008 258);">New AXI5 property. Default keeps VALID/READY; when set, the interface runs credit-based transport. Not available in AXI3/AXI4.</div>
+            </div>
+            <div style="flex:1 1 340px;background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-left:2px solid oklch(0.66 0.17 28);border-radius:10px;padding:14px 16px;">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:oklch(0.72 0.15 28);margin-bottom:5px;">caveat · wakeup</div>
+              <div style="font-size:13px;line-height:1.55;color:oklch(0.68 0.008 258);">When credit-based transport is enabled, <code style="font-family:'JetBrains Mono',monospace;">wakeup_signal</code> is <strong>not</strong> supported — credit exchange itself carries the activity information.</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ TRANSPORT COMPARISON ============ -->
+      <sc-if value="{{ isTransport }}">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.58 0.01 258);text-transform:uppercase;">Transport / Handshake vs Credits</div>
+          <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">Two ways to move a beat</h1>
+          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:720px;margin:0 0 22px;">The VALID/READY handshake negotiates capacity <em>per beat</em>, in the moment. Credit-based transport negotiates it <em>ahead of time</em>: a held credit is a standing promise that a buffer slot exists, so the sender never waits on READY.</p>
+
+          <div style="display:grid;grid-template-columns:200px 1fr 1fr;gap:0;max-width:900px;border:1px solid oklch(0.28 0.012 258);border-radius:12px;overflow:hidden;background:oklch(0.165 0.013 258);">
+            <div style="padding:13px 16px;background:oklch(0.135 0.011 258);border-bottom:1px solid oklch(0.26 0.011 258);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.1em;color:oklch(0.55 0.01 258);text-transform:uppercase;">Attribute</div>
+            <div style="padding:13px 16px;background:oklch(0.135 0.011 258);border-bottom:1px solid oklch(0.26 0.011 258);border-left:2px solid oklch(0.78 0.14 235);font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:oklch(0.78 0.14 235);">VALID / READY</div>
+            <div style="padding:13px 16px;background:oklch(0.135 0.011 258);border-bottom:1px solid oklch(0.26 0.011 258);border-left:2px solid oklch(0.80 0.14 165);font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:oklch(0.80 0.14 165);">Credit-based</div>
+            <sc-for list="{{ compareRows }}" as="r" hint-placeholder-count="6">
+              <div style="padding:11px 16px;border-top:1px solid oklch(0.21 0.01 258);font-size:12.5px;font-weight:600;color:oklch(0.74 0.008 258);">{{ r.attr }}</div>
+              <div style="padding:11px 16px;border-top:1px solid oklch(0.21 0.01 258);border-left:1px solid oklch(0.21 0.01 258);font-size:12.5px;line-height:1.45;color:oklch(0.66 0.008 258);">{{ r.vr }}</div>
+              <div style="padding:11px 16px;border-top:1px solid oklch(0.21 0.01 258);border-left:1px solid oklch(0.21 0.01 258);font-size:12.5px;line-height:1.45;color:oklch(0.72 0.05 165);">{{ r.cr }}</div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ CREDIT FLOW ============ -->
+      <sc-if value="{{ isCredits }}">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.58 0.01 258);text-transform:uppercase;">Credits / Grant · Spend · Return</div>
+          <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">The life of a credit</h1>
+          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:720px;margin:0 0 20px;">Step through one credit pool. The receiver grants credits up front; each request the sender issues spends one; when the pool hits zero the sender stalls until the receiver frees a slot and returns a credit. Per Resource Plane the receiver may grant <strong>1–15</strong> credits, plus up to <strong>15</strong> shared.</p>
+
+          <!-- live credit ledger -->
+          <div style="display:flex;align-items:center;gap:22px;flex-wrap:wrap;background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-radius:12px;padding:20px 22px;margin-bottom:16px;max-width:900px;">
+            <div style="flex:0 0 auto;">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.1em;color:oklch(0.55 0.01 258);text-transform:uppercase;margin-bottom:8px;">credits available</div>
+              <div style="display:flex;align-items:center;gap:9px;">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:40px;font-weight:700;color:{{ creditColor }};line-height:1;width:44px;">{{ creditNum }}</span>
+                <div style="display:flex;gap:7px;">
+                  <sc-for list="{{ creditDots }}" as="d" hint-placeholder-count="3">
+                    <span style="width:20px;height:20px;border-radius:50%;background:{{ d.bg }};border:2px solid {{ d.border }};box-shadow:{{ d.glow }};"></span>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+            <div style="flex:1 1 300px;min-width:220px;border-left:1px solid oklch(0.27 0.012 258);padding-left:22px;">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:{{ creditColor }};margin-bottom:4px;">{{ creditLabel }}</div>
+              <div style="font-size:13.5px;line-height:1.55;color:oklch(0.68 0.008 258);">{{ creditText }}</div>
+            </div>
+          </div>
+
+          <!-- waveform -->
+          <div style="background:oklch(0.135 0.011 258);border:1px solid oklch(0.27 0.012 258);border-radius:12px;padding:16px 18px 12px;overflow-x:auto;max-width:900px;">{{ creditWave }}</div>
+
+          <!-- controls -->
+          <div style="display:flex;align-items:center;gap:12px;margin-top:14px;">
+            <button onClick="{{ creditPrev }}" style="font-family:'JetBrains Mono',monospace;font-size:13px;padding:8px 16px;border-radius:8px;border:1px solid oklch(0.30 0.012 258);background:oklch(0.19 0.013 258);color:oklch(0.82 0.008 258);cursor:pointer;">‹ prev</button>
+            <button onClick="{{ creditNext }}" style="font-family:'JetBrains Mono',monospace;font-size:13px;padding:8px 16px;border-radius:8px;border:1px solid color-mix(in oklch, oklch(0.80 0.14 165) 50%, transparent);background:color-mix(in oklch, oklch(0.80 0.14 165) 16%, transparent);color:oklch(0.84 0.1 165);cursor:pointer;">next ›</button>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:oklch(0.55 0.01 258);">step {{ creditStepNum }} / {{ creditStepTot }}</span>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ RESOURCE PLANES ============ -->
+      <sc-if value="{{ isPlanes }}">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.58 0.01 258);text-transform:uppercase;">Resource Planes / Multi-RP interleave</div>
+          <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">Many planes, one physical channel</h1>
+          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:730px;margin:0 0 20px;">A <strong style="color:oklch(0.80 0.14 165);font-weight:600;">Resource Plane (RP)</strong> is an independent credit context that shares the physical wires. Because every beat carries its RP number, write-data beats from different planes can <strong>interleave</strong> on one W channel — something AXI3 forbade. Each column below is one shared beat; read top-to-bottom to see which plane owns it.</p>
+
+          <!-- per-RP credit pools -->
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;max-width:900px;">
+            <sc-for list="{{ rpPools }}" as="p" hint-placeholder-count="3">
+              <div style="flex:1 1 160px;background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-top:2px solid {{ p.color }};border-radius:10px;padding:13px 15px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:{{ p.color }};">{{ p.name }}</span>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:oklch(0.58 0.01 258);">{{ p.credits }} cr</span>
+                </div>
+                <div style="display:flex;gap:4px;flex-wrap:wrap;">
+                  <sc-for list="{{ p.dots }}" as="d" hint-placeholder-count="5">
+                    <span style="width:11px;height:11px;border-radius:3px;background:{{ d }};"></span>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+
+          <!-- interleave waveform -->
+          <div style="background:oklch(0.135 0.011 258);border:1px solid oklch(0.27 0.012 258);border-radius:12px;padding:16px 18px 12px;overflow-x:auto;max-width:900px;">{{ rpWave }}</div>
+
+          <div style="display:flex;align-items:center;gap:12px;margin:14px 0 22px;">
+            <button onClick="{{ rpPrev }}" style="font-family:'JetBrains Mono',monospace;font-size:13px;padding:8px 16px;border-radius:8px;border:1px solid oklch(0.30 0.012 258);background:oklch(0.19 0.013 258);color:oklch(0.82 0.008 258);cursor:pointer;">‹ prev</button>
+            <button onClick="{{ rpNext }}" style="font-family:'JetBrains Mono',monospace;font-size:13px;padding:8px 16px;border-radius:8px;border:1px solid color-mix(in oklch, oklch(0.80 0.14 165) 50%, transparent);background:color-mix(in oklch, oklch(0.80 0.14 165) 16%, transparent);color:oklch(0.84 0.1 165);cursor:pointer;">next ›</button>
+            <div style="flex:1;">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:oklch(0.80 0.14 165);">{{ rpLabel }}</div>
+              <div style="font-size:12.5px;line-height:1.5;color:oklch(0.68 0.008 258);max-width:640px;">{{ rpText }}</div>
+            </div>
+          </div>
+
+          <!-- RP constraints -->
+          <div style="display:flex;gap:10px;flex-wrap:wrap;max-width:900px;">
+            <sc-for list="{{ rpRules }}" as="r" hint-placeholder-count="3">
+              <div style="flex:1 1 260px;background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-left:2px solid {{ r.color }};border-radius:10px;padding:13px 15px;">
+                <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:{{ r.color }};margin-bottom:5px;">{{ r.title }}</div>
+                <div style="font-size:12.5px;line-height:1.5;color:oklch(0.68 0.008 258);">{{ r.body }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ VERSIONS ============ -->
+      <sc-if value="{{ isVersions }}">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.58 0.01 258);text-transform:uppercase;">Reference / Issue timeline</div>
+          <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">J → K → L</h1>
+          <p style="font-size:15.5px;line-height:1.65;color:oklch(0.68 0.008 258);max-width:720px;margin:0 0 22px;">Where Issue&nbsp;L sits in the AMBA 5 AXI line. K was a feature release (MEC, MPAM, MTE); L is a transport release.</p>
+          <div style="display:flex;flex-direction:column;gap:12px;max-width:860px;">
+            <sc-for list="{{ versions }}" as="v" hint-placeholder-count="3">
+              <div style="display:flex;gap:16px;align-items:flex-start;background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-left:3px solid {{ v.color }};border-radius:11px;padding:15px 18px;">
+                <div style="flex:0 0 92px;">
+                  <div style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:{{ v.color }};">{{ v.tag }}</div>
+                  <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:oklch(0.54 0.01 258);margin-top:2px;">{{ v.date }}</div>
+                </div>
+                <div style="flex:1;">
+                  <div style="font-size:14px;font-weight:600;margin-bottom:5px;">{{ v.title }}</div>
+                  <div style="font-size:12.5px;line-height:1.55;color:oklch(0.68 0.008 258);">{{ v.body }}</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ CHEAT SHEET ============ -->
+      <sc-if value="{{ isCheat }}">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.24em;color:oklch(0.58 0.01 258);text-transform:uppercase;">Reference / Cheat sheet</div>
+          <h1 style="font-size:30px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 12px;">Credit transport at a glance</h1>
+          <div style="display:flex;flex-direction:column;gap:12px;max-width:860px;">
+            <sc-for list="{{ cheat }}" as="c" hint-placeholder-count="4">
+              <div style="display:grid;grid-template-columns:210px 1fr;gap:16px;align-items:baseline;background:oklch(0.165 0.013 258);border:1px solid oklch(0.28 0.012 258);border-radius:10px;padding:13px 17px;">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:{{ c.color }};font-weight:600;">{{ c.term }}</span>
+                <span style="font-size:13px;line-height:1.55;color:oklch(0.68 0.008 258);">{{ c.def }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  state = { section: 'overview', creditStep: 0, rpStep: 0 };
+
+  C = {
+    teal: 'oklch(0.80 0.14 165)',
+    green: 'oklch(0.80 0.15 155)',
+    amber: 'oklch(0.80 0.15 90)',
+    red: 'oklch(0.66 0.17 28)',
+    clk: 'oklch(0.72 0.01 258)',
+    rp0: 'oklch(0.78 0.14 235)',
+    rp1: 'oklch(0.80 0.15 35)',
+    rp2: 'oklch(0.72 0.17 305)',
+    vr: 'oklch(0.78 0.14 235)',
+  };
+
+  go = (s) => this.setState({ section: s });
+  step(key, dir, max) {
+    this.setState((st) => { let v = st[key] + dir; if (v < 0) v = 0; if (v > max) v = max; return { [key]: v }; });
+  }
+
+  // ---------- waveform builder ----------
+  buildWave(opts) {
+    const h = React.createElement;
+    const cycles = opts.cycles || 10;
+    const w = opts.w || 40;
+    const t = opts.theme || {};
+    const rowH = t.rowH || 30;
+    const hi = 7, lo = rowH - 8, mid = (hi + lo) / 2;
+    const traceW = cycles * w;
+    const labelW = t.labelW || 92;
+    const mono = "'JetBrains Mono', monospace";
+
+    function stepPath(bits, ww) {
+      let x = 0; let d = `M0,${bits[0] ? hi : lo}`;
+      for (let i = 0; i < bits.length; i++) { const y = bits[i] ? hi : lo; d += ` L${x},${y}`; x += ww; d += ` L${x},${y}`; }
+      return d;
+    }
+
+    const headerRow = opts.axis ? (() => {
+      const cells = [];
+      for (let c = 0; c < cycles; c++) cells.push(h('div', { key: c, style: { width: w, flex: '0 0 auto', textAlign: 'center', fontFamily: mono, fontSize: 9.5, color: 'oklch(0.46 0.01 258)' } }, 'T' + c));
+      return h('div', { key: 'ax', style: { display: 'flex', height: 16, marginLeft: labelW } }, cells);
+    })() : null;
+
+    const rows = opts.signals.map((s, idx) => {
+      const kids = [];
+      for (let c = 0; c <= cycles; c++) kids.push(h('line', { key: 'g' + c, x1: c * w, y1: 0, x2: c * w, y2: rowH, stroke: 'oklch(0.24 0.008 258)', strokeWidth: 1 }));
+      if (s.type === 'clk') {
+        const bits = []; for (let c = 0; c < cycles; c++) { bits.push(1); bits.push(0); }
+        kids.push(h('path', { key: 'p', d: stepPath(bits, w / 2), fill: 'none', stroke: s.color, strokeWidth: 1.4 }));
+      } else if (s.type === 'bus') {
+        kids.unshift(h('line', { key: 'idle', x1: 0, y1: mid, x2: traceW, y2: mid, stroke: 'oklch(0.30 0.01 258)', strokeWidth: 1, strokeDasharray: '3 3' }));
+        (s.segs || []).forEach((sg, i) => {
+          const x0 = sg.from * w, x1 = sg.to * w;
+          const pts = `${x0},${mid} ${x0 + 6},${hi} ${x1 - 6},${hi} ${x1},${mid} ${x1 - 6},${lo} ${x0 + 6},${lo}`;
+          kids.push(h('polygon', { key: 'b' + i, points: pts, fill: `color-mix(in oklch, ${sg.color || s.color} 20%, transparent)`, stroke: sg.color || s.color, strokeWidth: 1.5 }));
+          if (sg.value) kids.push(h('text', { key: 'v' + i, x: (x0 + x1) / 2, y: mid + 4, fill: sg.color || s.color, fontSize: 10, fontFamily: mono, textAnchor: 'middle' }, sg.value));
+        });
+      } else {
+        kids.push(h('path', { key: 'p', d: stepPath(s.bits, w), fill: 'none', stroke: s.color, strokeWidth: 1.9, strokeLinejoin: 'round' }));
+      }
+      const svg = h('svg', { key: 's', width: traceW, height: rowH, style: { display: 'block', overflow: 'visible' } }, kids);
+      const nameSpan = h('span', { key: 'n', style: { fontFamily: mono, fontSize: 11, color: s.type === 'clk' ? 'oklch(0.6 0.01 258)' : s.color, whiteSpace: 'nowrap' } }, s.name);
+      const label = h('div', { key: 'l', style: { width: labelW, flex: '0 0 auto', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 11, height: rowH } }, [nameSpan]);
+      return h('div', { key: idx, style: { display: 'flex', alignItems: 'center', height: rowH } }, [label, svg]);
+    });
+
+    let overlay = null;
+    if (opts.playhead != null) {
+      const left = labelW + opts.playhead * w + w / 2;
+      overlay = h('div', { key: 'cur', style: { position: 'absolute', top: 16, bottom: 2, left: left, width: 0, borderLeft: '1.5px dashed oklch(0.88 0.005 258)', pointerEvents: 'none', zIndex: 5 } },
+        h('span', { style: { position: 'absolute', top: -1, left: -5, width: 9, height: 9, borderRadius: '50%', background: 'oklch(0.88 0.005 258)' } }));
+    }
+    return h('div', { style: { position: 'relative', display: 'inline-block', minWidth: '100%' } }, [headerRow, ...rows, overlay]);
+  }
+
+  // ---------- credit flow script ----------
+  creditSteps() {
+    const C = this.C;
+    return [
+      { cy: 1, credits: 3, color: C.green, label: 'GRANT · 3', text: 'The receiver advertises buffer capacity and grants 3 credits to the sender over the credit-return path. Nothing has been transferred yet — the sender simply now knows it has room for three requests.' },
+      { cy: 2, credits: 2, color: C.teal, label: 'ISSUE #1 · spend', text: 'The sender presents request #1 and consumes one credit (3 → 2). There is no READY to wait for: holding a credit already guarantees the receiver has a slot.' },
+      { cy: 3, credits: 1, color: C.teal, label: 'ISSUE #2 · spend', text: 'Request #2, second credit spent (2 → 1). Requests stream back-to-back with no per-beat handshake stall between them.' },
+      { cy: 4, credits: 0, color: C.teal, label: 'ISSUE #3 · spend', text: 'Request #3 spends the last credit (1 → 0). The pool is now empty.' },
+      { cy: 5, credits: 0, color: C.red, label: 'STALL · out of credits', text: 'Credits exhausted. The sender must hold — it cannot issue request #4 until a credit is returned. Back-pressure is known in advance rather than discovered mid-transfer.' },
+      { cy: 7, credits: 1, color: C.green, label: 'RETURN · +1', text: 'The receiver finishes processing request #1, frees the buffer slot and returns one credit (0 → 1) on the credit-return path.' },
+      { cy: 8, credits: 0, color: C.teal, label: 'ISSUE #4 · spend', text: 'The returned credit lets the sender issue request #4 immediately (1 → 0). Sustained throughput is bounded only by real buffer occupancy, not by handshake latency.' },
+    ];
+  }
+
+  rpSteps() {
+    return [
+      { cy: 1, label: 'RP0 · address', text: 'A write request opens on Resource Plane 0. Its AW and W transfers must both carry RP number 0 — a write is pinned to one plane end-to-end.' },
+      { cy: 2, label: 'RP0 · beat 0', text: 'RP0 begins streaming write data on the shared W channel.' },
+      { cy: 3, label: 'RP1 · beat 0 — interleave', text: 'A beat from RP1 lands on the SAME W channel between RP0 beats. Resource planes make write-data interleaving legal; each beat is disambiguated by its RP number. AXI3 forbade this.' },
+      { cy: 4, label: 'RP0 · beat 1', text: 'RP0 resumes. Interleaving is per-beat — the RP tag routes each beat to its plane, so no reordering buffer is needed at the receiver.' },
+      { cy: 5, label: 'RP2 · beat 0', text: 'A third plane injects a beat. Each plane draws from its own credit pool (max 15 per RP) plus up to 15 shared credits.' },
+      { cy: 6, label: 'RP1 · beat 1', text: 'RP1 continues at its own rate. Planes progress independently, each bounded only by its available credits.' },
+      { cy: 7, label: 'RP0 · last beat', text: 'RP0 finishes with WLAST. Its B write-response is restricted to a single RP, so completion routes cleanly back to the right plane.' },
+    ];
+  }
+
+  renderVals() {
+    const C = this.C;
+    const sec = this.state.section;
+    const mk = (key, label, dot) => {
+      const active = sec === key;
+      return { label, dot, onClick: () => this.go(key),
+        bg: active ? 'oklch(0.21 0.014 258)' : 'transparent',
+        color: active ? 'oklch(0.95 0.005 258)' : 'oklch(0.66 0.008 258)',
+        bar: active ? dot : 'transparent' };
+    };
+    const navGroups = [
+      { title: 'Start', items: [mk('overview', 'Overview', C.teal)] },
+      { title: 'Transport', items: [mk('transport', 'Handshake vs Credits', C.vr), mk('credits', 'Credit flow', C.green)] },
+      { title: 'Resource Planes', items: [mk('planes', 'Multi-RP interleave', C.rp0)] },
+      { title: 'Reference', items: [mk('versions', 'Versions · J/K/L', 'oklch(0.8 0.005 258)'), mk('cheat', 'Cheat sheet', 'oklch(0.8 0.005 258)')] },
+    ];
+
+    // ---- overview cards ----
+    const overviewCards = [
+      { tag: 'transport', color: C.teal, title: 'Credit-based transport', body: 'An alternative to VALID/READY. Senders spend pre-granted credits instead of waiting on READY.', onOpen: () => this.go('transport') },
+      { tag: 'flow control', color: C.green, title: 'Proactive flow control', body: 'Back-pressure is known before a request is sent, giving deterministic, pipelined behaviour.', onOpen: () => this.go('credits') },
+      { tag: 'resource planes', color: C.rp0, title: 'Resource Planes', body: 'Independent credit contexts sharing the wires — they enable write-data interleaving.', onOpen: () => this.go('planes') },
+      { tag: 'signals', color: 'oklch(0.7 0.01 258)', title: 'No new signals', body: 'The AXI signal list is unchanged K → L. The delta is behaviour plus the AXI_Transport property.', onOpen: () => this.go('versions') },
+    ];
+
+    // ---- transport comparison ----
+    const compareRows = [
+      { attr: 'Mechanism', vr: 'Per-beat VALID/READY handshake', cr: 'Pre-issued credits gate each request' },
+      { attr: 'Flow control', vr: 'Reactive — react to READY in the moment', cr: 'Proactive — capacity known in advance' },
+      { attr: 'Latency', vr: 'Handshake round-trip per transaction', cr: 'Reduced; many outstanding without stall' },
+      { attr: 'Throughput', vr: 'Idle cycles when READY lags', cr: 'Higher, better pipelined' },
+      { attr: 'Determinism', vr: 'Depends on dynamic READY timing', cr: 'More deterministic and predictable' },
+      { attr: 'Complexity', vr: 'Simpler to implement and debug', cr: 'Credit accounting adds some complexity' },
+      { attr: 'Best for', vr: 'Simpler / lower-bandwidth links', cr: 'High-throughput, low-latency, real-time' },
+    ];
+
+    // ---- credit flow ----
+    const csteps = this.creditSteps();
+    const ci = Math.min(this.state.creditStep, csteps.length - 1);
+    const cnow = csteps[ci];
+    const creditDots = [0, 1, 2].map((i) => {
+      const on = i < cnow.credits;
+      return { bg: on ? C.green : 'oklch(0.19 0.013 258)', border: on ? C.green : 'oklch(0.32 0.012 258)', glow: on ? `0 0 8px ${C.green}` : 'none' };
+    });
+    const reqBits = [0, 0, 1, 1, 1, 0, 0, 0, 1, 0];
+    const retBits = [0, 1, 0, 0, 0, 0, 0, 1, 0, 0];
+    const creditSegs = [
+      { from: 0, to: 2, value: '3', color: C.green }, { from: 2, to: 3, value: '2', color: C.teal },
+      { from: 3, to: 4, value: '1', color: C.teal }, { from: 4, to: 7, value: '0', color: C.red },
+      { from: 7, to: 8, value: '1', color: C.green }, { from: 8, to: 10, value: '0', color: C.red },
+    ];
+    const creditWave = this.buildWave({ cycles: 10, w: 44, axis: true, playhead: cnow.cy,
+      theme: { rowH: 30, labelW: 96 },
+      signals: [
+        { name: 'ACLK', type: 'clk', color: C.clk },
+        { name: 'request', bits: reqBits, color: C.teal },
+        { name: 'credits', type: 'bus', color: C.teal, segs: creditSegs },
+        { name: 'credit ret', bits: retBits, color: C.green },
+      ] });
+
+    // ---- resource planes ----
+    const rsteps = this.rpSteps();
+    const ri = Math.min(this.state.rpStep, rsteps.length - 1);
+    const rnow = rsteps[ri];
+    const seg = (from, to, value, color) => ({ from, to, value, color });
+    const rpWave = this.buildWave({ cycles: 9, w: 46, axis: true, playhead: rnow.cy,
+      theme: { rowH: 30, labelW: 92 },
+      signals: [
+        { name: 'ACLK', type: 'clk', color: C.clk },
+        { name: 'AW·rp', type: 'bus', color: C.teal, segs: [seg(1, 2, 'RP0', C.rp0)] },
+        { name: 'W · RP0', type: 'bus', color: C.rp0, segs: [seg(2, 3, 'b0', C.rp0), seg(4, 5, 'b1', C.rp0), seg(7, 8, 'b2⌁L', C.rp0)] },
+        { name: 'W · RP1', type: 'bus', color: C.rp1, segs: [seg(3, 4, 'b0', C.rp1), seg(6, 7, 'b1⌁L', C.rp1)] },
+        { name: 'W · RP2', type: 'bus', color: C.rp2, segs: [seg(5, 6, 'b0⌁L', C.rp2)] },
+        { name: 'B·rp', type: 'bus', color: C.green, segs: [seg(8, 9, 'RP0', C.rp0)] },
+      ] });
+    const poolDot = (n, filled, color) => Array.from({ length: n }, (_, i) => i < filled ? color : 'oklch(0.24 0.012 258)');
+    const rpPools = [
+      { name: 'RP0', color: C.rp0, credits: 5, dots: poolDot(5, 2, C.rp0) },
+      { name: 'RP1', color: C.rp1, credits: 5, dots: poolDot(5, 3, C.rp1) },
+      { name: 'RP2', color: C.rp2, credits: 5, dots: poolDot(5, 4, C.rp2) },
+    ];
+    const rpRules = [
+      { color: C.teal, title: 'AW + W share the RP', body: 'For any write, the address (AW) and data (W) beats must carry the same RP number. A write lives on one plane end-to-end.' },
+      { color: C.green, title: 'B and R: single RP', body: 'The write-response (B) and read-data (R) channels are each restricted to a single RP, keeping response routing unambiguous.' },
+      { color: C.amber, title: 'Credit limits', body: 'A receiver grants 1–15 credits per RP, plus up to 15 shared credits pooled across planes for bursty, uneven traffic.' },
+    ];
+
+    // ---- versions ----
+    const versions = [
+      { tag: 'L', date: '2025', color: C.teal, title: 'Issue L — credit-based transport', body: 'Adds the AXI_Transport property selecting credit-based transport, Resource Planes with write-data interleaving, and shared credits. No new signals; wakeup_signal unsupported when credits are enabled.' },
+      { tag: 'K', date: 'Sep 2023', color: 'oklch(0.72 0.02 258)', title: 'Issue K — feature release', body: 'Memory Encryption Contexts (MEC), 12-bit MPAM PARTID option, and the MTE “Simplified” option. Baseline that L extends.' },
+      { tag: 'J', date: 'Mar 2023', color: 'oklch(0.6 0.01 258)', title: 'Issue J — the big rewrite', body: 'Restructured spec; AXI3/AXI4/AXI4-Lite and ACE content removed. All features now framed on AXI5-class interfaces.' },
+    ];
+
+    // ---- cheat ----
+    const cheat = [
+      { term: 'AXI_Transport', color: C.teal, def: 'AXI5 property. Default = VALID/READY; set = credit-based transport. Absent in AXI3/AXI4.' },
+      { term: 'credit', color: C.green, def: 'A standing promise of one receiver buffer slot. Spent per request, returned when the slot frees.' },
+      { term: 'credits / RP', color: C.amber, def: 'Receiver may grant 1 (min) to 15 (max) credits per Resource Plane.' },
+      { term: 'shared credits', color: C.amber, def: 'Up to 15 additional credits pooled across RPs for uneven throughput.' },
+      { term: 'Resource Plane (RP)', color: C.rp0, def: 'Independent credit context on shared wires; enables write-data interleaving.' },
+      { term: 'AW + W', color: C.rp1, def: 'Must carry the same RP number for a given write transaction.' },
+      { term: 'B / R', color: C.rp2, def: 'Each restricted to a single RP.' },
+      { term: 'wakeup_signal', color: C.red, def: 'Not supported when credit-based transport is enabled.' },
+    ];
+
+    return {
+      navGroups,
+      isOverview: sec === 'overview', isTransport: sec === 'transport', isCredits: sec === 'credits',
+      isPlanes: sec === 'planes', isVersions: sec === 'versions', isCheat: sec === 'cheat',
+      overviewCards, compareRows,
+      creditWave, creditDots, creditNum: cnow.credits, creditColor: cnow.color,
+      creditLabel: cnow.label, creditText: cnow.text,
+      creditStepNum: ci + 1, creditStepTot: csteps.length,
+      creditNext: () => this.step('creditStep', 1, csteps.length - 1),
+      creditPrev: () => this.step('creditStep', -1, csteps.length - 1),
+      rpWave, rpPools, rpRules, rpLabel: rnow.label, rpText: rnow.text,
+      rpNext: () => this.step('rpStep', 1, rsteps.length - 1),
+      rpPrev: () => this.step('rpStep', -1, rsteps.length - 1),
+      versions, cheat,
+    };
+  }
+}
+</script>
+</body>
+</html>
